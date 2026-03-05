@@ -991,7 +991,7 @@ export const tripTemplates: TripTemplate[] = [
                 ]
             }
         ],
-        photos: [{ path: "/trips/vietnam/hero.png", alt: "Ha Long & Hanoi", isHero: true }],
+        photos: [{ path: "/trips/vietnam/hanoi-hero.png", alt: "Ha Long & Hanoi", isHero: true }],
         reviewSnippets: [{ text: "The food alone is worth the flight. Ha Long is magical.", sourceName: "Stanford Student", tag: "culture" }]
     },
     {
@@ -1268,7 +1268,7 @@ export const tripTemplates: TripTemplate[] = [
                 ]
             }
         ],
-        photos: [{ path: "/trips/southkorea/hero.png", alt: "K-Tech & Seoul", isHero: true }],
+        photos: [{ path: "/trips/south-korea/hero.png", alt: "K-Tech & Seoul", isHero: true }],
         reviewSnippets: [{ text: "The efficiency is mind-blowing. Highest speed internet on earth.", sourceName: "Stanford Business", tag: "logistics" }]
     },
     {
@@ -1450,7 +1450,7 @@ export const tripTemplates: TripTemplate[] = [
                 ]
             }
         ],
-        photos: [{ path: "/trips/japan/hero.png", alt: "Island Hopping", isHero: true }],
+        photos: [{ path: "/trips/philippines/hero.png", alt: "Island Hopping", isHero: true }],
         reviewSnippets: [{ text: "The most beautiful water I've ever seen. Pure paradise.", sourceName: "INSEAD Student", tag: "culture" }]
     },
     {
