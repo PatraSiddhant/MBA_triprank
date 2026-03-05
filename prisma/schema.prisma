@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model TripCandidate {
+  id                    String      @id @default(cuid())
+  name                  String
+  primaryDestinationCity String
+  primaryDestinationCountry String
+  durationDays          Int
+  roughBudgetUsd        Int
+  theme                 String
+  tags                  String      // Stored as JSON string or comma-separated
+  templateSlug          String?     // To track origin if cloned from template
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+  itinerary             Itinerary?
+}
+
+model Itinerary {
+  id              String         @id @default(cuid())
+  tripCandidateId String         @unique
+  tripCandidate   TripCandidate  @relation(fields: [tripCandidateId], references: [id], onDelete: Cascade)
+  days            ItineraryDay[]
+}
+
+model ItineraryDay {
+  id          String          @id @default(cuid())
+  dayIndex    Int
+  title       String
+  itineraryId String
+  itinerary   Itinerary       @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
+  items       ItineraryItem[]
+}
+
+model ItineraryItem {
+  id             String       @id @default(cuid())
+  title          String
+  description    String
+  timeBucket     String
+  costEstimate   String?
+  link           String?
+  itineraryDayId String
+  itineraryDay   ItineraryDay @relation(fields: [itineraryDayId], references: [id], onDelete: Cascade)
+}
+model TripRanking {
+  id           String   @id @default(cuid())
+  templateSlug String   @unique
+  score        Int      @default(1200) // Initial Elo score
+  wins         Int      @default(0)
+  losses       Int      @default(0)
+  updatedAt    DateTime @updatedAt
+}
