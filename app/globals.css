@@ -139,3 +139,42 @@ a {
 .image-zoom-container:hover .image-zoom {
   transform: scale(1.05);
 }
+
+/* Global Mobile Responsiveness */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  section {
+    padding: 4rem 0 !important;
+  }
+
+  h1 {
+    font-size: 2.5rem !important;
+  }
+
+  h2 {
+    font-size: 2rem !important;
+  }
+
+  .grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 2rem !important;
+  }
+
+  /* Make trip rank cards more compact on tiny screens */
+  .card h2 {
+    font-size: 1.75rem !important;
+  }
+
+  .card {
+    min-height: auto !important;
+  }
+}
