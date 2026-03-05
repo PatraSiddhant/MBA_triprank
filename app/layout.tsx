@@ -6,7 +6,11 @@ import ClientHeader from "@/components/ClientHeader";
 export const metadata: Metadata = {
   title: "triprank | Discover Iconic MBA Treks",
   description: "Beli-style platform for discovery and ranking of the world's most iconic MBA trips.",
-  viewport: "width=device-width, initial-scale=1",
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({

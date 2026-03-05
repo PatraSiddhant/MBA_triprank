@@ -20,7 +20,7 @@ export default function UseTemplateButton({ slug }: { slug: string }) {
                 cursor: isPending ? 'wait' : 'pointer'
             }}
         >
-            {isPending ? "Generating your trip..." : "Use this template →"}
+            {isPending ? "Adding to Plan..." : "Add to Plan →"}
         </button>
     );
 }
