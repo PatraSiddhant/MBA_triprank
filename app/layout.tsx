@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { useState } from "react";
 
 export const metadata: Metadata = {
   title: "triprank | Discover Iconic MBA Treks",
   description: "Beli-style platform for discovery and ranking of the world's most iconic MBA trips.",
+  viewport: "width=device-width, initial-scale=1",
 };
 
 export default function RootLayout({
@@ -11,6 +13,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <html lang="en">
       <body>
@@ -19,7 +22,22 @@ export default function RootLayout({
             <a href="/" style={{ fontSize: '1.5rem', fontWeight: 800, letterSpacing: '-0.05em' }}>
               triprank<span style={{ color: 'var(--accent)' }}>.</span>
             </a>
-            <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+            {/* Mobile menu button */}
+            <button
+              className="mobile-menu-btn"
+              onClick={() => setIsOpen(!isOpen)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--foreground)',
+                fontSize: '1.5rem',
+                display: 'none',
+              }}
+              aria-label="Toggle navigation"
+            >
+              ☰
+            </button>
+            <div className={"nav-links " + (isOpen ? "open" : "")} style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
               <a href="/discover" style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--secondary)' }}>Discover</a>
               <a href="/rank" style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--secondary)' }}>Trip Rank</a>
               <a href="/socials" style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--secondary)' }}>Socials</a>
@@ -40,6 +58,14 @@ export default function RootLayout({
             </div>
           </div>
         </footer>
+      <style jsx global>{`
+        @media (max-width: 640px) {
+          .mobile-menu-btn { display: block !important; }
+          .nav-links { display: none; flex-direction: column; background: var(--card); position: absolute; top: 100%; left: 0; width: 100%; padding: 1rem; }
+          .nav-links.open { display: flex; }
+          .nav-links a { padding: 0.5rem 0; }
+        }
+      `}</style>
       </body>
     </html>
   );
