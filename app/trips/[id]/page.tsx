@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { MapPin, Clock, DollarSign, Calendar } from "lucide-react";
+import ItineraryEditor from "@/components/ItineraryEditor";
 
 export default async function UserTripPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -47,28 +48,27 @@ export default async function UserTripPage({ params }: { params: Promise<{ id: s
                 <div className="grid" style={{ gridTemplateColumns: '1fr 300px', gap: '6rem' }}>
                     <div>
                         <h2 style={{ fontSize: '2rem', marginBottom: '2.5rem' }}>Full Itinerary</h2>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                            {trip.itinerary?.days.map((day) => (
-                                <div key={day.id} className="glass" style={{ padding: '2rem', borderRadius: 'var(--radius)' }}>
-                                    <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                        <div style={{ fontWeight: 800, fontSize: '1.5rem', opacity: 0.3 }}>{day.dayIndex}</div>
-                                        <h3 style={{ fontSize: '1.25rem' }}>{day.title}</h3>
-                                    </div>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                        {day.items.map((item) => (
-                                            <div key={item.id} style={{ paddingLeft: '3rem', borderLeft: '1px solid var(--border)', position: 'relative' }}>
-                                                <div style={{ position: 'absolute', left: '-5px', top: '8px', width: '9px', height: '9px', borderRadius: '50%', background: 'var(--accent)' }} />
-                                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-                                                    <h4 style={{ fontWeight: 600 }}>{item.title}</h4>
-                                                    <span style={{ fontSize: '0.75rem', color: 'var(--secondary)', textTransform: 'uppercase' }}>{item.timeBucket}</span>
-                                                </div>
-                                                <p style={{ fontSize: '0.875rem', color: 'var(--secondary)' }}>{item.description}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                        {trip.itinerary ? (
+                            <ItineraryEditor
+                                itineraryId={trip.itinerary.id}
+                                initialDays={trip.itinerary.days.map(day => ({
+                                    id: day.id,
+                                    dayIndex: day.dayIndex,
+                                    title: day.title,
+                                    items: day.items.map(item => ({
+                                        id: item.id,
+                                        title: item.title,
+                                        description: item.description,
+                                        timeBucket: item.timeBucket,
+                                        sortOrder: 0,
+                                    })),
+                                }))}
+                            />
+                        ) : (
+                            <div className="glass" style={{ padding: '3rem', borderRadius: 'var(--radius)', textAlign: 'center', color: 'var(--secondary)' }}>
+                                No itinerary yet. Clone a trip template to get started!
+                            </div>
+                        )}
                     </div>
 
                     <aside>

@@ -36,7 +36,7 @@ export default function TripDownloadButton({ trip }: TripDownloadButtonProps) {
 
                 doc.setFontSize(16);
                 doc.setTextColor(0, 112, 243);
-                doc.text(`Day ${day.dayIndex + 1}: ${day.title}`, 20, yOffset);
+                doc.text(`Day ${day.dayIndex}: ${day.title}`, 20, yOffset);
                 yOffset += 10;
 
                 const tableRows = day.items.map((item: any) => [

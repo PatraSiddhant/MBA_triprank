@@ -64,7 +64,7 @@ export default function TripDetailModal({ trip, onClose }: { trip: TripTemplate;
                     <div style={{ display: 'flex', gap: '2rem' }}>
                         <div>
                             <div style={{ color: 'var(--secondary)', fontSize: '0.75rem', textTransform: 'uppercase' }}>Theme</div>
-                            <div style={{ fontWeight: 600 }}>{trip.theme}</div>
+                            <div style={{ fontWeight: 600 }}>{trip.themes.join(' · ')}</div>
                         </div>
                         <div>
                             <div style={{ color: 'var(--secondary)', fontSize: '0.75rem', textTransform: 'uppercase' }}>Budget</div>

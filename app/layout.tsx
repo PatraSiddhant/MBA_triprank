@@ -4,8 +4,8 @@ import ClientHeader from "@/components/ClientHeader";
 
 
 export const metadata: Metadata = {
-  title: "triprank | Discover Iconic MBA Treks",
-  description: "Beli-style platform for discovery and ranking of the world's most iconic MBA trips.",
+  title: "trekrank | Discover Iconic MBA Treks",
+  description: "The ultimate platform for discovering, ranking, and planning the world's most iconic MBA trips.",
 };
 
 export const viewport = {
@@ -28,11 +28,11 @@ export default function RootLayout({
         </main>
         <footer className="container" style={{ padding: '4rem 0', color: 'var(--secondary)', borderTop: '1px solid var(--border)', marginTop: '4rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <p style={{ fontSize: '0.875rem' }}>© 2026 triprank. Built for the modern MBA.</p>
+            <p style={{ fontSize: '0.875rem' }}>© 2026 trekrank. Built for the modern MBA.</p>
             <div style={{ display: 'flex', gap: '1.5rem' }}>
-              <a href="#">About</a>
-              <a href="#">Privacy</a>
-              <a href="#">Contact</a>
+              <a href="/about">About</a>
+              <a href="/about#privacy">Privacy</a>
+              <a href="/about#contact">Contact</a>
             </div>
           </div>
         </footer>

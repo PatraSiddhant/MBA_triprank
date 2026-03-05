@@ -26,7 +26,7 @@ export type TripTemplate = {
     primaryDestinationCountry: string;
     durationDays: number;
     roughBudgetUsd: number;
-    theme: "Adventure" | "Culture" | "Business" | "Party" | "Luxury" | "Sustainability" | "Food & Wine" | "Tech";
+    themes: ("Adventure" | "Culture" | "Business" | "Party" | "Luxury" | "Sustainability" | "Food & Wine" | "Tech")[];
     summary: string;
     schoolSlugs: string[];
     days: ItineraryDay[];
@@ -50,7 +50,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Colombia",
         durationDays: 5,
         roughBudgetUsd: 2000,
-        theme: "Party",
+        themes: ["Party", "Culture"],
         summary: "High-energy exploration of Medellin and Cartagena, featuring vibrant street art, Caribbean beaches, and legendary nightlife.",
         schoolSlugs: ["wharton", "columbia", "harvard", "booth", "kellogg", "stanford"],
         safetyRating: 4,
@@ -115,7 +115,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Japan",
         durationDays: 5,
         roughBudgetUsd: 3500,
-        theme: "Business",
+        themes: ["Business", "Tech", "Culture"],
         summary: "An immersive journey from the neon streets of Tokyo to the serene temples of Kyoto, blending business insights with deep cultural experiences.",
         schoolSlugs: ["columbia", "wharton", "harvard", "booth", "kellogg", "stanford"],
         safetyRating: 5,
@@ -178,7 +178,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "UAE",
         durationDays: 5,
         roughBudgetUsd: 3000,
-        theme: "Business",
+        themes: ["Business", "Luxury"],
         summary: "Explore the global financial hub of Dubai and the cultural heart of Abu Dhabi, featuring top-tier corporate visits and luxury desert experiences.",
         schoolSlugs: ["columbia", "wharton", "harvard", "lbs"],
         safetyRating: 5,
@@ -239,7 +239,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "India",
         durationDays: 5,
         roughBudgetUsd: 1500,
-        theme: "Culture",
+        themes: ["Culture", "Business"],
         summary: "A journey through the heart of India, visiting the Taj Mahal and the royal palaces of Jaipur, with insights into emerging markets.",
         schoolSlugs: ["columbia", "wharton", "harvard", "booth", "kellogg"],
         safetyRating: 3,
@@ -299,7 +299,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Mexico",
         durationDays: 5,
         roughBudgetUsd: 2000,
-        theme: "Food & Wine",
+        themes: ["Food \u0026 Wine", "Culture", "Adventure"],
         summary: "The ultimate balance of historic Mexico City culture and the pristine beaches of Tulum, with a focus on world-class gastronomy.",
         schoolSlugs: ["columbia", "wharton", "kellogg", "booth"],
         safetyRating: 4,
@@ -360,7 +360,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Iceland",
         durationDays: 4,
         roughBudgetUsd: 3000,
-        theme: "Sustainability",
+        themes: ["Sustainability", "Adventure"],
         summary: "Witness the raw power of nature with geothermal spas, volcanic landscapes, and insights into 100% renewable energy systems.",
         schoolSlugs: ["harvard", "wharton", "booth"],
         safetyRating: 5,
@@ -413,7 +413,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "South Africa",
         durationDays: 5,
         roughBudgetUsd: 3000,
-        theme: "Adventure",
+        themes: ["Adventure", "Culture"],
         summary: "From the peak of Table Mountain to the winelands of Stellenbosch and the penguin colonies of Boulder's Beach.",
         schoolSlugs: ["columbia", "wharton", "insead"],
         safetyRating: 4,
@@ -472,7 +472,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Vietnam",
         durationDays: 5,
         roughBudgetUsd: 1800,
-        theme: "Food & Wine",
+        themes: ["Food \u0026 Wine", "Culture"],
         summary: "Navigate the chaos of Hanoi, cruise through Ha Long Bay, and experience the lantern-lit charm of Hoi An.",
         schoolSlugs: ["columbia", "wharton", "kellogg"],
         safetyRating: 5,
@@ -532,7 +532,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Argentina",
         durationDays: 5,
         roughBudgetUsd: 3500,
-        theme: "Adventure",
+        themes: ["Adventure"],
         summary: "A rugged expedition through the glaciers of Argentina and the granite peaks of Chile's Torres del Paine.",
         schoolSlugs: ["columbia", "harvard", "booth", "kellogg"],
         safetyRating: 4,
@@ -571,7 +571,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Portugal",
         durationDays: 5,
         roughBudgetUsd: 2500,
-        theme: "Food & Wine",
+        themes: ["Food \u0026 Wine", "Culture", "Luxury"],
         summary: "Savor the flavors of Portugal from the historic hills of Lisbon to the terraced vineyards of the Douro Valley.",
         schoolSlugs: ["columbia", "wharton", "booth", "iese"],
         safetyRating: 5,
@@ -608,10 +608,10 @@ export const tripTemplates: TripTemplate[] = [
         title: "South Korea: Seoul 24/7",
         primaryDestinationCity: "Seoul",
         primaryDestinationCountry: "South Korea",
-        durationDays: 4,
+        durationDays: 5,
         roughBudgetUsd: 2500,
-        theme: "Tech",
-        summary: "Experience the frenetic energy of Seoul, from cutting-edge tech Samsung visits to late-night Gangnam K-BBQ.",
+        themes: ["Tech", "Culture"],
+        summary: "Experience the frenetic energy of Seoul, from cutting-edge tech Samsung visits to late-night Gangnam K-BBQ, balanced with ancient palaces and world-class nightlife.",
         schoolSlugs: ["columbia", "wharton", "harvard", "stanford"],
         safetyRating: 5,
         comfortRating: 5,
@@ -619,15 +619,52 @@ export const tripTemplates: TripTemplate[] = [
         days: [
             {
                 dayIndex: 1,
-                title: "Gangnam Style",
+                title: "Arrival & Gangnam",
                 items: [
-                    { title: "Samsung HQ", description: "Tech innovations tour.", timeBucket: "Morning" },
-                    { title: "K-BBQ Dinner", description: "Unlimited grilling and drinks.", timeBucket: "Night" }
+                    { title: "Arrival", description: "Check in near Gangnam or Myeongdong.", timeBucket: "Afternoon" },
+                    { title: "K-BBQ Dinner", description: "BBQ dinner, stroll Gangnam streets, dessert cafés.", timeBucket: "Evening" }
+                ]
+            },
+            {
+                dayIndex: 2,
+                title: "K-Tech & Startups",
+                items: [
+                    { title: "Tech Visits", description: "Major tech companies (Samsung HQ) or Pangyo Techno Valley.", timeBucket: "Morning" },
+                    { title: "Startup Hub", description: "Hub/co-working space, guest talk with founder.", timeBucket: "Afternoon" },
+                    { title: "Soju Bars", description: "Craft beer + soju bars; optional karaoke.", timeBucket: "Night" }
+                ]
+            },
+            {
+                dayIndex: 3,
+                title: "Palaces & History",
+                items: [
+                    { title: "Gyeongbokgung", description: "Palace + changing of the guard, Bukchon Hanok Village.", timeBucket: "Morning" },
+                    { title: "Insadong", description: "Traditional shops, tea house stop.", timeBucket: "Afternoon" },
+                    { title: "Night Market", description: "Myeongdong night market and street food.", timeBucket: "Evening" }
+                ]
+            },
+            {
+                dayIndex: 4,
+                title: "DMZ or Digital Culture",
+                items: [
+                    { title: "DMZ Option", description: "Half-day DMZ tour or E-sports arena.", timeBucket: "Morning" },
+                    { title: "Hongdae Night", description: "Hongdae nightlife (live music, clubs).", timeBucket: "Night" }
+                ]
+            },
+            {
+                dayIndex: 5,
+                title: "Cafés & Departure",
+                items: [
+                    { title: "Trendy Seongsu", description: "Café in Seongsu or Ikseon-dong; last shopping.", timeBucket: "Morning" },
+                    { title: "Departure", description: "Airport transfer.", timeBucket: "Afternoon" }
                 ]
             }
         ],
         photos: [{ path: "/trips/south-korea/hero.png", alt: "Seoul Skyline at Night", isHero: true }],
-        reviewSnippets: [{ text: "Cutting-edge technology and amazing food scene every block.", sourceName: "Columbia Chazen", tag: "culture" }]
+        reviewSnippets: [
+            { text: "Cutting-edge technology and amazing food scene every block.", sourceName: "Columbia Chazen", tag: "culture" },
+            { text: "The efficiency is mind-blowing. Highest speed internet on earth.", sourceName: "Stanford Business", tag: "logistics" }
+        ]
     },
     {
         slug: "china-scale",
@@ -636,7 +673,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "China",
         durationDays: 5,
         roughBudgetUsd: 3000,
-        theme: "Business",
+        themes: ["Business", "Tech", "Culture"],
         summary: "Witness the massive scale of China's development, visiting the Great Wall and the tech ecosystems of Shenzhen.",
         schoolSlugs: ["columbia", "wharton", "harvard", "stanford", "booth"],
         safetyRating: 4,
@@ -661,7 +698,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Kenya",
         durationDays: 5,
         roughBudgetUsd: 4000,
-        theme: "Adventure",
+        themes: ["Adventure", "Culture"],
         summary: "Bucket-list Big Five safari combined with visits to Kenya's leading social enterprises and tech hubs.",
         schoolSlugs: ["columbia", "harvard"],
         safetyRating: 4,
@@ -687,7 +724,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Tanzania",
         durationDays: 5,
         roughBudgetUsd: 4500,
-        theme: "Luxury",
+        themes: ["Luxury", "Adventure"],
         summary: "The ultimate bucket-list adventure: witness the Great Migration on the Serengeti plains and unwind on the spice-scented beaches of Zanzibar.",
         schoolSlugs: ["booth"],
         safetyRating: 4,
@@ -715,7 +752,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Taiwan",
         durationDays: 4,
         roughBudgetUsd: 2200,
-        theme: "Tech",
+        themes: ["Tech", "Food \u0026 Wine"],
         summary: "Dive into the heart of global tech manufacturing and explore some of the world's best night market food scenes.",
         schoolSlugs: ["columbia"],
         safetyRating: 5,
@@ -743,7 +780,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Peru",
         durationDays: 5,
         roughBudgetUsd: 2500,
-        theme: "Culture",
+        themes: ["Culture", "Adventure"],
         summary: "Trek through the Andes to the lost city of Machu Picchu and savor world-class Peruvian cuisine in Lima.",
         schoolSlugs: ["wharton", "columbia", "kellogg"],
         safetyRating: 4,
@@ -771,7 +808,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Morocco",
         durationDays: 5,
         roughBudgetUsd: 2200,
-        theme: "Culture",
+        themes: ["Culture", "Adventure"],
         summary: "Navigate the labyrinthine souks of Marrakech and sleep under the stars in a luxury Sahara desert camp.",
         schoolSlugs: ["columbia", "wharton", "insead"],
         safetyRating: 4,
@@ -799,7 +836,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Egypt",
         durationDays: 5,
         roughBudgetUsd: 1800,
-        theme: "Culture",
+        themes: ["Culture", "Adventure"],
         summary: "Step back 5,000 years to the era of the Pharaohs. Explore the Great Pyramids and sail the Nile on a traditional Felucca.",
         schoolSlugs: ["columbia", "harvard", "wharton"],
         safetyRating: 3,
@@ -861,7 +898,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Greece",
         durationDays: 7,
         roughBudgetUsd: 3500,
-        theme: "Party",
+        themes: ["Party", "Luxury"],
         summary: "The quintessential MBA rite of passage. Sail the Aegean, jump into turquoise waters, and dance until sunrise in Mykonos.",
         schoolSlugs: ["insead", "lbs", "columbia", "wharton"],
         safetyRating: 4,
@@ -939,7 +976,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Vietnam",
         durationDays: 5,
         roughBudgetUsd: 1500,
-        theme: "Culture",
+        themes: ["Culture", "Food \u0026 Wine"],
         summary: "A sensory journey through the Old Quarter of Hanoi and an overnight luxury cruise in the emerald waters of Ha Long Bay.",
         schoolSlugs: ["columbia", "stanford"],
         safetyRating: 5,
@@ -1001,7 +1038,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Jordan",
         durationDays: 4,
         roughBudgetUsd: 2000,
-        theme: "Adventure",
+        themes: ["Adventure", "Culture"],
         summary: "Walk through the Siq to the Treasury of Petra, float in the hypersaline Dead Sea, and camp in the Martian landscape of Wadi Rum.",
         schoolSlugs: ["wharton", "insead"],
         safetyRating: 4,
@@ -1054,7 +1091,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Spain",
         durationDays: 4,
         roughBudgetUsd: 3000,
-        theme: "Party",
+        themes: ["Party", "Luxury"],
         summary: "Join the world's best DJs for the legendary closing parties of Ibiza. Luxury villas, beach clubs, and non-stop energy.",
         schoolSlugs: ["lbs", "insead", "wharton"],
         safetyRating: 4,
@@ -1105,7 +1142,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Croatia",
         durationDays: 5,
         roughBudgetUsd: 2200,
-        theme: "Luxury",
+        themes: ["Luxury", "Adventure"],
         summary: "Island hop between Hvar, Vis, and Korcula on a private catamaran. Mediterranean lifestyle at its finest.",
         schoolSlugs: ["insead", "columbia"],
         safetyRating: 5,
@@ -1166,7 +1203,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Argentina",
         durationDays: 4,
         roughBudgetUsd: 2400,
-        theme: "Luxury",
+        themes: ["Luxury", "Food \u0026 Wine"],
         summary: "Discover the world's best Malbecs in the shadow of the Andes. Vineyard luncheons and sunset horseback riding.",
         schoolSlugs: ["wharton", "kellogg"],
         safetyRating: 4,
@@ -1212,73 +1249,13 @@ export const tripTemplates: TripTemplate[] = [
         reviewSnippets: [{ text: "Incredible value for luxury. Best steak and wine of my life.", sourceName: "Kellogg Student", tag: "value" }]
     },
     {
-        slug: "korea-tech",
-        title: "South Korea: K-Tech & Seoul",
-        primaryDestinationCity: "Seoul",
-        primaryDestinationCountry: "South Korea",
-        durationDays: 5,
-        roughBudgetUsd: 2100,
-        theme: "Tech",
-        summary: "Explore the future of smart cities and digital innovation in Seoul, balanced with ancient palaces and world-class nightlife.",
-        schoolSlugs: ["stanford", "columbia"],
-        safetyRating: 5,
-        comfortRating: 5,
-        vibes: ["futuristic", "fast-paced", "vibrant", "polite"],
-        days: [
-            {
-                dayIndex: 1,
-                title: "Arrival & Gangnam",
-                items: [
-                    { title: "Arrival", description: "Check in near Gangnam or Myeongdong.", timeBucket: "Afternoon" },
-                    { title: "K-BBQ Dinner", description: "BBQ dinner, stroll Gangnam streets, dessert cafés.", timeBucket: "Evening" }
-                ]
-            },
-            {
-                dayIndex: 2,
-                title: "K-Tech & Startups",
-                items: [
-                    { title: "Tech Visits", description: "Major tech companies (Samsung HQ) or Pangyo Techno Valley.", timeBucket: "Morning" },
-                    { title: "Startup Hub", description: "Hub/co-working space, guest talk with founder.", timeBucket: "Afternoon" },
-                    { title: "Soju Bars", description: "Craft beer + soju bars; optional karaoke.", timeBucket: "Night" }
-                ]
-            },
-            {
-                dayIndex: 3,
-                title: "Palaces & History",
-                items: [
-                    { title: "Gyeongbokgung", description: "Palace + changing of the guard, Bukchon Hanok Village.", timeBucket: "Morning" },
-                    { title: "Insadong", description: "Traditional shops, tea house stop.", timeBucket: "Afternoon" },
-                    { title: "Night Market", description: "Myeongdong night market and street food.", timeBucket: "Evening" }
-                ]
-            },
-            {
-                dayIndex: 4,
-                title: "DMZ or Digital Culture",
-                items: [
-                    { title: "DMZ Option", description: "Half-day DMZ tour or E-sports arena.", timeBucket: "Morning" },
-                    { title: "Hongdae Night", description: "Hongdae nightlife (live music, clubs).", timeBucket: "Night" }
-                ]
-            },
-            {
-                dayIndex: 5,
-                title: "Cafés & Departure",
-                items: [
-                    { title: "Trendy Seongsu", description: "Café in Seongsu or Ikseon-dong; last shopping.", timeBucket: "Morning" },
-                    { title: "Departure", description: "Airport transfer.", timeBucket: "Afternoon" }
-                ]
-            }
-        ],
-        photos: [{ path: "/trips/south-korea/hero.png", alt: "K-Tech & Seoul", isHero: true }],
-        reviewSnippets: [{ text: "The efficiency is mind-blowing. Highest speed internet on earth.", sourceName: "Stanford Business", tag: "logistics" }]
-    },
-    {
         slug: "costa-rica-pura",
         title: "Costa Rica: Pura Vida",
         primaryDestinationCity: "San Jose",
         primaryDestinationCountry: "Costa Rica",
         durationDays: 5,
         roughBudgetUsd: 1800,
-        theme: "Adventure",
+        themes: ["Adventure", "Sustainability"],
         summary: "Zipline through cloud forests, soak in volcanic hot springs, and learn about sustainable ecotourism models.",
         schoolSlugs: ["kellogg", "booth"],
         safetyRating: 5,
@@ -1339,7 +1316,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Turkey",
         durationDays: 5,
         roughBudgetUsd: 2000,
-        theme: "Culture",
+        themes: ["Culture", "Adventure"],
         summary: "Cross continents between Europe and Asia in Istanbul, and drift over the fairy chimneys of Cappadocia in a hot air balloon.",
         schoolSlugs: ["lbs", "insead", "columbia"],
         safetyRating: 4,
@@ -1401,7 +1378,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Philippines",
         durationDays: 5,
         roughBudgetUsd: 1400,
-        theme: "Adventure",
+        themes: ["Adventure"],
         summary: "Explore the hidden lagoons of Palawan and the crystal clear waters of Coron on a private expedition boat.",
         schoolSlugs: ["insead", "columbia"],
         safetyRating: 4,
@@ -1460,7 +1437,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Scotland",
         durationDays: 4,
         roughBudgetUsd: 2200,
-        theme: "Luxury",
+        themes: ["Luxury", "Food \u0026 Wine"],
         summary: "Private road trip through the Isle of Skye and the rugged Highlands, with exclusive distillery tours and castle stays.",
         schoolSlugs: ["lbs", "wharton"],
         safetyRating: 5,
@@ -1512,7 +1489,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Australia",
         durationDays: 7,
         roughBudgetUsd: 4000,
-        theme: "Adventure",
+        themes: ["Adventure", "Culture"],
         summary: "Dive the Great Barrier Reef and watch the sunrise over Uluru (Ayers Rock). The ultimate Australian experience.",
         schoolSlugs: ["stanford", "wharton"],
         safetyRating: 5,
@@ -1588,7 +1565,7 @@ export const tripTemplates: TripTemplate[] = [
         primaryDestinationCountry: "Germany",
         durationDays: 4,
         roughBudgetUsd: 1500,
-        theme: "Party",
+        themes: ["Party", "Culture"],
         summary: "Deep dive into the world's best industrial warehouses for techno, balanced with moving visits to the Berlin Wall and Reichstag.",
         schoolSlugs: ["lbs", "insead", "columbia"],
         safetyRating: 5,

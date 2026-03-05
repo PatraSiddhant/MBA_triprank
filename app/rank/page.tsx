@@ -64,9 +64,9 @@ export default function RankPage() {
                         <div style={{ width: `${Math.min((comparisonsDone / 5) * 100, 100)}%`, height: '100%', background: 'var(--accent)', transition: 'width 0.3s ease' }}></div>
                     </div>
                     <div style={{ fontSize: '0.875rem', color: 'var(--secondary)', marginBottom: '1.5rem' }}>
-                        {comparisonsDone < 5 ? `${5 - comparisonsDone} more comparisions needed to generate your personalized ELO ranking` : 'Your personalized ELO ranking is ready! Scroll down to see it.'}
+                        {comparisonsDone < 5 ? `${5 - comparisonsDone} more comparisons needed to generate your personalized ELO ranking` : 'Your personalized ELO ranking is ready! Scroll down to see it.'}
                     </div>
-                    <h1 style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>Personalize Your Ranking</h1>
+                    <h1 style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>Trek Arena</h1>
                     <p style={{ color: 'var(--secondary)', fontSize: '1.25rem' }}>
                         Choose your favorite between the two. Your rank updates in real-time.
                     </p>
@@ -105,7 +105,7 @@ export default function RankPage() {
 
                     {comparisonsDone >= 5 && (
                         <div style={{ marginTop: '0', paddingBottom: '8rem' }}>
-                            <h2 style={{ fontSize: '2.5rem', marginBottom: '2rem', textAlign: 'center' }}>Design Your MBA Journey</h2>
+                            <h2 style={{ fontSize: '2.5rem', marginBottom: '2rem', textAlign: 'center' }}>Plan Your MBA Journey</h2>
                             <MbaCalendar
                                 availableTrips={rankingData.map((r, i) => {
                                     const template = templates.find(t => t.slug === r.templateSlug);
@@ -125,7 +125,7 @@ export default function RankPage() {
 
                 {comparisonsDone < 5 && rankingData.length > 0 && (
                     <div style={{ marginTop: '8rem', paddingBottom: '8rem' }}>
-                        <h2 style={{ fontSize: '2.5rem', marginBottom: '3rem', textAlign: 'center' }}>Your World Ranking</h2>
+                        <h2 style={{ fontSize: '2.5rem', marginBottom: '3rem', textAlign: 'center' }}>Your Trek Leaderboard</h2>
                         <div className="glass" style={{ borderRadius: 'var(--radius)', overflow: 'hidden' }}>
                             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                                 <thead>
@@ -149,7 +149,7 @@ export default function RankPage() {
                                                         <img src={template.photos[0].path} style={{ width: '40px', height: '40px', borderRadius: '4px', objectFit: 'cover' }} alt="" />
                                                         <div>
                                                             <div style={{ fontWeight: 600 }}>{template.title}</div>
-                                                            <div style={{ fontSize: '0.75rem', color: 'var(--secondary)' }}>{template.theme}</div>
+                                                            <div style={{ fontSize: '0.75rem', color: 'var(--secondary)' }}>{template.themes[0]}</div>
                                                         </div>
                                                     </div>
                                                 </td>

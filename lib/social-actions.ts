@@ -4,7 +4,7 @@ import prisma from "./prisma";
 import { createClient } from "./supabase/server";
 import { revalidatePath } from "next/cache";
 
-export async function createPost(content: string, tripSlug?: string) {
+export async function createPost(content: string, tripSlug?: string, imageUrl?: string) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -28,6 +28,7 @@ export async function createPost(content: string, tripSlug?: string) {
         data: {
             content,
             tripSlug,
+            imageUrl: imageUrl || null,
             userId: user.id,
             type: "update",
         },

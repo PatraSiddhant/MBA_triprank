@@ -31,7 +31,7 @@ export default async function UserTripsIndex() {
         <div style={{ paddingTop: '8rem', minHeight: '100vh' }}>
             <div className="container">
                 <header style={{ marginBottom: '4rem', textAlign: 'center' }}>
-                    <h1 style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>Add to Plan</h1>
+                    <h1 style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>My Trips</h1>
                     <p style={{ color: 'var(--secondary)', fontSize: '1.25rem' }}>
                         Manage and refine your upcoming MBA treks.
                     </p>

@@ -39,8 +39,8 @@ export default function Home() {
               Discover, rank, and plan iconic MBA treks with a community of global leaders. Built for the modern business student.
             </p>
             <div style={{ display: 'flex', gap: '1rem' }}>
-              <a href="/discover" className="btn btn-primary" style={{ fontSize: '1rem', padding: '1rem 2rem' }}>Browse Iconic Treks</a>
-              <a href="/trips" className="btn btn-secondary" style={{ fontSize: '1rem', padding: '1rem 2rem' }}>Add to Plan</a>
+              <a href="/discover" className="btn btn-primary" style={{ fontSize: '1rem', padding: '1rem 2rem' }}>Explore Iconic Treks</a>
+              <a href="/trips" className="btn btn-secondary" style={{ fontSize: '1rem', padding: '1rem 2rem' }}>My Trips</a>
             </div>
           </div>
         </div>
@@ -111,7 +111,7 @@ export default function Home() {
                     {trip.durationDays} Days
                   </span>
                   <span style={{ padding: '0.25rem 0.75rem', background: 'rgba(255,255,255,0.05)', borderRadius: '100px', fontSize: '0.75rem' }}>
-                    {trip.theme}
+                    {trip.themes[0]}
                   </span>
                 </div>
                 <a href={`/templates/${trip.slug}`} className="btn btn-secondary" style={{ width: '100%', padding: '0.5rem' }}>
@@ -127,7 +127,7 @@ export default function Home() {
       <section style={{ padding: '8rem 0', background: 'var(--card-bg)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-            <h2 style={{ fontSize: '3rem', marginBottom: '1rem' }}>Trek Leaderboard</h2>
+            <h2 style={{ fontSize: '3rem', marginBottom: '1rem' }}>Who's Leading the Pack?</h2>
             <p style={{ color: 'var(--secondary)', fontSize: '1.25rem' }}>Most saved and trending destinations by top MBA programs.</p>
           </div>
 
@@ -142,7 +142,7 @@ export default function Home() {
                     <span style={{ width: '2rem', fontWeight: 800, opacity: 0.2 }}>0{i + 1}</span>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontWeight: 600 }}>{trip.title}</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--secondary)' }}>{trip.theme} • {trip.durationDays} Days</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--secondary)' }}>{trip.themes[0]} • {trip.durationDays} Days</div>
                     </div>
                   </div>
                 ))}

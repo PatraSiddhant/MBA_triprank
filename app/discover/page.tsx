@@ -11,11 +11,11 @@ export default async function DiscoverPage({
 
     const filteredTemplates = allTemplates.filter((trip) => {
         const matchesSchool = !selectedSchool || trip.schoolSlugs.includes(selectedSchool);
-        const matchesTheme = !selectedTheme || trip.theme === selectedTheme;
+        const matchesTheme = !selectedTheme || trip.themes.includes(selectedTheme as any);
         return matchesSchool && matchesTheme;
     });
 
-    const themes = Array.from(new Set(allTemplates.map((t) => t.theme)));
+    const themes = Array.from(new Set(allTemplates.flatMap((t) => t.themes)));
 
     return (
         <div style={{ paddingTop: '8rem', minHeight: '100vh' }}>
@@ -102,7 +102,7 @@ export default async function DiscoverPage({
                                     ))}
                                 </div>
                                 <p style={{ fontSize: '0.875rem', color: 'var(--secondary)', marginBottom: '1.5rem' }}>
-                                    {trip.durationDays} Days • {trip.theme}
+                                    {trip.durationDays} Days • {trip.themes.join(' · ')}
                                 </p>
                                 <a href={`/templates/${trip.slug}`} className="btn btn-secondary" style={{ width: '100%', padding: '0.5rem' }}>
                                     View Template

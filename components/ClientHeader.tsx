@@ -35,7 +35,7 @@ export default function ClientHeader() {
         <nav className="glass-dark" style={{ position: 'fixed', top: 0, width: '100%', zIndex: 50, padding: '1rem 0' }}>
             <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <a href="/" style={{ fontSize: '1.5rem', fontWeight: 800, letterSpacing: '-0.05em' }}>
-                    triprank<span style={{ color: 'var(--accent)' }}>.</span>
+                    trekrank<span style={{ color: 'var(--accent)' }}>.</span>
                 </a>
                 {/* Mobile menu button */}
                 <button
@@ -54,10 +54,10 @@ export default function ClientHeader() {
                 </button>
                 <div className={"nav-links " + (isOpen ? "open" : "")}
                     style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-                    <a href="/discover" style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--secondary)' }}>Discover</a>
-                    <a href="/rank" style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--secondary)' }}>Trip Rank</a>
-                    <a href="/socials" style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--secondary)' }}>Socials</a>
-                    <a href="/trips" style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--secondary)' }}>Add to Plan</a>
+                    <a href="/discover" style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--secondary)' }}>Explore</a>
+                    <a href="/rank" style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--secondary)' }}>Arena</a>
+                    <a href="/socials" style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--secondary)' }}>Community</a>
+                    <a href="/trips" style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--secondary)' }}>My Trips</a>
 
                     {user ? (
                         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>

@@ -56,7 +56,7 @@ export default async function TemplateDetail({ params }: { params: Promise<{ slu
                 </div>
             </section>
 
-            <div className="container" style={{ padding: '6rem 0', display: 'grid', gridTemplateColumns: '1fr 350px', gap: '6rem' }}>
+            <div className="container grid" style={{ padding: '6rem 0', gridTemplateColumns: '1fr 350px', gap: '6rem' }}>
                 {/* Main Content */}
                 <div>
                     <div style={{ marginBottom: '6rem' }}>

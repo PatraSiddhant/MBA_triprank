@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { getAllTripTemplates } from "@/data/trip-templates";
-import { Heart, Share2, MessageSquare, ShieldCheck, Trophy, Send } from "lucide-react";
+import { Heart, Share2, MessageSquare, ShieldCheck, Trophy, Send, Image as ImageIcon } from "lucide-react";
 import { createPost } from "@/lib/social-actions";
 
 interface PostWithUser {
@@ -11,6 +11,7 @@ interface PostWithUser {
     userId: string;
     tripSlug: string | null;
     type: string;
+    imageUrl: string | null;
     likes: number;
     createdAt: Date;
     user: {
@@ -31,6 +32,8 @@ export default function SocialFeed({ initialPosts, currentUserId }: SocialFeedPr
     const [activeTab, setActiveTab] = useState<"global" | "school">("global");
     const [posts, setPosts] = useState(initialPosts);
     const [newPostContent, setNewPostContent] = useState("");
+    const [newPostImageUrl, setNewPostImageUrl] = useState("");
+    const [showImageInput, setShowImageInput] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const templates = getAllTripTemplates();
 
@@ -44,11 +47,10 @@ export default function SocialFeed({ initialPosts, currentUserId }: SocialFeedPr
 
         setIsSubmitting(true);
         try {
-            const post = await createPost(newPostContent);
-            // In a real app, revalidatePath would handle this, but for SPA feel we can optimistic update
-            // However, since we are using server actions and revalidatePath, let's just clear and wait for refresh or manual update
+            const post = await createPost(newPostContent, undefined, newPostImageUrl || undefined);
             setNewPostContent("");
-            // Refreshing posts would be better, but for now let's just reload or trust the server action
+            setNewPostImageUrl("");
+            setShowImageInput(false);
             window.location.reload();
         } catch (err) {
             alert(err instanceof Error ? err.message : "Failed to post");
@@ -158,6 +160,60 @@ export default function SocialFeed({ initialPosts, currentUserId }: SocialFeedPr
                         <Send size={18} />
                     </button>
                 </div>
+                {/* Image URL Input */}
+                {showImageInput && (
+                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                        <input
+                            type="url"
+                            value={newPostImageUrl}
+                            onChange={(e) => setNewPostImageUrl(e.target.value)}
+                            placeholder="Paste image URL..."
+                            style={{
+                                flex: 1,
+                                background: 'rgba(255,255,255,0.03)',
+                                border: '1px solid var(--border)',
+                                borderRadius: '0.75rem',
+                                padding: '0.75rem',
+                                color: 'white',
+                                fontSize: '0.825rem'
+                            }}
+                        />
+                    </div>
+                )}
+                {/* Image Preview */}
+                {newPostImageUrl && (
+                    <div style={{ position: 'relative', borderRadius: '0.75rem', overflow: 'hidden', maxHeight: '200px' }}>
+                        <img src={newPostImageUrl} alt="Preview" style={{ width: '100%', maxHeight: '200px', objectFit: 'cover', borderRadius: '0.75rem' }} />
+                        <button
+                            type="button"
+                            onClick={() => { setNewPostImageUrl(''); setShowImageInput(false); }}
+                            style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(0,0,0,0.7)', color: 'white', border: 'none', borderRadius: '50%', width: '24px', height: '24px', cursor: 'pointer', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        >×</button>
+                    </div>
+                )}
+                {/* Action Buttons */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <button
+                        type="button"
+                        onClick={() => setShowImageInput(!showImageInput)}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.4rem',
+                            background: 'none',
+                            border: '1px solid var(--border)',
+                            borderRadius: '0.5rem',
+                            padding: '0.5rem 0.75rem',
+                            color: showImageInput ? 'var(--accent)' : 'var(--secondary)',
+                            cursor: 'pointer',
+                            fontSize: '0.75rem',
+                            fontWeight: 600
+                        }}
+                    >
+                        <ImageIcon size={14} />
+                        Add Photo
+                    </button>
+                </div>
             </form>
 
             <div style={{
@@ -221,6 +277,17 @@ export default function SocialFeed({ initialPosts, currentUserId }: SocialFeedPr
                             <p style={{ margin: 0, fontSize: "0.875rem", lineHeight: 1.5, color: "var(--foreground)" }}>
                                 {post.content}
                             </p>
+
+                            {/* Attached Image */}
+                            {(post as any).imageUrl && (
+                                <div style={{ borderRadius: '0.75rem', overflow: 'hidden' }}>
+                                    <img
+                                        src={(post as any).imageUrl}
+                                        alt="Post attachment"
+                                        style={{ width: '100%', maxHeight: '300px', objectFit: 'cover', borderRadius: '0.75rem' }}
+                                    />
+                                </div>
+                            )}
 
                             {trip && (
                                 <div style={{

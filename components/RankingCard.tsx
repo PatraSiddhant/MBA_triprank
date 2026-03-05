@@ -59,7 +59,7 @@ export default function RankingCard({
                             marginBottom: '1rem'
                         }}
                     >
-                        {trip.theme}
+                        {trip.themes[0]}
                     </span>
                     <h2 style={{ fontSize: '3rem', lineHeight: 1, marginBottom: '1.5rem' }}>{trip.title}</h2>
                     <p style={{ color: 'var(--secondary)', fontSize: '1rem', marginBottom: '2rem', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>

@@ -18,7 +18,7 @@ export async function cloneTemplateAction(slug: string) {
             primaryDestinationCountry: template.primaryDestinationCountry,
             durationDays: template.durationDays,
             roughBudgetUsd: template.roughBudgetUsd,
-            theme: template.theme,
+            theme: template.themes.join(', '),
             tags: JSON.stringify(template.vibes),
             templateSlug: template.slug,
             itinerary: {
