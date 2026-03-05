@@ -10,6 +10,8 @@ export default function ClientHeader() {
     const supabase = createClient();
 
     useEffect(() => {
+        if (!supabase) return;
+
         const getUser = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             setUser(user);
@@ -21,9 +23,10 @@ export default function ClientHeader() {
         });
 
         return () => subscription.unsubscribe();
-    }, []);
+    }, [supabase]);
 
     const handleSignOut = async () => {
+        if (!supabase) return;
         await supabase.auth.signOut();
         window.location.reload();
     };
