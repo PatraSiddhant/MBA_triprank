@@ -1,0 +1,41 @@
+/* app/rank/page.module.css */
+
+/* Container for the whole ranking section */
+.rankContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  padding-top: 8rem; /* match original padding */
+}
+
+/* Container for the two cards + VS */
+.pairContainer {
+  display: flex;
+  gap: 2rem;
+  align-items: stretch;
+  justify-content: center;
+  flex-wrap: wrap; /* allow stacking on narrow screens */
+}
+
+/* VS label */
+.vs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  opacity: 0.1;
+  font-size: 4rem;
+  margin: 0 1rem;
+}
+
+/* Mobile adjustments */
+@media (max-width: 640px) {
+  .pairContainer {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .vs {
+    font-size: 3rem;
+    margin: 0.5rem 0;
+  }
+}

@@ -1,4 +1,4 @@
-"use client";
+import styles from "./page.module.css";
 
 import React, { useState, useEffect, useTransition } from "react";
 import { getAllTripTemplates, TripTemplate } from "@/data/trip-templates";
@@ -71,8 +71,8 @@ export default function RankPage() {
                     </p>
                 </header>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4rem' }}>
-                    <div style={{ display: 'flex', gap: '2rem', alignItems: 'stretch' }}>
+                <div className={styles.rankContainer}>
+                    <div className={styles.pairContainer}>
                         {currentPair && !showResults ? (
                             <>
                                 <div style={{ flex: 1, position: 'relative' }}>
@@ -86,9 +86,7 @@ export default function RankPage() {
                                         {Math.floor(70 + Math.random() * 25)}% MATCH
                                     </div>
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, opacity: 0.1, fontSize: '4rem' }}>
-                                    VS
-                                </div>
+                                <div className={styles.vs}>VS</div>
                                 <div style={{ flex: 1, position: 'relative' }}>
                                     <RankingCard
                                         trip={currentPair[1]}
