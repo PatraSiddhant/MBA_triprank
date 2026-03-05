@@ -1,11 +1,27 @@
 import prisma from "@/lib/prisma";
+import { createClient } from "@/lib/supabase/server";
+import TripDownloadButton from "@/components/TripDownloadButton";
 
 export default async function UserTripsIndex() {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
     let trips: any[] = [];
     try {
-        trips = await prisma.tripCandidate.findMany({
+        trips = await (prisma as any).tripCandidate.findMany({
+            where: user ? { userId: user.id } : {}, // If not logged in, show all (for now) or nothing
             orderBy: { createdAt: 'desc' },
-            include: { itinerary: true }
+            include: {
+                itinerary: {
+                    include: {
+                        days: {
+                            include: {
+                                items: true
+                            }
+                        }
+                    }
+                }
+            }
         });
     } catch (e) {
         console.error("Prisma error:", e);
@@ -15,7 +31,7 @@ export default async function UserTripsIndex() {
         <div style={{ paddingTop: '8rem', minHeight: '100vh' }}>
             <div className="container">
                 <header style={{ marginBottom: '4rem', textAlign: 'center' }}>
-                    <h1 style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>My Trip Plans</h1>
+                    <h1 style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>Add to Plan</h1>
                     <p style={{ color: 'var(--secondary)', fontSize: '1.25rem' }}>
                         Manage and refine your upcoming MBA treks.
                     </p>
@@ -59,9 +75,12 @@ export default async function UserTripsIndex() {
                                     </div>
                                 </div>
 
-                                <a href={`/trips/${trip.id}`} className="btn btn-secondary" style={{ width: '100%' }}>
-                                    Open Itinerary
-                                </a>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                    <a href={`/trips/${trip.id}`} className="btn btn-primary" style={{ width: '100%' }}>
+                                        Open Itinerary
+                                    </a>
+                                    <TripDownloadButton trip={trip} />
+                                </div>
                             </div>
                         ))}
                     </div>

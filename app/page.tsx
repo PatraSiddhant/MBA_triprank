@@ -40,7 +40,7 @@ export default function Home() {
             </p>
             <div style={{ display: 'flex', gap: '1rem' }}>
               <a href="/discover" className="btn btn-primary" style={{ fontSize: '1rem', padding: '1rem 2rem' }}>Browse Iconic Treks</a>
-              <a href="/trips" className="btn btn-secondary" style={{ fontSize: '1rem', padding: '1rem 2rem' }}>Create Your Trip</a>
+              <a href="/trips" className="btn btn-secondary" style={{ fontSize: '1rem', padding: '1rem 2rem' }}>Add to Plan</a>
             </div>
           </div>
         </div>
@@ -115,7 +115,7 @@ export default function Home() {
                   </span>
                 </div>
                 <a href={`/templates/${trip.slug}`} className="btn btn-secondary" style={{ width: '100%', padding: '0.5rem' }}>
-                  View Template
+                  Copy this trip
                 </a>
               </div>
             </div>

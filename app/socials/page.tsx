@@ -1,9 +1,19 @@
-"use client";
-
 import React from "react";
 import SocialFeed from "@/components/SocialFeed";
+import { getPosts } from "@/lib/social-actions";
+import { createClient } from "@/lib/supabase/server";
 
-export default function SocialsPage() {
+export default async function SocialsPage() {
+    const posts = await getPosts();
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // Map Prisma posts to the format expected by SocialFeed
+    const serializedPosts = posts.map((post: any) => ({
+        ...post,
+        createdAt: post.createdAt,
+    }));
+
     return (
         <div style={{ paddingTop: '8rem', minHeight: '100vh', background: 'var(--bg)' }}>
             <div className="container">
@@ -28,7 +38,7 @@ export default function SocialsPage() {
                 </header>
 
                 <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-                    <SocialFeed />
+                    <SocialFeed initialPosts={serializedPosts as any} currentUserId={user?.id} />
                 </div>
             </div>
         </div>
