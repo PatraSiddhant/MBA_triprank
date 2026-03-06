@@ -1,18 +1,23 @@
 "use client";
 
-import { MapPin } from "lucide-react";
+import React, { useTransition } from "react";
+import {
+    ComposableMap,
+    Geographies,
+    Geography,
+    Marker,
+    ZoomableGroup
+} from "react-simple-maps";
+import { MapPin, Plus, Sparkles, Compass } from "lucide-react";
+import { createCustomTripAction } from "@/lib/actions";
+import Link from "next/link";
 
-interface CityPoint {
-    name: string;
-    city: string;
-    country: string;
-    status: 'planning' | 'booked' | 'completed';
-    lat?: number;
-    lng?: number;
+const geoUrl = "https://raw.githubusercontent.com/lotusms/world-map-data/master/world-110m.json";
+
+interface WorldMapProps {
+    trips: any[];
 }
 
-// Simple approximation for lat/lng based on city names in the DB
-// In a real app, this would come from a geocoding API
 const CITY_COORDS: Record<string, { lat: number, lng: number }> = {
     "Medellin": { lat: 6.2442, lng: -75.5812 },
     "Cartagena": { lat: 10.3910, lng: -75.4794 },
@@ -45,111 +50,175 @@ const CITY_COORDS: Record<string, { lat: number, lng: number }> = {
     "Aspen": { lat: 39.1911, lng: -106.8175 }
 };
 
-export default function WorldMap({ trips }: { trips: any[] }) {
-    // Map projection: Equirectangular
-    // x = (lng + 180) * (width / 360)
-    // y = (90 - lat) * (height / 180)
+export default function WorldMap({ trips }: WorldMapProps) {
+    const [isPending, startTransition] = useTransition();
 
-    const width = 1000;
-    const height = 500;
-
-    const points = trips.map(t => {
+    const markers = trips.map(t => {
         const coords = CITY_COORDS[t.primaryDestinationCity] || { lat: 0, lng: 0 };
         return {
             ...t,
-            x: (coords.lng + 180) * (width / 360),
-            y: (90 - coords.lat) * (height / 180),
+            coordinates: [coords.lng, coords.lat] as [number, number],
             hasCoords: !!CITY_COORDS[t.primaryDestinationCity]
         };
-    }).filter(p => p.hasCoords);
+    }).filter(m => m.hasCoords);
 
     return (
         <div className="glass" style={{
-            borderRadius: '2rem',
+            borderRadius: '2.5rem',
             overflow: 'hidden',
             marginBottom: '6rem',
-            background: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(255,255,255,0.05)'
+            background: '#0a0c10', // Darker, premium foundation
+            border: '1px solid rgba(255,255,255,0.05)',
+            boxShadow: '0 40px 100px -20px rgba(0,0,0,0.8)'
         }}>
-            <div style={{ padding: '2rem 3rem', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            {/* Map Header with Quick Actions */}
+            <div style={{ padding: '2.5rem 3.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.01)' }}>
                 <div>
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Global Footprint</h3>
-                    <p style={{ color: 'var(--secondary)', fontSize: '0.875rem' }}>Visualizing the legendary treks you've conquered and planned.</p>
-                </div>
-                <div style={{ display: 'flex', gap: '1.5rem', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#00cc88' }} /> Completed
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                        <Compass size={20} color="var(--accent)" />
+                        <h3 style={{ fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-0.02em' }}>Global Footprint</h3>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent)' }} /> Booked/Planning
-                    </div>
+                    <p style={{ color: 'var(--secondary)', fontSize: '0.9rem' }}>A visual ledger of your legendary MBA expeditions.</p>
                 </div>
-            </div>
 
-            <div style={{ position: 'relative', width: '100%', aspectRatio: '2/1', padding: '2rem' }}>
-                {/* Simplified World SVG background */}
-                <svg viewBox={`0 0 ${width} ${height}`} style={{ width: '100%', height: 'auto', opacity: 0.1 }}>
-                    <path d="M150,150 L850,150 L850,350 L150,350 Z" fill="none" stroke="white" strokeWidth="0.5" strokeDasharray="5,5" />
-                    {/* Just a very abstract representation to avoid massive path data */}
-                    <text x="500" y="250" fontSize="120" fill="white" textAnchor="middle" style={{ opacity: 0.2, fontWeight: 900 }}>EARTH</text>
-                </svg>
-
-                {/* City Points */}
-                {points.map((p, i) => (
-                    <div
-                        key={p.id}
-                        className="animate-fade-in"
-                        style={{
-                            position: 'absolute',
-                            left: `${(p.x / width) * 100}%`,
-                            top: `${(p.y / height) * 100}%`,
-                            transform: 'translate(-50%, -50%)',
-                            zIndex: 10
-                        }}
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <Link href="/discover" className="btn btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.5rem', fontSize: '0.875rem' }}>
+                        <Sparkles size={16} /> Explore Templates
+                    </Link>
+                    <button
+                        onClick={() => startTransition(() => createCustomTripAction())}
+                        disabled={isPending}
+                        className="btn btn-primary"
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.5rem', fontSize: '0.875rem', fontWeight: 800 }}
                     >
-                        <div style={{
-                            width: p.status === 'completed' ? '12px' : '10px',
-                            height: p.status === 'completed' ? '12px' : '10px',
-                            borderRadius: '50%',
-                            background: p.status === 'completed' ? '#00cc88' : 'var(--accent)',
-                            boxShadow: `0 0 15px ${p.status === 'completed' ? '#00cc88' : 'var(--accent)'}`,
-                            cursor: 'pointer',
-                            transition: 'transform 0.2s'
-                        }}
-                            title={`${p.name} (${p.primaryDestinationCity})`}
-                            onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(2)')}
-                            onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-                        />
-
-                        <div style={{
-                            position: 'absolute',
-                            top: '100%',
-                            left: '50%',
-                            transform: 'translateX(-50%)',
-                            whiteSpace: 'nowrap',
-                            fontSize: '0.6rem',
-                            fontWeight: 800,
-                            marginTop: '0.5rem',
-                            opacity: 0.6
-                        }}>
-                            {p.primaryDestinationCity}
-                        </div>
-                    </div>
-                ))}
+                        <Plus size={16} /> {isPending ? "Creating..." : "Design Custom Trek"}
+                    </button>
+                </div>
             </div>
 
-            <div style={{ padding: '2rem 3rem', background: 'rgba(0,0,0,0.2)', display: 'flex', gap: '4rem' }}>
+            <div style={{ position: 'relative', width: '100%', height: '500px', padding: '1rem' }}>
+                <ComposableMap
+                    height={500}
+                    projectionConfig={{
+                        scale: 140,
+                        rotate: [-10, 0, 0] // Centering a bit more naturally
+                    }}
+                    style={{
+                        width: "100%",
+                        height: "100%",
+                    }}
+                >
+                    <ZoomableGroup zoom={1} minZoom={1} maxZoom={4}>
+                        <Geographies geography={geoUrl}>
+                            {({ geographies }: { geographies: any[] }) =>
+                                geographies.map((geo) => (
+                                    <Geography
+                                        key={geo.rsmKey}
+                                        geography={geo}
+                                        fill="#1c2128" // Dark land
+                                        stroke="#2d333b" // Subtle borders
+                                        strokeWidth={0.5}
+                                        style={{
+                                            default: { outline: "none" },
+                                            hover: { fill: "#22272e", outline: "none" },
+                                            pressed: { fill: "#2d333b", outline: "none" },
+                                        }}
+                                    />
+                                ))
+                            }
+                        </Geographies>
+
+                        {markers.map((marker) => (
+                            <Marker key={marker.id} coordinates={marker.coordinates}>
+                                <g
+                                    style={{ cursor: "pointer" }}
+                                    onMouseEnter={(e) => {
+                                        const dot = e.currentTarget.querySelector('.dot') as SVGCircleElement;
+                                        const glow = e.currentTarget.querySelector('.glow') as SVGCircleElement;
+                                        if (dot) dot.setAttribute('r', '8');
+                                        if (glow) glow.setAttribute('r', '15');
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        const dot = e.currentTarget.querySelector('.dot') as SVGCircleElement;
+                                        const glow = e.currentTarget.querySelector('.glow') as SVGCircleElement;
+                                        if (dot) dot.setAttribute('r', '5');
+                                        if (glow) glow.setAttribute('r', '10');
+                                    }}
+                                >
+                                    <circle
+                                        className="glow"
+                                        r={10}
+                                        fill={marker.status === 'completed' ? 'rgba(0, 204, 136, 0.4)' : 'rgba(59, 130, 246, 0.4)'}
+                                        style={{ transition: 'r 0.3s' }}
+                                    />
+                                    <circle
+                                        className="dot"
+                                        r={5}
+                                        fill={marker.status === 'completed' ? '#00cc88' : 'var(--accent)'}
+                                        style={{ transition: 'r 0.3s' }}
+                                    />
+                                    <text
+                                        textAnchor="middle"
+                                        y={-15}
+                                        style={{
+                                            fontSize: "0.65rem",
+                                            fontWeight: 800,
+                                            fill: "rgba(255,255,255,0.7)",
+                                            textTransform: "uppercase",
+                                            letterSpacing: "0.05em",
+                                            pointerEvents: "none",
+                                            paintOrder: "stroke",
+                                            stroke: "#0a0c10",
+                                            strokeWidth: 2,
+                                            strokeLinecap: "round",
+                                            strokeLinejoin: "round"
+                                        }}
+                                    >
+                                        {marker.primaryDestinationCity}
+                                    </text>
+                                </g>
+                            </Marker>
+                        ))}
+                    </ZoomableGroup>
+                </ComposableMap>
+
+                {/* Legend Overlay */}
+                <div style={{
+                    position: 'absolute',
+                    bottom: '2rem',
+                    right: '2.5rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '1rem',
+                    padding: '1.25rem',
+                    background: 'rgba(10,12,16,0.8)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '1.25rem',
+                    border: '1px solid rgba(255,255,255,0.05)'
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                        <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#00cc88', boxShadow: '0 0 10px #00cc88' }} />
+                        <span>Completed Legacy</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                        <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--accent)', boxShadow: '0 0 10px var(--accent)' }} />
+                        <span>Planned Expedition</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style={{ padding: '2.5rem 3.5rem', background: 'rgba(255,255,255,0.02)', display: 'flex', gap: '6rem' }}>
                 <div>
-                    <div style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--secondary)', marginBottom: '0.5rem' }}>Total Expeditions</div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 900 }}>{trips.length}</div>
+                    <div style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--secondary)', marginBottom: '0.5rem' }}>Global Reach</div>
+                    <div style={{ fontSize: '2rem', fontWeight: 900, color: 'white' }}>{trips.length} <span style={{ fontSize: '1rem', fontWeight: 400, opacity: 0.5 }}>Expeditions</span></div>
                 </div>
                 <div>
-                    <div style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--secondary)', marginBottom: '0.5rem' }}>Regions Explored</div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 900 }}>{new Set(trips.map(t => t.primaryDestinationCountry)).size}</div>
+                    <div style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--secondary)', marginBottom: '0.5rem' }}>Regions Unlocked</div>
+                    <div style={{ fontSize: '2rem', fontWeight: 900, color: 'white' }}>{new Set(trips.map(t => t.primaryDestinationCountry)).size} <span style={{ fontSize: '1rem', fontWeight: 400, opacity: 0.5 }}>Countries</span></div>
                 </div>
-                <div>
-                    <div style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--secondary)', marginBottom: '0.5rem' }}>Memories Recorded</div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 900 }}>{trips.filter(t => t.status === 'completed').length}</div>
+                <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
+                    <div style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--accent)', marginBottom: '0.5rem' }}>Status</div>
+                    <div style={{ fontSize: '1.25rem', fontWeight: 800 }}>Master Voyager</div>
                 </div>
             </div>
         </div>

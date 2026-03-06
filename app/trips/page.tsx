@@ -32,26 +32,25 @@ export default async function UserTripsIndex() {
     return (
         <div style={{ paddingTop: '8rem', paddingBottom: '8rem', minHeight: '100vh' }}>
             <div className="container">
-                <header style={{ marginBottom: '5rem', textAlign: 'center' }}>
-                    <h1 style={{ fontSize: 'clamp(3rem, 7vw, 5rem)', fontWeight: 900, marginBottom: '1.5rem', letterSpacing: '-0.04em' }}>Your Global Legacy</h1>
-                    <p style={{ color: 'var(--secondary)', fontSize: '1.25rem', maxWidth: '600px', margin: '0 auto' }}>
-                        From initial sparks to completed legendary treks. Track your progress across the globe.
+                <header style={{ marginBottom: '4rem', textAlign: 'center' }}>
+                    <h1 style={{ fontSize: 'clamp(3.5rem, 8vw, 6rem)', fontWeight: 900, marginBottom: '1rem', letterSpacing: '-0.05em' }}>Your Global Legacy</h1>
+                    <p style={{ color: 'var(--secondary)', fontSize: '1.25rem', maxWidth: '650px', margin: '0 auto', lineHeight: 1.5 }}>
+                        A living record of your iconic MBA journeys. Track your progress, record your memories, and visualize your footprint.
                     </p>
                 </header>
 
-                {trips.length > 0 && <WorldMap trips={trips} />}
+                <WorldMap trips={trips} />
 
-                {trips.length === 0 ? (
-                    <div className="glass" style={{ padding: '5rem 2rem', textAlign: 'center', borderRadius: 'var(--radius)' }}>
-                        <div style={{ fontSize: '4rem', marginBottom: '1.5rem', opacity: 0.3 }}>🗺️</div>
-                        <h2 style={{ fontSize: '2rem', marginBottom: '1rem', fontWeight: 700 }}>No expeditions found</h2>
-                        <p style={{ color: 'var(--secondary)', marginBottom: '3rem', maxWidth: '500px', margin: '0 auto 3rem' }}>
-                            Your journey begins once you clone a template or start designing your own custom itinerary.
+                {trips.length === 0 && (
+                    <div className="glass" style={{ padding: '4rem 2rem', textAlign: 'center', borderRadius: 'var(--radius)', borderStyle: 'dashed' }}>
+                        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', fontWeight: 700 }}>Your Map is Empty</h2>
+                        <p style={{ color: 'var(--secondary)', marginBottom: '0', maxWidth: '500px', margin: '0 auto' }}>
+                            Start by exploring templates or designing your first custom journey above.
                         </p>
-                        <a href="/discover" className="btn btn-primary" style={{ padding: '1rem 2rem' }}>Explore Templates</a>
                     </div>
-                ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6rem' }}>
+                )}
+                {trips.length > 0 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6rem', marginTop: '4rem' }}>
                         {/* Planning Section */}
                         {planning.length > 0 && (
                             <section>
