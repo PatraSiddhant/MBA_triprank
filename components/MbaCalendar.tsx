@@ -310,12 +310,16 @@ export default function MbaCalendar({ availableTrips }: MbaCalendarProps) {
                                 onChange={(e) => {
                                     const val = parseInt(e.target.value);
                                     let newSource = [...tripsSource];
+                                    const parseBudget = (b: number | string) => {
+                                        if (typeof b === 'number') return b;
+                                        return parseInt(b.split('-')[0]) || 0;
+                                    };
                                     if (val < 40) {
                                         // Efficiency: Reorder by budget ascending
-                                        newSource.sort((a, b) => a.roughBudgetUsd - b.roughBudgetUsd);
+                                        newSource.sort((a, b) => parseBudget(a.roughBudgetUsd) - parseBudget(b.roughBudgetUsd));
                                     } else if (val > 60) {
                                         // YOLO: Reorder by budget descending (premium vibes)
-                                        newSource.sort((a, b) => b.roughBudgetUsd - a.roughBudgetUsd);
+                                        newSource.sort((a, b) => parseBudget(b.roughBudgetUsd) - parseBudget(a.roughBudgetUsd));
                                     } else {
                                         // Balanced: Reorder by rank
                                         newSource.sort((a, b) => a.rank - b.rank);

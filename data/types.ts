@@ -2,6 +2,8 @@ export type ItineraryItem = {
     title: string;
     description: string;
     timeBucket: string;
+    costEstimate?: string;
+    link?: string;
 };
 
 export type ItineraryDay = {
