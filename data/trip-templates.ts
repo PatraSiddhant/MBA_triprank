@@ -1,3 +1,4 @@
+export * from "./types";
 
 import { TripTemplate } from "./types";
 
@@ -5731,3 +5732,5 @@ export const tripTemplates: TripTemplate[] = [
 export const getTripTemplateBySlug = (slug: string) => {
     return tripTemplates.find((t) => t.slug === slug);
 };
+
+export const getAllTripTemplates = () => tripTemplates;
