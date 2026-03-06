@@ -63,7 +63,7 @@ export default function AboutPage() {
                                 }}>✉</div>
                                 <div>
                                     <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>Email</div>
-                                    <a href="mailto:hello@trekrank.co" style={{ color: 'var(--accent)' }}>hello@trekrank.co</a>
+                                    <a href="mailto:sp4352@columbia.edu" style={{ color: 'var(--accent)' }}>sp4352@columbia.edu</a>
                                 </div>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>

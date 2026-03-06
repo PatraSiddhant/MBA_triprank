@@ -38,7 +38,13 @@ export async function addTripFromTemplateAction(templateSlug: string) {
                         create: template.days?.map((d: any) => ({
                             dayIndex: d.dayIndex || 1,
                             title: d.title || "Day",
-                            description: d.description || "",
+                            items: {
+                                create: d.items?.map((item: any) => ({
+                                    title: item.title,
+                                    description: item.description,
+                                    timeBucket: item.timeBucket
+                                })) || []
+                            }
                         })) || []
                     }
                 }
@@ -82,7 +88,13 @@ export async function logPastTripFromTemplateAction(templateSlug: string) {
                         create: template.days?.map((d: any) => ({
                             dayIndex: d.dayIndex || 1,
                             title: d.title || "Day",
-                            description: d.description || "",
+                            items: {
+                                create: d.items?.map((item: any) => ({
+                                    title: item.title,
+                                    description: item.description,
+                                    timeBucket: item.timeBucket
+                                })) || []
+                            }
                         })) || []
                     }
                 }
@@ -230,7 +242,7 @@ export async function createCustomTripAction() {
             itinerary: {
                 create: {
                     days: {
-                        create: [{ dayIndex: 1, title: "Day 1" }]
+                        create: [{ dayIndex: 1, title: "Day 1", items: { create: [] } }]
                     }
                 }
             }

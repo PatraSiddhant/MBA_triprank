@@ -3,7 +3,6 @@ import { schools } from "@/data/schools";
 import { notFound } from "next/navigation";
 import UseTemplateButton from "@/components/UseTemplateButton";
 import TemplateInterestWidget from "@/components/TemplateInterestWidget";
-import BookingTrigger from "@/components/BookingTrigger";
 import ReviewTrigger from "@/components/ReviewTrigger";
 import { getInterestData } from "@/lib/interest-actions";
 import { createClient } from "@/lib/supabase/server";
@@ -268,11 +267,7 @@ export default async function TemplateDetail({ params }: { params: Promise<{ slu
                                     slug: trip.slug,
                                     highlights: trip.days.slice(0, 2).map(d => d.title)
                                 }} />
-                                <BookingTrigger slug={trip.slug} schoolName={tripSchools[0]?.name} />
                             </div>
-                            <p style={{ fontSize: '0.75rem', color: 'var(--secondary)', textAlign: 'center', marginTop: '1rem' }}>
-                                Exclusive $200 discount for {tripSchools[0]?.name || 'MBA'} Students.
-                            </p>
                         </div>
 
                         <div className="glass" style={{ padding: '1.5rem', borderRadius: 'var(--radius)', marginTop: '2rem', textAlign: 'center', border: '1px dashed var(--accent)', cursor: 'default' }}>
