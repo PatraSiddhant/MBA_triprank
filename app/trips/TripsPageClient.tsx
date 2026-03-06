@@ -108,7 +108,7 @@ export default function TripsPageClient({ trips, userId }: { trips: Trip[], user
 
                     <button onClick={handleCreate} disabled={createPending} className="btn btn-primary" style={{ borderRadius: '100px', padding: '0.5rem 1.5rem', fontSize: '0.85rem', fontWeight: 800, gap: '0.6rem' }}>
                         {createPending ? <Clock size={16} className="animate-spin" /> : <Plus size={18} />}
-                        Design Custom Journey
+                        Capture your trip memories
                     </button>
                 </div>
 

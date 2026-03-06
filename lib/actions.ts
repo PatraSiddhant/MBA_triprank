@@ -10,17 +10,17 @@ export async function addTripFromTemplateAction(templateSlug: string) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user) redirect("/login");
-
     const template = tripTemplates.find(t => t.slug === templateSlug);
     if (!template) throw new Error("Template not found");
 
-    // Ensure user exists
-    await (prisma as any).user.upsert({
-        where: { id: user.id },
-        update: { email: user.email || '' },
-        create: { id: user.id, email: user.email || '', name: user.email?.split('@')[0] || 'User' }
-    });
+    // Ensure user exists if logged in
+    if (user) {
+        await (prisma as any).user.upsert({
+            where: { id: user.id },
+            update: { email: user.email || '' },
+            create: { id: user.id, email: user.email || '', name: user.email?.split('@')[0] || 'User' }
+        });
+    }
 
     const trip = await (prisma as any).tripCandidate.create({
         data: {
@@ -31,7 +31,7 @@ export async function addTripFromTemplateAction(templateSlug: string) {
             roughBudgetUsd: template.roughBudgetUsd,
             templateSlug: template.slug,
             status: "planning",
-            userId: user.id,
+            userId: user?.id || null,
             itinerary: {
                 create: {
                     days: {
@@ -54,17 +54,17 @@ export async function logPastTripFromTemplateAction(templateSlug: string) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user) redirect("/login");
-
     const template = tripTemplates.find(t => t.slug === templateSlug);
     if (!template) throw new Error("Template not found");
 
-    // Ensure user exists
-    await (prisma as any).user.upsert({
-        where: { id: user.id },
-        update: { email: user.email || '' },
-        create: { id: user.id, email: user.email || '', name: user.email?.split('@')[0] || 'User' }
-    });
+    // Ensure user exists if logged in
+    if (user) {
+        await (prisma as any).user.upsert({
+            where: { id: user.id },
+            update: { email: user.email || '' },
+            create: { id: user.id, email: user.email || '', name: user.email?.split('@')[0] || 'User' }
+        });
+    }
 
     const trip = await (prisma as any).tripCandidate.create({
         data: {
@@ -75,7 +75,7 @@ export async function logPastTripFromTemplateAction(templateSlug: string) {
             roughBudgetUsd: template.roughBudgetUsd,
             templateSlug: template.slug,
             status: "completed",
-            userId: user.id,
+            userId: user?.id || null,
             itinerary: {
                 create: {
                     days: {

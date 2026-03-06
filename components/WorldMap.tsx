@@ -12,6 +12,7 @@ import { MapPin, Plus, Sparkles, Compass } from "lucide-react";
 import { createCustomTripAction, createWorldMapTripAction } from "@/lib/actions";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import html2canvas from "html2canvas";
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
@@ -56,7 +57,9 @@ export default function WorldMap({ trips }: WorldMapProps) {
     const [showModal, setShowModal] = React.useState(false);
     const [country, setCountry] = React.useState("");
     const [citiesInput, setCitiesInput] = React.useState("");
+    const [isExporting, setIsExporting] = React.useState(false);
     const [isSubmitting, setIsSubmitting] = React.useState(false);
+    const exportRef = React.useRef<HTMLDivElement>(null);
     const router = useRouter();
 
     const markers: any[] = [];
@@ -71,6 +74,7 @@ export default function WorldMap({ trips }: WorldMapProps) {
                         if (c.lat && c.lng) {
                             markers.push({
                                 ...t,
+                                tripId: t.id,
                                 id: `${t.id}-${c.name}`,
                                 primaryDestinationCity: c.name,
                                 coordinates: [c.lng, c.lat] as [number, number],
@@ -86,6 +90,7 @@ export default function WorldMap({ trips }: WorldMapProps) {
             if (coords) {
                 markers.push({
                     ...t,
+                    tripId: t.id,
                     coordinates: [coords.lng, coords.lat] as [number, number],
                 });
             }
@@ -129,6 +134,29 @@ export default function WorldMap({ trips }: WorldMapProps) {
         });
     };
 
+    const handleExportIG = async () => {
+        if (!exportRef.current) return;
+        setIsExporting(true);
+        try {
+            const canvas = await html2canvas(exportRef.current, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#0a0c10',
+            });
+            const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
+            const link = document.createElement("a");
+            link.download = `my-global-footprint.jpg`;
+            link.href = dataUrl;
+            link.click();
+        } catch (e) {
+            console.error("Export failed", e);
+        }
+        setIsExporting(false);
+    };
+
+    // Prepare list of unique cities visited for the IG template
+    const uniqueCities = Array.from(new Set(markers.map(m => m.primaryDestinationCity))).sort();
+
     return (
         <div className="glass" style={{
             borderRadius: '2.5rem',
@@ -148,9 +176,12 @@ export default function WorldMap({ trips }: WorldMapProps) {
                     <p style={{ color: 'var(--secondary)', fontSize: '0.9rem' }}>A visual ledger of your legendary MBA expeditions.</p>
                 </div>
 
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <button onClick={handleExportIG} disabled={isExporting} className="btn btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.5rem', fontSize: '0.875rem' }}>
+                        <Sparkles size={16} /> {isExporting ? "Exporting..." : "IG Story Export"}
+                    </button>
                     <Link href="/discover" className="btn btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.5rem', fontSize: '0.875rem' }}>
-                        <Sparkles size={16} /> Explore Templates
+                        <Compass size={16} /> Explore Templates
                     </Link>
                     <button
                         onClick={() => setShowModal(true)}
@@ -195,7 +226,7 @@ export default function WorldMap({ trips }: WorldMapProps) {
                         </Geographies>
 
                         {markers.map((marker) => (
-                            <Marker key={marker.id} coordinates={marker.coordinates}>
+                            <Marker key={marker.id} coordinates={marker.coordinates} onClick={() => router.push(`/trips/${marker.tripId}`)}>
                                 <g
                                     style={{ cursor: "pointer" }}
                                     onMouseEnter={(e) => {
@@ -334,6 +365,65 @@ export default function WorldMap({ trips }: WorldMapProps) {
                     </div>
                 </div>
             )}
+
+            {/* Hidden IG Export 9:16 Frame */}
+            <div style={{ position: 'absolute', top: '-9999px', left: '-9999px' }}>
+                <div ref={exportRef} style={{
+                    width: '1080px',
+                    height: '1920px',
+                    backgroundColor: '#0a0c10',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: '4rem',
+                    boxSizing: 'border-box',
+                    fontFamily: 'Inter, sans-serif'
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: '#fbbf24', marginBottom: '2rem' }}>
+                        <Compass size={60} />
+                        <h1 style={{ fontSize: '3rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}>My Global Footprint</h1>
+                    </div>
+
+                    <div style={{ flex: 1, width: '100%', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '-10vh' }}>
+                        <ComposableMap projectionConfig={{ scale: 300 }} style={{ width: '100%', height: '100%' }}>
+                            <ZoomableGroup zoom={1} center={[0, 0]}>
+                                <Geographies geography={geoUrl}>
+                                    {({ geographies }) => geographies.map(geo => (
+                                        <Geography key={geo.rsmKey} geography={geo} fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.25)" strokeWidth={0.5} />
+                                    ))}
+                                </Geographies>
+                                {markers.map(marker => (
+                                    <Marker key={`export-${marker.id}`} coordinates={marker.coordinates}>
+                                        <circle r={10} fill={marker.status === 'completed' ? '#00cc88' : 'var(--accent)'} />
+                                    </Marker>
+                                ))}
+                            </ZoomableGroup>
+                        </ComposableMap>
+                    </div>
+
+                    <div style={{
+                        marginTop: 'auto',
+                        padding: '3rem',
+                        backgroundColor: 'rgba(255,255,255,0.05)',
+                        backdropFilter: 'blur(20px)',
+                        borderRadius: '2rem',
+                        width: '100%',
+                        textAlign: 'center',
+                        zIndex: 10
+                    }}>
+                        <h2 style={{ color: '#fff', fontSize: '2.5rem', marginBottom: '1.5rem', fontWeight: 800 }}>Cities Visited</h2>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center' }}>
+                            {uniqueCities.map(city => (
+                                <span key={city} style={{ backgroundColor: 'rgba(255,255,255,0.1)', padding: '1rem 2rem', borderRadius: '100px', fontSize: '1.75rem', color: '#fff', fontWeight: 700 }}>
+                                    {city}
+                                </span>
+                            ))}
+                            {uniqueCities.length === 0 && <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '1.5rem' }}>No cities tracked yet.</span>}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

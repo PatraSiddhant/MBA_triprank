@@ -5,7 +5,7 @@ import { TripTemplate } from "./types";
 export const tripTemplates: TripTemplate[] = [
     {
         "slug": "costa-rica-trek",
-        "title": "Costa Rica: The Pura Vida MBA Trek",
+        "title": "Costa Rica",
         "primaryDestinationCountry": "Costa Rica",
         "primaryDestinationCity": "San Jose",
         "region": "Central America",
@@ -76,7 +76,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "dominican-republic-trek",
-        "title": "Dominican Republic: The Caribbean Escape",
+        "title": "Dominican Republic",
         "primaryDestinationCountry": "Dominican Republic",
         "primaryDestinationCity": "Punta Cana",
         "region": "Caribbean",
@@ -147,7 +147,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "jamaica-trek",
-        "title": "Jamaica: The Island Rhythm Trek",
+        "title": "Jamaica",
         "primaryDestinationCountry": "Jamaica",
         "primaryDestinationCity": "Montego Bay",
         "region": "Caribbean",
@@ -218,7 +218,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "colombia-trek",
-        "title": "Colombia: The Iconic MBA Trek",
+        "title": "Colombia",
         "primaryDestinationCity": "Bogotá",
         "primaryDestinationCountry": "Colombia",
         "region": "South America",
@@ -409,7 +409,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "peru-trek",
-        "title": "Peru: The Iconic MBA Trek",
+        "title": "Peru",
         "primaryDestinationCity": "Aguas Calientes",
         "primaryDestinationCountry": "Peru",
         "region": "South America",
@@ -600,7 +600,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "argentina-trek",
-        "title": "Argentina: The Iconic MBA Trek",
+        "title": "Argentina",
         "primaryDestinationCity": "Buenos Aires",
         "primaryDestinationCountry": "Argentina",
         "region": "South America",
@@ -791,7 +791,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "chile-trek",
-        "title": "Chile: The Iconic MBA Trek",
+        "title": "Chile",
         "primaryDestinationCity": "Torres del Paine National Park",
         "primaryDestinationCountry": "Chile",
         "region": "South America",
@@ -976,7 +976,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "costa-rica-trek",
-        "title": "Costa Rica: The Iconic MBA Trek",
+        "title": "Costa Rica",
         "primaryDestinationCity": "Guanacaste",
         "primaryDestinationCountry": "Costa Rica",
         "region": "Central America",
@@ -1167,7 +1167,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "brazil-trek",
-        "title": "Brazil: The Iconic MBA Trek",
+        "title": "Brazil",
         "primaryDestinationCity": "Rio de Janeiro",
         "primaryDestinationCountry": "Brazil",
         "region": "South America",
@@ -1358,7 +1358,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "portugal-trek",
-        "title": "Portugal: The Iconic MBA Trek",
+        "title": "Portugal",
         "primaryDestinationCity": "Lisbon",
         "primaryDestinationCountry": "Portugal",
         "region": "Europe",
@@ -1549,7 +1549,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "iceland-trek",
-        "title": "Iceland: The Iconic MBA Trek",
+        "title": "Iceland",
         "primaryDestinationCity": "Reykjavik",
         "primaryDestinationCountry": "Iceland",
         "region": "Europe",
@@ -1740,7 +1740,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "greece-trek",
-        "title": "Greece: The Iconic MBA Trek",
+        "title": "Greece",
         "primaryDestinationCity": "Athens",
         "primaryDestinationCountry": "Greece",
         "region": "Europe",
@@ -1931,7 +1931,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "croatia-trek",
-        "title": "Croatia: The Iconic MBA Trek",
+        "title": "Croatia",
         "primaryDestinationCity": "Dubrovnik",
         "primaryDestinationCountry": "Croatia",
         "region": "Europe",
@@ -2122,7 +2122,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "scotland-trek",
-        "title": "Scotland: The Iconic MBA Trek",
+        "title": "Scotland",
         "primaryDestinationCity": "Edinburgh",
         "primaryDestinationCountry": "Scotland",
         "region": "Europe",
@@ -2313,7 +2313,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "turkey-trek",
-        "title": "Turkey: The Iconic MBA Trek",
+        "title": "Turkey",
         "primaryDestinationCity": "Istanbul",
         "primaryDestinationCountry": "Turkey",
         "region": "Europe/Middle East (Transcontinental)",
@@ -2504,7 +2504,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "berlin-trek",
-        "title": "Berlin: The Iconic MBA Trek",
+        "title": "Berlin",
         "primaryDestinationCity": "Berlin",
         "primaryDestinationCountry": "Berlin",
         "region": "Europe",
@@ -2695,7 +2695,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "spain-trek",
-        "title": "Spain: The Iconic MBA Trek",
+        "title": "Spain",
         "primaryDestinationCity": "Madrid",
         "primaryDestinationCountry": "Spain",
         "region": "Europe",
@@ -2886,7 +2886,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "south-africa-trek",
-        "title": "South Africa: The Iconic MBA Trek",
+        "title": "South Africa",
         "primaryDestinationCity": "Kruger area",
         "primaryDestinationCountry": "South Africa",
         "region": "Africa",
@@ -3077,7 +3077,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "kenya-trek",
-        "title": "Kenya: The Iconic MBA Trek",
+        "title": "Kenya",
         "primaryDestinationCity": "Masai Mara",
         "primaryDestinationCountry": "Kenya",
         "region": "Africa",
@@ -3268,7 +3268,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "morocco-trek",
-        "title": "Morocco: The Iconic MBA Trek",
+        "title": "Morocco",
         "primaryDestinationCity": "Marrakech",
         "primaryDestinationCountry": "Morocco",
         "region": "Africa/Europe (Transcontinental)",
@@ -3459,7 +3459,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "uae-trek",
-        "title": "UAE: The Iconic MBA Trek",
+        "title": "UAE",
         "primaryDestinationCity": "Dubai",
         "primaryDestinationCountry": "UAE",
         "region": "Middle East",
@@ -3650,7 +3650,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "jordan-trek",
-        "title": "Jordan: The Iconic MBA Trek",
+        "title": "Jordan",
         "primaryDestinationCity": "Dead Sea",
         "primaryDestinationCountry": "Jordan",
         "region": "Middle East",
@@ -3841,7 +3841,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "japan-trek",
-        "title": "Japan: The Iconic MBA Trek",
+        "title": "Japan",
         "primaryDestinationCity": "Tokyo",
         "primaryDestinationCountry": "Japan",
         "region": "Asia",
@@ -4032,7 +4032,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "south-korea-trek",
-        "title": "South Korea: The Iconic MBA Trek",
+        "title": "South Korea",
         "primaryDestinationCity": "Seoul",
         "primaryDestinationCountry": "South Korea",
         "region": "Asia",
@@ -4223,7 +4223,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "vietnam-trek",
-        "title": "Vietnam: The Iconic MBA Trek",
+        "title": "Vietnam",
         "primaryDestinationCity": "Hanoi",
         "primaryDestinationCountry": "Vietnam",
         "region": "Southeast Asia",
@@ -4414,7 +4414,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "philippines-trek",
-        "title": "Philippines: The Iconic MBA Trek",
+        "title": "Philippines",
         "primaryDestinationCity": "Boracay",
         "primaryDestinationCountry": "Philippines",
         "region": "Southeast Asia",
@@ -4605,7 +4605,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "india-trek",
-        "title": "India: The Iconic MBA Trek",
+        "title": "India",
         "primaryDestinationCity": "Delhi",
         "primaryDestinationCountry": "India",
         "region": "South Asia",
@@ -4796,7 +4796,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "taiwan-trek",
-        "title": "Taiwan: The Iconic MBA Trek",
+        "title": "Taiwan",
         "primaryDestinationCity": "Taipei",
         "primaryDestinationCountry": "Taiwan",
         "region": "East Asia",
@@ -4987,7 +4987,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "thailand-trek",
-        "title": "Thailand: The Iconic MBA Trek",
+        "title": "Thailand",
         "primaryDestinationCity": "Bangkok",
         "primaryDestinationCountry": "Thailand",
         "region": "Southeast Asia",
@@ -5178,7 +5178,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "australia-trek",
-        "title": "Australia: The Iconic MBA Trek",
+        "title": "Australia",
         "primaryDestinationCity": "Sydney",
         "primaryDestinationCountry": "Australia",
         "region": "Oceania",
@@ -5369,7 +5369,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "china-trek",
-        "title": "China: The Iconic MBA Trek",
+        "title": "China",
         "primaryDestinationCity": "Beijing",
         "primaryDestinationCountry": "China",
         "region": "East Asia",
@@ -5560,7 +5560,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "indonesia-trek",
-        "title": "Indonesia: The Iconic MBA Trek",
+        "title": "Indonesia",
         "primaryDestinationCity": "Jakarta",
         "primaryDestinationCountry": "Indonesia",
         "region": "Southeast Asia",
@@ -5751,7 +5751,7 @@ export const tripTemplates: TripTemplate[] = [
     },
     {
         "slug": "singapore-trek",
-        "title": "Singapore: The Iconic MBA Trek",
+        "title": "Singapore",
         "primaryDestinationCity": "Marina Bay",
         "primaryDestinationCountry": "Singapore",
         "region": "Southeast Asia",
@@ -5939,6 +5939,99 @@ export const tripTemplates: TripTemplate[] = [
                 "whyGoodForGroups": "Beach resort, island location, activities hub"
             }
         ]
+    },
+    {
+        "slug": "tanzania-trek",
+        "title": "Tanzania",
+        "primaryDestinationCountry": "Tanzania",
+        "primaryDestinationCity": "Serengeti",
+        "region": "Africa",
+        "durationDays": 8,
+        "roughBudgetUsd": 3500,
+        "themes": ["Adventure", "Luxury"],
+        "summary": "Tanzania offers the ultimate African safari experience. From witnessing the Great Migration in the Serengeti to the breathtaking Ngorongoro Crater, this trek is a once-in-a-lifetime journey to the heart of the wild.",
+        "schoolSlugs": ["wharton", "harvard", "kellogg"],
+        "days": [
+            {
+                "dayIndex": 1,
+                "title": "Arrival in Kilimanjaro",
+                "items": [
+                    { "title": "Touchdown", "description": "Arrive at JRO and transfer to the lodge in Arusha.", "timeBucket": "Evening" }
+                ]
+            },
+            {
+                "dayIndex": 2,
+                "title": "Tarangire National Park",
+                "items": [
+                    { "title": "First Safari", "description": "Witness massive elephant herds and Baobab trees.", "timeBucket": "All Day" }
+                ]
+            },
+            {
+                "dayIndex": 3,
+                "title": "Ngorongoro Crater",
+                "items": [
+                    { "title": "Crater Descent", "description": "Search for the Big Five in this ancient caldera.", "timeBucket": "Morning" }
+                ]
+            },
+            {
+                "dayIndex": 4,
+                "title": "Serengeti Migration",
+                "items": [
+                    { "title": "Plains Expedition", "description": "Drive into the endless plains of the Serengeti.", "timeBucket": "All Day" }
+                ]
+            },
+            {
+                "dayIndex": 5,
+                "title": "Serengeti Deep Safari",
+                "items": [
+                    { "title": "Hot Air Balloon Flight", "description": "Optional sunrise balloon ride over the herds.", "timeBucket": "Morning" },
+                    { "title": "Afternoon Drive", "description": "Leopard and cheetah tracking.", "timeBucket": "Afternoon" }
+                ]
+            },
+            {
+                "dayIndex": 6,
+                "title": "Maasai Village Visit",
+                "items": [
+                    { "title": "Cultural Exchange", "description": "Learn about traditional Maasai culture.", "timeBucket": "Morning" }
+                ]
+            },
+            {
+                "dayIndex": 7,
+                "title": "Zanzibar Extension (Optional)",
+                "items": [
+                    { "title": "Fly to Stone Town", "description": "Leave the plains for the spice island beaches.", "timeBucket": "Morning" }
+                ]
+            },
+            {
+                "dayIndex": 8,
+                "title": "Farewell",
+                "items": [
+                    { "title": "Departure", "description": "Fly home from JRO or ZNZ.", "timeBucket": "Morning" }
+                ]
+            }
+        ],
+        "photos": [{ "path": "/trips/tanzania/hero.png", "alt": "Serengeti Safari", "isHero": true }],
+        "reviewSnippets": [{ "text": "A life-changing experience seeing the migration.", "sourceName": "MBA Trek Hub", "tag": "adventure" }],
+        "safetyRating": 4,
+        "comfortRating": 4,
+        "vibes": ["wild", "safari", "scenic"],
+        "logistics": {
+            "bestSeason": "June-October",
+            "visaNotes": "eVisa required for most",
+            "dailyBudgetRange": "300-600",
+            "primaryAirport": "JRO",
+            "currency": "Tanzanian Shilling (TZS)",
+            "healthNotes": "Yellow fever and malaria prohylaxis recommended",
+            "transport": { "airportToHotel": "Transfer", "withinCity": "4x4 Safari Vehicle", "betweenDestinations": "Bush flights" }
+        },
+        "culturalIntelligence": {
+            "communicationStyle": "Direct and welcoming",
+            "businessEtiquette": "Polite and respectful",
+            "socialCustoms": "Greeting elders first is polite",
+            "diningNorms": "Eat with the right hand if eating traditionally"
+        },
+        "groupBondingActivities": [{ "activity": "Bush Dinner", "durationHours": 3, "costPerPerson": 100, "whyItWorks": "Dinner under the stars with a bonfire." }],
+        "premiumAccommodations": [{ "name": "Four Seasons Safari Lodge", "stars": 5, "city": "Serengeti", "whyGoodForGroups": "Luxury in the wild, great pool." }]
     }
 ];
 
