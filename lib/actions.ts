@@ -16,7 +16,25 @@ export async function cloneTemplateAction(slug: string) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    const trip = await prisma.tripCandidate.create({
+    if (user) {
+        // Ensure user exists in our DB
+        await (prisma as any).user.upsert({
+            where: { id: user.id },
+            update: {
+                email: user.email || '',
+                name: user.user_metadata?.name || user.email?.split('@')[0],
+                avatar: user.user_metadata?.avatar_url || null
+            },
+            create: {
+                id: user.id,
+                email: user.email || '',
+                name: user.user_metadata?.name || user.email?.split('@')[0],
+                avatar: user.user_metadata?.avatar_url || null
+            }
+        });
+    }
+
+    const trip = await (prisma as any).tripCandidate.create({
         data: {
             name: `My ${template.title}`,
             primaryDestinationCity: template.primaryDestinationCity,

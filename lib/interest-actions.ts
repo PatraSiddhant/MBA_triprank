@@ -12,12 +12,23 @@ export async function toggleInterest(templateSlug: string) {
         throw new Error("You must be signed in to show interest");
     }
 
-    // Get user info from our DB to get school
-    const dbUser = await prisma.user.findUnique({
-        where: { id: user.id }
+    // Ensure user exists in our DB
+    const dbUser = await (prisma as any).user.upsert({
+        where: { id: user.id },
+        update: {
+            email: user.email || '',
+            name: user.user_metadata?.name || user.email?.split('@')[0],
+            avatar: user.user_metadata?.avatar_url || null
+        },
+        create: {
+            id: user.id,
+            email: user.email || '',
+            name: user.user_metadata?.name || user.email?.split('@')[0],
+            avatar: user.user_metadata?.avatar_url || null
+        }
     });
 
-    const existing = await prisma.tripInterest.findUnique({
+    const existing = await (prisma as any).tripInterest.findUnique({
         where: {
             templateSlug_userId: {
                 templateSlug,
@@ -27,11 +38,11 @@ export async function toggleInterest(templateSlug: string) {
     });
 
     if (existing) {
-        await prisma.tripInterest.delete({
+        await (prisma as any).tripInterest.delete({
             where: { id: existing.id }
         });
     } else {
-        await prisma.tripInterest.create({
+        await (prisma as any).tripInterest.create({
             data: {
                 templateSlug,
                 userId: user.id,
@@ -44,7 +55,7 @@ export async function toggleInterest(templateSlug: string) {
 }
 
 export async function getInterestData(templateSlug: string) {
-    const interests = await prisma.tripInterest.findMany({
+    const interests = await (prisma as any).tripInterest.findMany({
         where: { templateSlug },
         include: {
             user: {
@@ -59,7 +70,7 @@ export async function getInterestData(templateSlug: string) {
 
     return {
         count: interests.length,
-        users: interests.map(i => ({
+        users: interests.map((i: any) => ({
             name: i.user.name,
             avatar: i.user.avatar,
             school: i.user.school
