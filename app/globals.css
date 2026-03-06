@@ -128,7 +128,8 @@ main {
 
 @media (max-width: 768px) {
   main {
-    padding-bottom: 80px; /* Space for bottom tab bar */
+    padding-bottom: 80px;
+    /* Space for bottom tab bar */
   }
 }
 
@@ -144,13 +145,16 @@ main {
   .mobile-only {
     display: block;
   }
+
   .desktop-only {
     display: none;
   }
 }
 
 /* Touch-friendly Elements */
-button, a, .clickable {
+button,
+a,
+.clickable {
   min-height: 44px;
   min-width: 44px;
   display: inline-flex;
@@ -164,12 +168,14 @@ button, a, .clickable {
   overflow-x: auto;
   white-space: nowrap;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none;
+  /* Firefox */
   padding-bottom: 0.5rem;
 }
 
 .scroll-x::-webkit-scrollbar {
-  display: none; /* Safari and Chrome */
+  display: none;
+  /* Safari and Chrome */
 }
 
 /* Section Adjustments */
@@ -191,8 +197,15 @@ section {
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fade-in {
@@ -253,4 +266,95 @@ section {
   .card {
     min-height: auto !important;
   }
+}
+
+/* Template Page Specific Utilities */
+.responsive-stack {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 5rem;
+}
+
+.mobile-stack {
+  display: flex;
+  gap: 2rem;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.sticky-sidebar {
+  position: sticky;
+  top: 8rem;
+  height: fit-content;
+}
+
+@media (max-width: 1024px) {
+  .responsive-stack {
+    grid-template-columns: 1fr !important;
+    gap: 3rem !important;
+  }
+
+  .sticky-sidebar {
+    position: static !important;
+    order: -1;
+    margin-bottom: 4rem;
+  }
+}
+
+@media (max-width: 640px) {
+
+  .mobile-stack,
+  .grid-2 {
+    flex-direction: column !important;
+    grid-template-columns: 1fr !important;
+    align-items: flex-start !important;
+  }
+}
+
+/* Animations Hub */
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: rotate(45deg);
+  animation: shine 3s infinite;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out forwards;
 }

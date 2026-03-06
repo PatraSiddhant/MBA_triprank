@@ -68,7 +68,7 @@ export default async function TemplateDetail({ params }: { params: Promise<{ slu
             </section>
 
             <div className="container" style={{ padding: '6rem 0' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '5rem' }} className="responsive-stack">
+                <div className="responsive-stack">
                     {/* Main Content */}
                     <div>
                         <div style={{ marginBottom: '6rem' }}>
@@ -80,7 +80,7 @@ export default async function TemplateDetail({ params }: { params: Promise<{ slu
                             <h2 style={{ fontSize: '2rem', marginBottom: '3rem', fontWeight: 800 }}>Itinerary Highlights</h2>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
                                 {trip.days.map((day) => (
-                                    <div key={day.dayIndex} style={{ display: 'flex', gap: '2rem' }} className="mobile-stack">
+                                    <div key={day.dayIndex} className="mobile-stack">
                                         <div style={{
                                             width: '50px',
                                             height: '50px',
@@ -117,7 +117,7 @@ export default async function TemplateDetail({ params }: { params: Promise<{ slu
 
                         <div style={{ marginBottom: '6rem' }}>
                             <h2 style={{ fontSize: '2rem', marginBottom: '2rem', fontWeight: 800 }}>Student Reviews</h2>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }} className="mobile-stack">
+                            <div className="grid-2">
                                 {trip.reviewSnippets.map((review, idx) => (
                                     <div key={idx} className="glass" style={{ padding: '2rem', borderRadius: 'var(--radius)', position: 'relative' }}>
                                         <p style={{ fontSize: '1.125rem', marginBottom: '1.5rem', fontStyle: 'italic', color: 'rgba(255,255,255,0.9)' }}>"{review.text}"</p>
@@ -129,7 +129,7 @@ export default async function TemplateDetail({ params }: { params: Promise<{ slu
                     </div>
 
                     {/* Sidebar */}
-                    <div style={{ position: 'sticky', top: '8rem', height: 'fit-content' }}>
+                    <div className="sticky-sidebar">
                         <div className="glass" style={{ padding: '2.5rem', borderRadius: 'var(--radius)', border: '1px solid rgba(255,255,255,0.1)' }}>
                             <div style={{ marginBottom: '2.5rem' }}>
                                 <h3 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', fontWeight: 700 }}>Trip DNA</h3>
@@ -176,25 +176,6 @@ export default async function TemplateDetail({ params }: { params: Promise<{ slu
                     </div>
                 </div>
             </div>
-
-            <style jsx>{`
-                @media (max-width: 1024px) {
-                    .responsive-stack {
-                        grid-template-columns: 1fr !important;
-                    }
-                    div[style*="position: sticky"] {
-                        position: static !important;
-                        order: -1;
-                        margin-bottom: 4rem;
-                    }
-                }
-                @media (max-width: 640px) {
-                    .mobile-stack {
-                        flex-direction: column;
-                        grid-template-columns: 1fr !important;
-                    }
-                }
-            `}</style>
         </div>
     );
 }
