@@ -3,6 +3,8 @@
 import prisma from "./prisma";
 import { getTripTemplateBySlug } from "@/data/trip-templates";
 import { redirect } from "next/navigation";
+import { createClient } from "./supabase/server";
+import { revalidatePath } from "next/cache";
 
 export async function cloneTemplateAction(slug: string) {
     const template = getTripTemplateBySlug(slug);
@@ -10,6 +12,9 @@ export async function cloneTemplateAction(slug: string) {
     if (!template) {
         throw new Error("Template not found");
     }
+
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
 
     const trip = await prisma.tripCandidate.create({
         data: {
@@ -21,6 +26,8 @@ export async function cloneTemplateAction(slug: string) {
             theme: template.themes.join(', '),
             tags: JSON.stringify(template.vibes),
             templateSlug: template.slug,
+            status: "planning",
+            userId: user?.id || null, // Attach user if logged in
             itinerary: {
                 create: {
                     days: {
@@ -43,5 +50,21 @@ export async function cloneTemplateAction(slug: string) {
         },
     });
 
+    revalidatePath("/trips");
     redirect(`/trips/${trip.id}`);
+}
+
+export async function updateTripStatusAction(tripId: string, status: 'planning' | 'booked' | 'completed') {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) throw new Error("Unauthorized");
+
+    await (prisma as any).tripCandidate.update({
+        where: { id: tripId, userId: user.id },
+        data: { status }
+    });
+
+    revalidatePath("/trips");
+    revalidatePath(`/trips/${tripId}`);
 }

@@ -20,6 +20,7 @@ model User {
   travelPersona String?
   trips     TripCandidate[]
   posts     Post[]
+  interests TripInterest[]
   createdAt DateTime        @default(now())
 }
 
@@ -33,6 +34,7 @@ model TripCandidate {
   theme                 String
   tags                  String      // Stored as JSON string or comma-separated
   templateSlug          String?     // To track origin if cloned from template
+  status                String      @default("planning") // interested, planning, booked, completed
   userId                String?
   user                  User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt             DateTime    @default(now())
@@ -74,6 +76,17 @@ model TripRanking {
   wins         Int      @default(0)
   losses       Int      @default(0)
   updatedAt    DateTime @updatedAt
+}
+
+model TripInterest {
+  id           String   @id @default(cuid())
+  templateSlug String
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  school       String?  // Cache school for easier filtering
+  createdAt    DateTime @default(now())
+
+  @@unique([templateSlug, userId])
 }
 
 model Post {

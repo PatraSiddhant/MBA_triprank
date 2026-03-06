@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 
 const K_FACTOR = 32;
 
-export async function submitComparison(winnerSlug: string, loserSlug: string) {
+export async function updateRankingAction(winnerSlug: string, loserSlug: string) {
     // 1. Get current rankings or create if not exist
     const [winner, loser] = await Promise.all([
         getOrCreateRanking(winnerSlug),
@@ -55,7 +55,7 @@ async function getOrCreateRanking(slug: string) {
     });
 }
 
-export async function getUserRankings() {
+export async function getLeaderboardAction() {
     return await prisma.tripRanking.findMany({
         orderBy: { score: 'desc' }
     });

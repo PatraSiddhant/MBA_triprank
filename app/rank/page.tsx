@@ -1,166 +1,148 @@
 "use client";
-import styles from "./page.module.css";
 
-import React, { useState, useEffect, useTransition } from "react";
-import { getAllTripTemplates, TripTemplate } from "@/data/trip-templates";
+import { useState, useTransition, useEffect } from "react";
+import { tripTemplates } from "@/data/trip-templates";
+import { updateRankingAction, getLeaderboardAction } from "@/lib/ranking-actions";
+import { cloneTemplateAction } from "@/lib/actions";
 import RankingCard from "@/components/RankingCard";
 import TripDetailModal from "@/components/TripDetailModal";
-import MbaCalendar from "@/components/MbaCalendar";
-import { submitComparison, getUserRankings } from "@/lib/ranking-actions";
+import Link from "next/link";
+import { Sword, Trophy, Users, Zap } from "lucide-react";
 
 export default function RankPage() {
-    const [templates, setTemplates] = useState<TripTemplate[]>([]);
-    const [currentPair, setCurrentPair] = useState<[TripTemplate, TripTemplate] | null>(null);
-    const [selectedTrip, setSelectedTrip] = useState<TripTemplate | null>(null);
+    const [pair, setPair] = useState<[any, any] | null>(null);
+    const [detailTrip, setDetailTrip] = useState<any | null>(null);
+    const [leaderboard, setLeaderboard] = useState<any[]>([]);
     const [isPending, startTransition] = useTransition();
-    const [rankingData, setRankingData] = useState<any[]>([]);
-    const [showResults, setShowResults] = useState(false);
-    const [comparisonsDone, setComparisonsDone] = useState(0);
+
+    const generatePair = () => {
+        const shuffled = [...tripTemplates].sort(() => 0.5 - Math.random());
+        setPair([shuffled[0], shuffled[1]]);
+    };
+
+    const fetchLeaderboard = async () => {
+        const data = await getLeaderboardAction();
+        setLeaderboard(data);
+    };
 
     useEffect(() => {
-        const allTemplates = getAllTripTemplates();
-        setTemplates(allTemplates);
-        setCurrentPair(getRandomPair(allTemplates));
-        loadRankings();
+        generatePair();
+        fetchLeaderboard();
     }, []);
 
-    async function loadRankings() {
-        const rankings = await getUserRankings();
-        setRankingData(rankings);
-    }
-
-    function getRandomPair(all: TripTemplate[]): [TripTemplate, TripTemplate] {
-        const first = all[Math.floor(Math.random() * all.length)];
-        let second = all[Math.floor(Math.random() * all.length)];
-        while (second.slug === first.slug) {
-            second = all[Math.floor(Math.random() * all.length)];
-        }
-        return [first, second];
-    }
-
-    async function handleSelect(winner: TripTemplate, loser: TripTemplate) {
+    const handleVote = async (winnerSlug: string, loserSlug: string) => {
+        if (isPending) return;
         startTransition(async () => {
-            await submitComparison(winner.slug, loser.slug);
-            setComparisonsDone(prev => prev + 1);
-            setCurrentPair(getRandomPair(templates));
-            loadRankings();
+            await updateRankingAction(winnerSlug, loserSlug);
+            generatePair();
+            fetchLeaderboard();
         });
-    }
+    };
 
-    function handleRightClick(trip: TripTemplate) {
-        setSelectedTrip(trip);
-    }
-
-    if (!currentPair && !showResults) return <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>;
+    if (!pair) return null;
 
     return (
-        <div style={{ paddingTop: '8rem', minHeight: '100vh', background: 'var(--bg)' }}>
+        <div style={{ minHeight: '100vh', padding: '8rem 0' }}>
             <div className="container">
-                <header style={{ marginBottom: '4rem', textAlign: 'center' }}>
-                    <div style={{ display: 'inline-flex', padding: '0.5rem 1.5rem', borderRadius: '100px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', marginBottom: '1.5rem', fontSize: '0.875rem', fontWeight: 600, color: 'var(--accent)' }}>
-                        Trip Rank • {comparisonsDone} Comparisons Done
+                <header style={{ textAlign: 'center', marginBottom: '4rem' }}>
+                    <div style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.75rem',
+                        padding: '0.5rem 1rem',
+                        background: 'rgba(255,255,255,0.05)',
+                        borderRadius: '100px',
+                        marginBottom: '1.5rem',
+                        border: '1px solid rgba(255,255,255,0.1)'
+                    }}>
+                        <Sword size={16} color="var(--accent)" />
+                        <span style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Ranking Arena</span>
                     </div>
-                    <div style={{ width: '100%', maxWidth: '400px', margin: '0 auto 1.5rem auto', background: 'rgba(255,255,255,0.1)', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
-                        <div style={{ width: `${Math.min((comparisonsDone / 5) * 100, 100)}%`, height: '100%', background: 'var(--accent)', transition: 'width 0.3s ease' }}></div>
-                    </div>
-                    <div style={{ fontSize: '0.875rem', color: 'var(--secondary)', marginBottom: '1.5rem' }}>
-                        {comparisonsDone < 5 ? `${5 - comparisonsDone} more comparisons needed to generate your personalized ELO ranking` : 'Your personalized ELO ranking is ready! Scroll down to see it.'}
-                    </div>
-                    <h1 style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>Trek Arena</h1>
-                    <p style={{ color: 'var(--secondary)', fontSize: '1.25rem' }}>
-                        Choose your favorite between the two. Your rank updates in real-time.
-                    </p>
+                    <h1 style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 800, marginBottom: '1rem' }}>Which trek is better?</h1>
+                    <p style={{ color: 'var(--secondary)', fontSize: '1.25rem' }}>Help the community find the most iconic MBA journeys.</p>
                 </header>
 
-                <div className={styles.rankContainer}>
-                    <div className={styles.pairContainer}>
-                        {currentPair && !showResults ? (
-                            <>
-                                <div style={{ flex: 1, position: 'relative' }}>
-                                    <RankingCard
-                                        trip={currentPair[0]}
-                                        side="left"
-                                        onSelect={() => handleSelect(currentPair[0], currentPair[1])}
-                                        onContextMenu={handleRightClick}
-                                    />
-                                    <div suppressHydrationWarning style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'rgba(0,112,243,0.9)', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '0.6rem', fontWeight: 800, zIndex: 10 }}>
-                                        {Math.floor(70 + Math.random() * 25)}% MATCH
-                                    </div>
-                                </div>
-                                <div className={styles.vs}>VS</div>
-                                <div style={{ flex: 1, position: 'relative' }}>
-                                    <RankingCard
-                                        trip={currentPair[1]}
-                                        side="right"
-                                        onSelect={() => handleSelect(currentPair[1], currentPair[0])}
-                                        onContextMenu={handleRightClick}
-                                    />
-                                    <div suppressHydrationWarning style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'rgba(0,112,243,0.9)', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '0.6rem', fontWeight: 800, zIndex: 10 }}>
-                                        {Math.floor(70 + Math.random() * 25)}% MATCH
-                                    </div>
-                                </div>
-                            </>
-                        ) : null}
-                    </div>
-
-                    {comparisonsDone >= 5 && (
-                        <div style={{ marginTop: '0', paddingBottom: '8rem' }}>
-                            <h2 style={{ fontSize: '2.5rem', marginBottom: '2rem', textAlign: 'center' }}>Plan Your MBA Journey</h2>
-                            <MbaCalendar
-                                availableTrips={rankingData.map((r, i) => {
-                                    const template = templates.find(t => t.slug === r.templateSlug);
-                                    if (!template) return null;
-                                    return {
-                                        ...template,
-                                        rank: i + 1,
-                                        score: r.score,
-                                        wins: r.wins,
-                                        losses: r.losses
-                                    };
-                                }).filter(Boolean) as any[]}
-                            />
-                        </div>
-                    )}
+                <div className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
+                    <RankingCard
+                        trip={pair[0]}
+                        onSelect={() => handleVote(pair[0].slug, pair[1].slug)}
+                        onViewDetail={() => setDetailTrip(pair[0])}
+                    />
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', fontWeight: 900, opacity: 0.2 }}>VS</div>
+                    <RankingCard
+                        trip={pair[1]}
+                        onSelect={() => handleVote(pair[1].slug, pair[0].slug)}
+                        onViewDetail={() => setDetailTrip(pair[1])}
+                    />
                 </div>
 
-                {comparisonsDone < 5 && rankingData.length > 0 && (
-                    <div style={{ marginTop: '8rem', paddingBottom: '8rem' }}>
-                        <h2 style={{ fontSize: '2.5rem', marginBottom: '3rem', textAlign: 'center' }}>Your Trek Leaderboard</h2>
-                        <div className="glass" style={{ borderRadius: 'var(--radius)', overflow: 'hidden' }}>
-                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <div className="mobile-only" style={{ textAlign: 'center', marginTop: '3rem' }}>
+                    <div className="glass" style={{ padding: '1rem', borderRadius: '12px' }}>
+                        <Zap size={20} color="var(--accent)" style={{ marginBottom: '0.5rem' }} />
+                        <p style={{ fontSize: '0.875rem', color: 'var(--secondary)' }}>Tap the trek you prefer. Your votes influence the global leaderboard.</p>
+                    </div>
+                </div>
+
+                {/* Leaderboard Section */}
+                <div style={{ padding: '6rem 0' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem' }}>
+                        <div>
+                            <h2 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Global Leaderboard</h2>
+                            <p style={{ color: 'var(--secondary)' }}>Real-time rankings from the MBA community.</p>
+                        </div>
+                    </div>
+
+                    <div className="glass" style={{ borderRadius: 'var(--radius)', overflow: 'hidden' }}>
+                        {/* Desktop Table */}
+                        <div className="desktop-only">
+                            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                                 <thead>
-                                    <tr style={{ background: 'rgba(255,255,255,0.05)', textAlign: 'left' }}>
+                                    <tr style={{ background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
                                         <th style={{ padding: '1.5rem 2rem' }}>Rank</th>
-                                        <th style={{ padding: '1.5rem 2rem' }}>Trip</th>
-                                        <th style={{ padding: '1.5rem 2rem' }}>Elo Rating</th>
-                                        <th style={{ padding: '1.5rem 2rem' }}>Stats</th>
-                                        <th style={{ padding: '1.5rem 2rem' }}>Action</th>
+                                        <th style={{ padding: '1.5rem 2rem' }}>Trek</th>
+                                        <th style={{ padding: '1.5rem 2rem' }}>Elo Score</th>
+                                        <th style={{ padding: '1.5rem 2rem' }}>W-L Record</th>
+                                        <th style={{ padding: '1.5rem 2rem', textAlign: 'right' }}>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {rankingData.map((ranking, i) => {
-                                        const template = templates.find(t => t.slug === ranking.templateSlug);
-                                        if (!template) return null;
+                                    {leaderboard.map((item, index) => {
+                                        const trip = tripTemplates.find(t => t.slug === item.templateSlug);
+                                        if (!trip) return null;
                                         return (
-                                            <tr key={ranking.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                                                <td style={{ padding: '1.5rem 2rem', fontWeight: 800, opacity: 0.3 }}>#0{i + 1}</td>
+                                            <tr key={item.templateSlug} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                                                 <td style={{ padding: '1.5rem 2rem' }}>
-                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                                        <img src={template.photos[0].path} style={{ width: '40px', height: '40px', borderRadius: '4px', objectFit: 'cover' }} alt="" />
-                                                        <div>
-                                                            <div style={{ fontWeight: 600 }}>{template.title}</div>
-                                                            <div style={{ fontSize: '0.75rem', color: 'var(--secondary)' }}>{template.themes[0]}</div>
-                                                        </div>
-                                                    </div>
+                                                    <span style={{
+                                                        width: '32px',
+                                                        height: '32px',
+                                                        borderRadius: '50%',
+                                                        background: index < 3 ? 'var(--accent)' : 'rgba(255,255,255,0.05)',
+                                                        color: index < 3 ? '#000' : '#fff',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        fontWeight: 800,
+                                                        fontSize: '0.875rem'
+                                                    }}>
+                                                        {index + 1}
+                                                    </span>
                                                 </td>
                                                 <td style={{ padding: '1.5rem 2rem' }}>
-                                                    <div style={{ fontWeight: 800, color: 'var(--accent)' }}>{ranking.score}</div>
+                                                    <Link href={`/templates/${trip.slug}`} style={{ color: '#fff', textDecoration: 'none', fontWeight: 600 }}>
+                                                        {trip.title}
+                                                    </Link>
                                                 </td>
+                                                <td style={{ padding: '1.5rem 2rem', fontWeight: 700, color: 'var(--accent)' }}>{item.score}</td>
                                                 <td style={{ padding: '1.5rem 2rem', color: 'var(--secondary)', fontSize: '0.875rem' }}>
-                                                    {ranking.wins}W - {ranking.losses}L
+                                                    {item.wins}W - {item.losses}L
                                                 </td>
-                                                <td style={{ padding: '1.5rem 2rem' }}>
-                                                    <a href={`/trips/${template.slug}/start`} className="btn btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.875rem', cursor: 'pointer' }}>Add to Get Started</a>
+                                                <td style={{ padding: '1.5rem 2rem', textAlign: 'right' }}>
+                                                    <button
+                                                        onClick={() => startTransition(() => cloneTemplateAction(trip.slug))}
+                                                        style={{ background: 'transparent', border: 'none', color: 'var(--accent)', fontWeight: 700, cursor: 'pointer', fontSize: '0.875rem' }}
+                                                    >
+                                                        Add to Plan →
+                                                    </button>
                                                 </td>
                                             </tr>
                                         );
@@ -168,13 +150,36 @@ export default function RankPage() {
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-                )}
 
-                {selectedTrip && (
-                    <TripDetailModal trip={selectedTrip} onClose={() => setSelectedTrip(null)} />
-                )}
+                        {/* Mobile Card List */}
+                        <div className="mobile-only" style={{ display: 'flex', flexDirection: 'column' }}>
+                            {leaderboard.map((item, index) => {
+                                const trip = tripTemplates.find(t => t.slug === item.templateSlug);
+                                if (!trip) return null;
+                                return (
+                                    <div key={item.templateSlug} style={{ padding: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                                            <div style={{ fontSize: '1.25rem', fontWeight: 800, color: index < 3 ? 'var(--accent)' : 'var(--secondary)', width: '2rem' }}>{index + 1}</div>
+                                            <div>
+                                                <div style={{ fontWeight: 700, marginBottom: '0.25rem' }}>{trip.title}</div>
+                                                <div style={{ fontSize: '0.75rem', color: 'var(--secondary)' }}>{item.score} pts • {item.wins}W - {item.losses}L</div>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => startTransition(() => cloneTemplateAction(trip.slug))}
+                                            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--accent)', padding: '0.5rem 1rem', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 700 }}
+                                        >
+                                            Add
+                                        </button>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            {detailTrip && <TripDetailModal trip={detailTrip} onClose={() => setDetailTrip(null)} />}
         </div>
     );
 }
