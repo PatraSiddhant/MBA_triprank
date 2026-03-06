@@ -3,8 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import TripDownloadButton from "@/components/TripDownloadButton";
 import StatusSelector from "@/components/StatusSelector";
 import { updateTripStatusAction } from "@/lib/actions";
-import { Calendar, CheckCircle2, MapPin, MoreHorizontal } from "lucide-react";
+import { Calendar, CheckCircle2, MapPin, MoreHorizontal, Globe } from "lucide-react";
 import Link from "next/link";
+import WorldMap from "@/components/WorldMap";
 
 export default async function UserTripsIndex() {
     const supabase = await createClient();
@@ -32,11 +33,13 @@ export default async function UserTripsIndex() {
         <div style={{ paddingTop: '8rem', paddingBottom: '8rem', minHeight: '100vh' }}>
             <div className="container">
                 <header style={{ marginBottom: '5rem', textAlign: 'center' }}>
-                    <h1 style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 800, marginBottom: '1rem' }}>Your Quest Log</h1>
-                    <p style={{ color: 'var(--secondary)', fontSize: '1.25rem' }}>
-                        From initial spark to completed legendary trek.
+                    <h1 style={{ fontSize: 'clamp(3rem, 7vw, 5rem)', fontWeight: 900, marginBottom: '1.5rem', letterSpacing: '-0.04em' }}>Your Global Legacy</h1>
+                    <p style={{ color: 'var(--secondary)', fontSize: '1.25rem', maxWidth: '600px', margin: '0 auto' }}>
+                        From initial sparks to completed legendary treks. Track your progress across the globe.
                     </p>
                 </header>
+
+                {trips.length > 0 && <WorldMap trips={trips} />}
 
                 {trips.length === 0 ? (
                     <div className="glass" style={{ padding: '5rem 2rem', textAlign: 'center', borderRadius: 'var(--radius)' }}>

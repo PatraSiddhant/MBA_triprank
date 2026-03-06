@@ -40,6 +40,25 @@ model TripCandidate {
   createdAt             DateTime    @default(now())
   updatedAt             DateTime    @updatedAt
   itinerary             Itinerary?
+  memory                TripMemory?
+}
+
+model TripMemory {
+  id              String   @id @default(cuid())
+  tripCandidateId String   @unique
+  tripCandidate   TripCandidate @relation(fields: [tripCandidateId], references: [id], onDelete: Cascade)
+  
+  // Guided questionnaire fields
+  highlightMoment String?   // "What was the single best moment?"
+  foodPick        String?   // "Best meal you had?"
+  hiddenGem       String?   // "A place most people wouldn't know about?"
+  wouldReturn     Boolean?  // "Would you go back?"
+  overallRating   Int?      // 1-5 stars
+  travelTip       String?   // "One tip for future students?"
+  photoUrl        String?   // Cover photo URL
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model Itinerary {

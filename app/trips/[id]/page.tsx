@@ -1,13 +1,16 @@
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
-import { MapPin, Clock, DollarSign, Calendar } from "lucide-react";
+import { MapPin, Clock, DollarSign, Calendar, Zap, Book } from "lucide-react";
 import ItineraryEditor from "@/components/ItineraryEditor";
+import MemoryQuestionnaire from "@/components/MemoryQuestionnaire";
+import MemoryCard from "@/components/MemoryCard";
 
 export default async function UserTripPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
-    const trip = await prisma.tripCandidate.findUnique({
+    const trip = await (prisma as any).tripCandidate.findUnique({
         where: { id },
         include: {
+            memory: true,
             itinerary: {
                 include: {
                     days: {
@@ -27,92 +30,111 @@ export default async function UserTripPage({ params }: { params: Promise<{ id: s
         notFound();
     }
 
+    const isCompleted = trip.status === 'completed';
+
     return (
-        <div style={{ paddingTop: '8rem', minHeight: '100vh' }}>
+        <div style={{ paddingTop: '8rem', paddingBottom: '8rem', minHeight: '100vh' }}>
             <div className="container">
-                <div style={{ marginBottom: '4rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--accent)', marginBottom: '1rem', fontSize: '0.875rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                        <Zap size={16} /> <span>Your Planned Trip</span>
+                <div style={{ marginBottom: '6rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: isCompleted ? '#00cc88' : 'var(--accent)', marginBottom: '1.5rem', fontSize: '0.875rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+                        {isCompleted ? <Book size={18} /> : <Zap size={18} />}
+                        <span>{isCompleted ? 'Historical Record' : 'Active Expedition'}</span>
                     </div>
-                    <h1 style={{ fontSize: '3.5rem', marginBottom: '1.5rem' }}>{trip.name}</h1>
-                    <div style={{ display: 'flex', gap: '2.5rem', flexWrap: 'wrap', color: 'var(--secondary)' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <MapPin size={18} /> <span>{trip.primaryDestinationCity}, {trip.primaryDestinationCountry}</span>
+                    <h1 style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', marginBottom: '2rem', fontWeight: 900, lineHeight: 1.1 }}>{trip.name}</h1>
+                    <div style={{ display: 'flex', gap: '3rem', flexWrap: 'wrap', color: 'var(--secondary)', fontSize: '1.125rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                            <MapPin size={22} color="var(--accent)" />
+                            <span>{trip.primaryDestinationCity}, {trip.primaryDestinationCountry}</span>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <Calendar size={18} /> <span>Planned for {trip.durationDays} Days</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                            <Calendar size={22} color="var(--accent)" />
+                            <span>Completed {trip.durationDays} Days</span>
                         </div>
                     </div>
                 </div>
 
-                <div className="grid" style={{ gridTemplateColumns: '1fr 300px', gap: '6rem' }}>
-                    <div>
-                        <h2 style={{ fontSize: '2rem', marginBottom: '2.5rem' }}>Full Itinerary</h2>
-                        {trip.itinerary ? (
-                            <ItineraryEditor
-                                itineraryId={trip.itinerary.id}
-                                initialDays={trip.itinerary.days.map(day => ({
-                                    id: day.id,
-                                    dayIndex: day.dayIndex,
-                                    title: day.title,
-                                    items: day.items.map(item => ({
-                                        id: item.id,
-                                        title: item.title,
-                                        description: item.description,
-                                        timeBucket: item.timeBucket,
-                                        sortOrder: 0,
-                                    })),
-                                }))}
-                            />
+                {isCompleted && (
+                    <section style={{ marginBottom: '8rem' }}>
+                        {trip.memory ? (
+                            <MemoryCard memory={trip.memory} tripName={trip.name} />
                         ) : (
-                            <div className="glass" style={{ padding: '3rem', borderRadius: 'var(--radius)', textAlign: 'center', color: 'var(--secondary)' }}>
-                                No itinerary yet. Clone a trip template to get started!
+                            <div>
+                                <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+                                    <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Record Your Legacy</h2>
+                                    <p style={{ color: 'var(--secondary)', fontSize: '1.125rem' }}>Share your wisdom from {trip.name} for future MBA students.</p>
+                                </div>
+                                <MemoryQuestionnaire tripId={trip.id} tripName={trip.name} />
+                            </div>
+                        )}
+                    </section>
+                )}
+
+                <div className="grid" style={{ gridTemplateColumns: isCompleted ? '1fr' : '1fr 340px', gap: '6rem' }}>
+                    <div>
+                        <h2 style={{ fontSize: '2rem', marginBottom: '3rem', fontWeight: 800 }}>
+                            {isCompleted ? 'The Final Itinerary' : 'Refining Your Path'}
+                        </h2>
+                        {trip.itinerary ? (
+                            <div style={{ opacity: isCompleted ? 0.8 : 1 }}>
+                                <ItineraryEditor
+                                    itineraryId={trip.itinerary.id}
+                                    readOnly={isCompleted}
+                                    initialDays={trip.itinerary.days.map((day: any) => ({
+                                        id: day.id,
+                                        dayIndex: day.dayIndex,
+                                        title: day.title,
+                                        items: day.items.map((item: any) => ({
+                                            id: item.id,
+                                            title: item.title,
+                                            description: item.description,
+                                            timeBucket: item.timeBucket,
+                                            sortOrder: 0,
+                                        })),
+                                    }))}
+                                />
+                            </div>
+                        ) : (
+                            <div className="glass" style={{ padding: '4rem', borderRadius: 'var(--radius)', textAlign: 'center', color: 'var(--secondary)', fontSize: '1.25rem' }}>
+                                No itinerary records found for this expedition.
                             </div>
                         )}
                     </div>
 
-                    <aside>
-                        <div className="glass" style={{ padding: '2rem', borderRadius: 'var(--radius)', position: 'sticky', top: '10rem' }}>
-                            <h3 style={{ fontSize: '1.125rem', marginBottom: '1.5rem' }}>Trip Summary</h3>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <span style={{ color: 'var(--secondary)' }}>Budget</span>
-                                    <span>${trip.roughBudgetUsd}</span>
+                    {!isCompleted && (
+                        <aside>
+                            <div className="glass" style={{ padding: '2.5rem', borderRadius: 'var(--radius)', position: 'sticky', top: '10rem', border: '1px solid rgba(255,255,255,0.08)' }}>
+                                <h3 style={{ fontSize: '1.25rem', marginBottom: '2rem', fontWeight: 700 }}>Expedition Stats</h3>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <span style={{ color: 'var(--secondary)', fontSize: '0.9rem' }}>Budget</span>
+                                        <span style={{ fontWeight: 700, color: 'var(--accent)' }}>${trip.roughBudgetUsd}</span>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <span style={{ color: 'var(--secondary)', fontSize: '0.9rem' }}>Theme</span>
+                                        <span style={{ fontWeight: 600 }}>{trip.theme}</span>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <span style={{ color: 'var(--secondary)', fontSize: '0.9rem' }}>Current Status</span>
+                                        <span style={{
+                                            padding: '0.4rem 0.8rem',
+                                            borderRadius: '8px',
+                                            fontSize: '0.75rem',
+                                            fontWeight: 800,
+                                            background: trip.status === 'booked' ? 'rgba(0, 204, 136, 0.1)' : 'rgba(255, 255, 255, 0.05)',
+                                            color: trip.status === 'booked' ? '#00cc88' : 'white',
+                                            textTransform: 'uppercase'
+                                        }}>{trip.status || 'Draft'}</span>
+                                    </div>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <span style={{ color: 'var(--secondary)' }}>Theme</span>
-                                    <span>{trip.theme}</span>
-                                </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <span style={{ color: 'var(--secondary)' }}>Status</span>
-                                    <span style={{ color: '#10b981', fontWeight: 600 }}>Draft</span>
-                                </div>
+                                <button className="btn btn-primary" style={{ width: '100%', marginTop: '3rem', padding: '1rem', fontWeight: 800 }}>
+                                    Share Itinerary
+                                </button>
                             </div>
-                            <button className="btn btn-primary" style={{ width: '100%', marginTop: '2rem' }}>
-                                Share Trip
-                            </button>
-                        </div>
-                    </aside>
+                        </aside>
+                    )}
                 </div>
             </div>
         </div>
     );
 }
 
-function Zap({ size }: { size: number }) {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width={size}
-            height={size}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        >
-            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-        </svg>
-    );
-}

@@ -62,13 +62,41 @@ export default function RankPage() {
                     <p style={{ color: 'var(--secondary)', fontSize: '1.25rem' }}>Help the community find the most iconic MBA journeys.</p>
                 </header>
 
-                <div className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
+                <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                    alignItems: 'center',
+                    gap: '2rem',
+                    maxWidth: '1200px',
+                    margin: '0 auto',
+                    position: 'relative'
+                }}>
                     <RankingCard
                         trip={pair[0]}
                         onSelect={() => handleVote(pair[0].slug, pair[1].slug)}
                         onViewDetail={() => setDetailTrip(pair[0])}
                     />
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', fontWeight: 900, opacity: 0.2 }}>VS</div>
+
+                    <div style={{
+                        position: 'absolute',
+                        left: '50%',
+                        top: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        zIndex: 10,
+                        background: 'var(--bg)',
+                        width: '80px',
+                        height: '80px',
+                        borderRadius: '50%',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '1.5rem',
+                        fontWeight: 900,
+                        color: 'var(--accent)',
+                        boxShadow: '0 0 30px rgba(0,0,0,0.5)'
+                    }} className="desktop-only">VS</div>
+
                     <RankingCard
                         trip={pair[1]}
                         onSelect={() => handleVote(pair[1].slug, pair[0].slug)}

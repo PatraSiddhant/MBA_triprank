@@ -34,75 +34,67 @@ export default function DiscoverPage() {
                 </div>
 
                 {/* Search and Filters */}
-                <div style={{ position: 'sticky', top: '5rem', zIndex: 10, background: 'var(--bg)', padding: '1rem 0', marginBottom: '3rem' }}>
-                    <div className="glass" style={{ padding: '1.5rem', borderRadius: 'var(--radius)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                        {/* Search Bar */}
-                        <div style={{ position: 'relative', marginBottom: '1.5rem' }}>
-                            <Search style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--secondary)' }} size={20} />
-                            <input
-                                type="text"
-                                placeholder="Search by name, city or country..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                style={{
-                                    width: '100%',
-                                    background: 'rgba(255,255,255,0.05)',
-                                    border: '1px solid rgba(255,255,255,0.1)',
-                                    borderRadius: '12px',
-                                    padding: '1rem 1rem 1rem 3rem',
-                                    color: '#fff',
-                                    fontSize: '1rem'
-                                }}
-                            />
-                        </div>
+                <div className="dock animate-fade-in" style={{ marginBottom: '6rem' }}>
+                    {/* Search Bar */}
+                    <div style={{ position: 'relative', marginBottom: '1.5rem' }}>
+                        <Search style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--secondary)', opacity: 0.5 }} size={20} />
+                        <input
+                            type="text"
+                            placeholder="Find your next MBA legacy..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            style={{
+                                width: '100%',
+                                background: 'rgba(255,255,255,0.03)',
+                                border: '1px solid rgba(255,255,255,0.08)',
+                                borderRadius: '1rem',
+                                padding: '1.25rem 1.25rem 1.25rem 3.5rem',
+                                color: '#fff',
+                                fontSize: '1.125rem',
+                                outline: 'none',
+                                transition: 'border-color 0.2s'
+                            }}
+                            onFocus={(e) => e.target.style.borderColor = 'var(--accent)'}
+                            onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.08)'}
+                        />
+                    </div>
 
-                        {/* Filter Tabs */}
-                        <div className="scroll-x" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                    {/* Filter Tabs */}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
+                        <button
+                            onClick={() => setSelectedSchool(null)}
+                            className={selectedSchool === null ? 'active-pill' : 'pill'}
+                        >
+                            All Schools
+                        </button>
+                        {schools.map(s => (
                             <button
-                                onClick={() => setSelectedSchool(null)}
-                                className={`btn ${selectedSchool === null ? 'btn-primary' : 'btn-secondary'}`}
-                                style={{ padding: '0.5rem 1.25rem', fontSize: '0.875rem', flexShrink: 0 }}
+                                key={s.slug}
+                                onClick={() => setSelectedSchool(s.slug)}
+                                className={selectedSchool === s.slug ? 'active-pill' : 'pill'}
+                                style={selectedSchool === s.slug ? { background: s.brandColor, borderColor: s.brandColor } : {}}
                             >
-                                All Schools
+                                {s.name}
                             </button>
-                            {schools.map(s => (
-                                <button
-                                    key={s.slug}
-                                    onClick={() => setSelectedSchool(s.slug)}
-                                    className="btn"
-                                    style={{
-                                        padding: '0.5rem 1.25rem',
-                                        fontSize: '0.875rem',
-                                        background: selectedSchool === s.slug ? s.brandColor : 'rgba(255,255,255,0.05)',
-                                        color: '#fff',
-                                        border: '1px solid rgba(255,255,255,0.1)',
-                                        flexShrink: 0
-                                    }}
-                                >
-                                    {s.name}
-                                </button>
-                            ))}
-                        </div>
+                        ))}
+                    </div>
 
-                        <div className="scroll-x" style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '1rem' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '1.25rem' }}>
+                        <button
+                            onClick={() => setSelectedTheme(null)}
+                            className={selectedTheme === null ? 'active-pill' : 'pill'}
+                        >
+                            All Themes
+                        </button>
+                        {themes.map(t => (
                             <button
-                                onClick={() => setSelectedTheme(null)}
-                                className={selectedTheme === null ? 'active-pill' : 'pill'}
-                                style={{ flexShrink: 0 }}
+                                key={t}
+                                onClick={() => setSelectedTheme(t)}
+                                className={selectedTheme === t ? 'active-pill' : 'pill'}
                             >
-                                All Themes
+                                {t}
                             </button>
-                            {themes.map(t => (
-                                <button
-                                    key={t}
-                                    onClick={() => setSelectedTheme(t)}
-                                    className={selectedTheme === t ? 'active-pill' : 'pill'}
-                                    style={{ flexShrink: 0 }}
-                                >
-                                    {t}
-                                </button>
-                            ))}
-                        </div>
+                        ))}
                     </div>
                 </div>
 
@@ -154,28 +146,6 @@ export default function DiscoverPage() {
                 )}
             </div>
 
-            <style jsx>{`
-                .pill {
-                    padding: 0.4rem 1rem;
-                    background: rgba(255,255,255,0.05);
-                    border-radius: 100px;
-                    color: var(--secondary);
-                    font-size: 0.875rem;
-                    cursor: pointer;
-                    transition: all 0.2s;
-                    border: none;
-                }
-                .active-pill {
-                    padding: 0.4rem 1rem;
-                    background: var(--accent);
-                    color: #000;
-                    border-radius: 100px;
-                    font-size: 0.875rem;
-                    font-weight: 700;
-                    cursor: pointer;
-                    border: none;
-                }
-            `}</style>
         </div>
     );
 }

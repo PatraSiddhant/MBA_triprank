@@ -28,9 +28,10 @@ interface ItineraryDayData {
 interface ItineraryEditorProps {
     itineraryId: string;
     initialDays: ItineraryDayData[];
+    readOnly?: boolean;
 }
 
-export default function ItineraryEditor({ itineraryId, initialDays }: ItineraryEditorProps) {
+export default function ItineraryEditor({ itineraryId, initialDays, readOnly = false }: ItineraryEditorProps) {
     const [days, setDays] = useState(initialDays);
     const [editingItem, setEditingItem] = useState<string | null>(null);
     const [editData, setEditData] = useState({ title: "", description: "", timeBucket: "" });
@@ -168,12 +169,14 @@ export default function ItineraryEditor({ itineraryId, initialDays }: ItineraryE
                             <div style={{ fontWeight: 800, fontSize: '1.5rem', opacity: 0.3 }}>{day.dayIndex}</div>
                             <h3 style={{ fontSize: '1.25rem' }}>{day.title}</h3>
                         </div>
-                        <button
-                            onClick={() => handleDeleteDay(day.id)}
-                            style={{ ...smallBtnStyle, color: '#ef4444' }}
-                        >
-                            <Trash2 size={12} />
-                        </button>
+                        {!readOnly && (
+                            <button
+                                onClick={() => handleDeleteDay(day.id)}
+                                style={{ ...smallBtnStyle, color: '#ef4444' }}
+                            >
+                                <Trash2 size={12} />
+                            </button>
+                        )}
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         {day.items.map((item) => (
@@ -225,16 +228,20 @@ export default function ItineraryEditor({ itineraryId, initialDays }: ItineraryE
                                             <h4 style={{ fontWeight: 600 }}>{item.title}</h4>
                                             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexShrink: 0 }}>
                                                 <span style={{ fontSize: '0.75rem', color: 'var(--secondary)', textTransform: 'uppercase' }}>{item.timeBucket}</span>
-                                                <button onClick={() => startEdit(item)} style={smallBtnStyle} title="Edit">
-                                                    <Pencil size={11} />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDeleteItem(item.id, day.id)}
-                                                    style={{ ...smallBtnStyle, color: '#ef4444' }}
-                                                    title="Delete"
-                                                >
-                                                    <Trash2 size={11} />
-                                                </button>
+                                                {!readOnly && (
+                                                    <>
+                                                        <button onClick={() => startEdit(item)} style={smallBtnStyle} title="Edit">
+                                                            <Pencil size={11} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDeleteItem(item.id, day.id)}
+                                                            style={{ ...smallBtnStyle, color: '#ef4444' }}
+                                                            title="Delete"
+                                                        >
+                                                            <Trash2 size={11} />
+                                                        </button>
+                                                    </>
+                                                )}
                                             </div>
                                         </div>
                                         <p style={{ fontSize: '0.875rem', color: 'var(--secondary)' }}>{item.description}</p>
@@ -244,94 +251,98 @@ export default function ItineraryEditor({ itineraryId, initialDays }: ItineraryE
                         ))}
 
                         {/* Add Activity Form */}
-                        {addingToDay === day.id ? (
-                            <div style={{ paddingLeft: '3rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', borderLeft: '1px dashed var(--accent)' }}>
-                                <input
-                                    value={newItem.title}
-                                    onChange={(e) => setNewItem({ ...newItem, title: e.target.value })}
-                                    style={inputStyle}
-                                    placeholder="Activity title"
-                                    autoFocus
-                                />
-                                <input
-                                    value={newItem.description}
-                                    onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
-                                    style={inputStyle}
-                                    placeholder="Brief description"
-                                />
-                                <select
-                                    value={newItem.timeBucket}
-                                    onChange={(e) => setNewItem({ ...newItem, timeBucket: e.target.value })}
-                                    style={inputStyle}
-                                >
-                                    <option value="Morning">Morning</option>
-                                    <option value="Afternoon">Afternoon</option>
-                                    <option value="Evening">Evening</option>
-                                    <option value="Night">Night</option>
-                                </select>
-                                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                    <button
-                                        onClick={() => handleAddItem(day.id)}
-                                        disabled={saving || !newItem.title.trim()}
-                                        style={{ ...smallBtnStyle, color: '#10b981', borderColor: '#10b981' }}
+                        {!readOnly && (
+                            addingToDay === day.id ? (
+                                <div style={{ paddingLeft: '3rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', borderLeft: '1px dashed var(--accent)' }}>
+                                    <input
+                                        value={newItem.title}
+                                        onChange={(e) => setNewItem({ ...newItem, title: e.target.value })}
+                                        style={inputStyle}
+                                        placeholder="Activity title"
+                                        autoFocus
+                                    />
+                                    <input
+                                        value={newItem.description}
+                                        onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
+                                        style={inputStyle}
+                                        placeholder="Brief description"
+                                    />
+                                    <select
+                                        value={newItem.timeBucket}
+                                        onChange={(e) => setNewItem({ ...newItem, timeBucket: e.target.value })}
+                                        style={inputStyle}
                                     >
-                                        <Check size={12} /> Add
-                                    </button>
-                                    <button onClick={() => setAddingToDay(null)} style={smallBtnStyle}>
-                                        <X size={12} /> Cancel
-                                    </button>
+                                        <option value="Morning">Morning</option>
+                                        <option value="Afternoon">Afternoon</option>
+                                        <option value="Evening">Evening</option>
+                                        <option value="Night">Night</option>
+                                    </select>
+                                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                        <button
+                                            onClick={() => handleAddItem(day.id)}
+                                            disabled={saving || !newItem.title.trim()}
+                                            style={{ ...smallBtnStyle, color: '#10b981', borderColor: '#10b981' }}
+                                        >
+                                            <Check size={12} /> Add
+                                        </button>
+                                        <button onClick={() => setAddingToDay(null)} style={smallBtnStyle}>
+                                            <X size={12} /> Cancel
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        ) : (
-                            <button
-                                onClick={() => { setAddingToDay(day.id); setNewItem({ title: '', description: '', timeBucket: 'Morning' }); }}
-                                style={{
-                                    ...smallBtnStyle,
-                                    marginLeft: '3rem',
-                                    color: 'var(--accent)',
-                                    borderColor: 'var(--accent)',
-                                    borderStyle: 'dashed',
-                                    width: 'fit-content'
-                                }}
-                            >
-                                <Plus size={12} /> Add Activity
-                            </button>
+                            ) : (
+                                <button
+                                    onClick={() => { setAddingToDay(day.id); setNewItem({ title: '', description: '', timeBucket: 'Morning' }); }}
+                                    style={{
+                                        ...smallBtnStyle,
+                                        marginLeft: '3rem',
+                                        color: 'var(--accent)',
+                                        borderColor: 'var(--accent)',
+                                        borderStyle: 'dashed',
+                                        width: 'fit-content'
+                                    }}
+                                >
+                                    <Plus size={12} /> Add Activity
+                                </button>
+                            )
                         )}
                     </div>
                 </div>
             ))}
 
             {/* Add Day */}
-            {isAddingDay ? (
-                <div className="glass" style={{ padding: '1.5rem', borderRadius: 'var(--radius)', border: '1px dashed var(--accent)' }}>
-                    <input
-                        value={newDayTitle}
-                        onChange={(e) => setNewDayTitle(e.target.value)}
-                        style={{ ...inputStyle, marginBottom: '0.75rem' }}
-                        placeholder="Day title (e.g., 'Markets & Culture')"
-                        autoFocus
-                    />
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <button
-                            onClick={handleAddDay}
-                            disabled={saving || !newDayTitle.trim()}
-                            style={{ ...smallBtnStyle, color: '#10b981', borderColor: '#10b981' }}
-                        >
-                            <Check size={12} /> Add Day
-                        </button>
-                        <button onClick={() => setIsAddingDay(false)} style={smallBtnStyle}>
-                            <X size={12} /> Cancel
-                        </button>
+            {!readOnly && (
+                isAddingDay ? (
+                    <div className="glass" style={{ padding: '1.5rem', borderRadius: 'var(--radius)', border: '1px dashed var(--accent)' }}>
+                        <input
+                            value={newDayTitle}
+                            onChange={(e) => setNewDayTitle(e.target.value)}
+                            style={{ ...inputStyle, marginBottom: '0.75rem' }}
+                            placeholder="Day title (e.g., 'Markets & Culture')"
+                            autoFocus
+                        />
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <button
+                                onClick={handleAddDay}
+                                disabled={saving || !newDayTitle.trim()}
+                                style={{ ...smallBtnStyle, color: '#10b981', borderColor: '#10b981' }}
+                            >
+                                <Check size={12} /> Add Day
+                            </button>
+                            <button onClick={() => setIsAddingDay(false)} style={smallBtnStyle}>
+                                <X size={12} /> Cancel
+                            </button>
+                        </div>
                     </div>
-                </div>
-            ) : (
-                <button
-                    onClick={() => setIsAddingDay(true)}
-                    className="btn btn-secondary"
-                    style={{ width: 'fit-content', borderStyle: 'dashed', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-                >
-                    <Plus size={16} /> Add Day
-                </button>
+                ) : (
+                    <button
+                        onClick={() => setIsAddingDay(true)}
+                        className="btn btn-secondary"
+                        style={{ width: 'fit-content', borderStyle: 'dashed', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                    >
+                        <Plus size={16} /> Add Day
+                    </button>
+                )
             )}
         </div>
     );

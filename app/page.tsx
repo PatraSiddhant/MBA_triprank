@@ -1,202 +1,184 @@
 import { getAllTripTemplates } from "@/data/trip-templates";
 import { schools } from "@/data/schools";
+import { Globe, Map, Award, BookOpen, Star, ChevronRight, Zap, Target } from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
   const featuredTrips = getAllTripTemplates().slice(0, 6);
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Hero Section */}
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--background)' }}>
+      {/* 1. Hero Section: "The World is Your Campus" */}
       <section style={{
         position: 'relative',
-        height: '90vh',
+        height: '100vh',
         display: 'flex',
         alignItems: 'center',
-        overflow: 'hidden'
+        padding: '0 2rem'
       }}>
+        {/* Abstract Background Elements */}
         <div style={{
           position: 'absolute',
-          top: 0, left: 0, right: 0, bottom: 0,
-          backgroundImage: 'url(/trips/japan/hero.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          zIndex: -1,
-          opacity: 0.6
+          top: '20%',
+          right: '10%',
+          width: '40vw',
+          height: '40vw',
+          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)',
+          filter: 'blur(80px)',
+          zIndex: 0
         }} />
         <div style={{
           position: 'absolute',
-          top: 0, left: 0, right: 0, bottom: 0,
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.9))',
-          zIndex: -1
+          bottom: '10%',
+          left: '5%',
+          width: '30vw',
+          height: '30vw',
+          background: 'radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%)',
+          filter: 'blur(60px)',
+          zIndex: 0
         }} />
 
         <div className="container" style={{ position: 'relative', zIndex: 10 }}>
-          <div style={{ maxWidth: '800px' }} className="animate-fade-in">
-            <h1 style={{ fontSize: 'clamp(3rem, 8vw, 6rem)', lineHeight: 0.9, marginBottom: '2rem' }}>
-              The World is Your <br /><span style={{ color: 'var(--accent)' }}>Campus.</span>
+          <div style={{ maxWidth: '900px' }} className="animate-fade-in">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2.5rem', opacity: 0.8 }}>
+              <div style={{ width: '40px', height: '1px', background: 'var(--accent)' }} />
+              <span style={{ fontSize: '0.875rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--accent)' }}>For the Global Elite</span>
+            </div>
+            <h1 style={{ fontSize: 'clamp(4rem, 10vw, 8.5rem)', lineHeight: 0.85, marginBottom: '3rem', fontWeight: 900, letterSpacing: '-0.06em' }}>
+              The World is Your <br /><span style={{ color: 'white' }}>Campus.</span>
             </h1>
-            <p style={{ fontSize: '1.25rem', color: 'var(--secondary)', marginBottom: '3rem', maxWidth: '600px' }}>
-              Discover, rank, and plan iconic MBA treks with a community of global leaders. Built for the modern business student.
+            <p style={{ fontSize: 'clamp(1.125rem, 2vw, 1.5rem)', color: 'var(--secondary)', marginBottom: '4rem', maxWidth: '650px', lineHeight: 1.4 }}>
+              Discover iconic MBA treks, build your wishlist, and record your legacy. The ultimate travel companion for the modern business student.
             </p>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <a href="/discover" className="btn btn-primary" style={{ fontSize: '1rem', padding: '1rem 2rem' }}>Explore Iconic Treks</a>
-              <a href="/trips" className="btn btn-secondary" style={{ fontSize: '1rem', padding: '1rem 2rem' }}>My Trips</a>
+            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+              <Link href="/discover" className="btn btn-primary" style={{ fontSize: '1.125rem', padding: '1.25rem 2.5rem', fontWeight: 800 }}>Explore Treks</Link>
+              <Link href="/trips" className="btn btn-secondary" style={{ fontSize: '1.125rem', padding: '1.25rem 2.5rem', fontWeight: 700 }}>My Quest Log</Link>
             </div>
           </div>
         </div>
-      </section>
 
-      {/* Featured Section */}
-      <section className="container" style={{ padding: '8rem 0' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '4rem' }}>
-          <div>
-            <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Iconic Treks</h2>
-            <p style={{ color: 'var(--secondary)' }}>The most popular destinations for the M7 and beyond.</p>
-          </div>
-          <a href="/discover" style={{
-            color: 'var(--accent)',
-            fontWeight: 600,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem'
-          }}>
-            View all 32 templates →
-          </a>
-        </div>
-
-        <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '2rem' }}>
-          {featuredTrips.map((trip) => (
-            <div key={trip.slug} className="glass card image-zoom-container animate-fade-in" style={{
-              borderRadius: 'var(--radius)',
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: 'column',
-              transition: 'transform 0.3s ease'
-            }}>
-              <div style={{ position: 'relative', height: '240px' }}>
-                <img
-                  src={trip.photos[0].path}
-                  alt={trip.photos[0].alt}
-                  className="image-zoom"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-                <div style={{
-                  position: 'absolute',
-                  top: '1rem',
-                  right: '1rem',
-                  display: 'flex',
-                  gap: '0.25rem'
-                }}>
-                  {trip.schoolSlugs.slice(0, 3).map(slug => (
-                    <div key={slug} style={{
-                      width: '24px',
-                      height: '24px',
-                      borderRadius: '50%',
-                      background: schools.find(s => s.slug === slug)?.brandColor || '#fff',
-                      border: '2px solid rgba(255,255,255,0.2)'
-                    }} title={slug.toUpperCase()} />
-                  ))}
-                </div>
-              </div>
-              <div style={{ padding: '1.5rem', flex: 1 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                  <h3 style={{ fontSize: '1.25rem' }}>{trip.title}</h3>
-                  <span style={{ fontSize: '0.875rem', color: 'var(--secondary)' }}>{trip.roughBudgetUsd}+</span>
-                </div>
-                <p style={{ fontSize: '0.875rem', color: 'var(--secondary)', marginBottom: '1.5rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                  {trip.summary}
-                </p>
-                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
-                  <span style={{ padding: '0.25rem 0.75rem', background: 'rgba(255,255,255,0.05)', borderRadius: '100px', fontSize: '0.75rem' }}>
-                    {trip.durationDays} Days
-                  </span>
-                  <span style={{ padding: '0.25rem 0.75rem', background: 'rgba(255,255,255,0.05)', borderRadius: '100px', fontSize: '0.75rem' }}>
-                    {trip.themes[0]}
-                  </span>
-                </div>
-                <a href={`/templates/${trip.slug}`} className="btn btn-secondary" style={{ width: '100%', padding: '0.5rem' }}>
-                  Copy this trip
-                </a>
-              </div>
-            </div>
-          ))}
+        {/* Scroll Indicator */}
+        <div style={{ position: 'absolute', bottom: '3rem', left: '50%', transform: 'translateX(-50%)', opacity: 0.3 }}>
+          <div style={{ width: '1px', height: '60px', background: 'white' }} />
         </div>
       </section>
 
-      {/* Trek Leaderboard Section */}
-      <section style={{ padding: '8rem 0', background: 'var(--card-bg)' }}>
+      {/* 2. Track Section: First Year Focus */}
+      <section style={{ padding: '12rem 0', background: 'rgba(255,255,255,0.01)' }}>
         <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-            <h2 style={{ fontSize: '3rem', marginBottom: '1rem' }}>Who's Leading the Pack?</h2>
-            <p style={{ color: 'var(--secondary)', fontSize: '1.25rem' }}>Most saved and trending destinations by top MBA programs.</p>
+          <div className="grid-2" style={{ alignItems: 'center', gap: '8rem' }}>
+            <div className="animate-fade-in">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--accent)', marginBottom: '2rem' }}>
+                <Map size={32} />
+                <span style={{ fontSize: '1rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Phase 1: Explore</span>
+              </div>
+              <h2 style={{ fontSize: '3.5rem', marginBottom: '2.5rem', lineHeight: 1.1 }}>Plan your next legendary journey.</h2>
+              <p style={{ color: 'var(--secondary)', fontSize: '1.25rem', lineHeight: 1.6, marginBottom: '3.5rem' }}>
+                Browse 30+ MBA-curated trek templates. From Medellin street art to Tokyo night markets, build your wishlist for the next two years.
+              </p>
+              <Link href="/discover" style={{
+                color: 'white',
+                fontWeight: 800,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                fontSize: '1.125rem'
+              }}>
+                Browse Templates <ChevronRight size={20} />
+              </Link>
+            </div>
+            <div className="glass animate-fade-in" style={{ padding: '3rem', borderRadius: '3rem', transform: 'rotate(2deg)' }}>
+              {/* Mockup of a trip card */}
+              <div style={{ padding: '1.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '1.5rem', marginBottom: '1.5rem' }}>
+                <div style={{ opacity: 0.5, fontSize: '0.75rem', fontWeight: 800, marginBottom: '1rem' }}>FEATURED TEMPLATE</div>
+                <h4 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Japan: The Tech & Tradition Trek</h4>
+                <div style={{ color: 'var(--accent)', fontWeight: 700 }}>9 Days • Tokyo & Kyoto</div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+                {[1, 2, 3].map(i => <div key={i} style={{ aspectRatio: '1', background: 'rgba(255,255,255,0.03)', borderRadius: '12px' }} />)}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Remember Section: Second Year Focus */}
+      <section style={{ padding: '12rem 0' }}>
+        <div className="container">
+          <div className="grid-2" style={{ alignItems: 'center', gap: '8rem', direction: 'rtl' }}>
+            <div style={{ direction: 'ltr' }} className="animate-fade-in">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: '#00cc88', marginBottom: '2rem' }}>
+                <Globe size={32} />
+                <span style={{ fontSize: '1rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Phase 2: Remember</span>
+              </div>
+              <h2 style={{ fontSize: '3.5rem', marginBottom: '2.5rem', lineHeight: 1.1 }}>Your travels, your story.</h2>
+              <p style={{ color: 'var(--secondary)', fontSize: '1.25rem', lineHeight: 1.6, marginBottom: '3.5rem' }}>
+                Record your legacy with guided post-trek journals. Visualize your global footprint on your personal world map.
+              </p>
+              <Link href="/trips" className="btn btn-primary" style={{ padding: '1rem 2.5rem', fontWeight: 800 }}>Open Your Quest Log</Link>
+            </div>
+            <div className="glass animate-fade-in" style={{ padding: '3rem', borderRadius: '3rem', transform: 'rotate(-2deg)', direction: 'ltr' }}>
+              <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🗺️</div>
+                <div style={{ fontWeight: 800 }}>Footprint: 12 Cities</div>
+                <div style={{ fontSize: '0.875rem', opacity: 0.5 }}>4 Countries conquered</div>
+              </div>
+              <div style={{ height: '150px', background: 'rgba(0,204,136,0.1)', borderRadius: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span style={{ fontWeight: 800, color: '#00cc88' }}>Interactive Map Rendering...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Rank Section: Social/Mobile Focus */}
+      <section style={{ padding: '12rem 0', background: 'var(--card)' }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', marginBottom: '8rem' }} className="animate-fade-in">
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '1rem', color: '#fbbf24', marginBottom: '2rem' }}>
+              <Award size={32} />
+              <span style={{ fontSize: '1rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Phase 3: Community</span>
+            </div>
+            <h2 style={{ fontSize: '4rem', marginBottom: '2.5rem' }}>Ranked by the community.</h2>
+            <p style={{ color: 'var(--secondary)', fontSize: '1.25rem', maxWidth: '700px', margin: '0 auto' }}>
+              Settle the debate. Pairwise rank treks and see which destinations are trending for your school.
+            </p>
           </div>
 
           <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem' }}>
-            <div className="glass" style={{ padding: '2rem', borderRadius: 'var(--radius)' }}>
-              <h3 style={{ fontSize: '1.25rem', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <span style={{ color: 'var(--accent)' }}>●</span> Highest Ranked
-              </h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                {getAllTripTemplates().slice(0, 5).sort((a, b) => b.roughBudgetUsd - a.roughBudgetUsd).map((trip, i) => (
-                  <div key={trip.slug} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <span style={{ width: '2rem', fontWeight: 800, opacity: 0.2 }}>0{i + 1}</span>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 600 }}>{trip.title}</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--secondary)' }}>{trip.themes[0]} • {trip.durationDays} Days</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className="glass animate-fade-in" style={{ padding: '3rem', borderRadius: '2.5rem', textAlign: 'center' }}>
+              <Target size={40} color="var(--accent)" style={{ margin: '0 auto 2rem' }} />
+              <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>The Arena</h3>
+              <p style={{ color: 'var(--secondary)', fontSize: '0.875rem', lineHeight: 1.6 }}>Quick-fire pairwise comparisons to find your true travel DNA.</p>
             </div>
+            <div className="glass animate-fade-in" style={{ padding: '3rem', borderRadius: '2.5rem', textAlign: 'center' }}>
+              <Zap size={40} color="#fbbf24" style={{ margin: '0 auto 2rem' }} />
+              <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Trek Rank</h3>
+              <p style={{ color: 'var(--secondary)', fontSize: '0.875rem', lineHeight: 1.6 }}>Dynamic global leaderboard updated in real-time by student votes.</p>
+            </div>
+            <div className="glass animate-fade-in" style={{ padding: '3rem', borderRadius: '2.5rem', textAlign: 'center' }}>
+              <BookOpen size={40} color="#00cc88" style={{ margin: '0 auto 2rem' }} />
+              <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Social DNA</h3>
+              <p style={{ color: 'var(--secondary)', fontSize: '0.875rem', lineHeight: 1.6 }}>Share your rankings and see how you align with your peers.</p>
+            </div>
+          </div>
 
-            <div className="glass" style={{ padding: '2rem', borderRadius: 'var(--radius)' }}>
-              <h3 style={{ fontSize: '1.25rem', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <span style={{ color: 'var(--accent)' }}>●</span> Most Active Schools
-              </h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                {schools.map((school, i) => (
-                  <div key={school.id} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: school.brandColor }} />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 600 }}>{school.name.split(' (')[0]}</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--secondary)' }}>
-                        {getAllTripTemplates().filter(t => t.schoolSlugs.includes(school.slug)).length} treks listed
-                      </div>
-                    </div>
-                    <div style={{ fontWeight: 800, fontSize: '0.875rem' }}>{Math.floor(Math.random() * 50) + 50}% activity</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="glass" style={{ padding: '2rem', borderRadius: 'var(--radius)' }}>
-              <h3 style={{ fontSize: '1.25rem', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <span style={{ color: 'var(--accent)' }}>●</span> Budget vs Vibes
-              </h3>
-              <div style={{ height: '250px', display: 'flex', alignItems: 'flex-end', gap: '1rem', paddingBottom: '1rem' }}>
-                {[60, 80, 45, 95, 70, 55].map((v, i) => (
-                  <div key={i} style={{ flex: 1, background: 'var(--accent)', height: `${v}%`, borderRadius: '4px', opacity: 0.3 + (v / 150) }} />
-                ))}
-              </div>
-              <p style={{ fontSize: '0.875rem', color: 'var(--secondary)', textAlign: 'center' }}>
-                Real-time analysis of trek costs vs experience ratings.
-              </p>
-            </div>
+          <div style={{ textAlign: 'center', marginTop: '6rem' }}>
+            <Link href="/rank" className="btn btn-primary" style={{ padding: '1.25rem 4rem', fontSize: '1.125rem', fontWeight: 800 }}>Enter the Arena</Link>
           </div>
         </div>
       </section>
 
-      {/* Schools Section (Moved down) */}
-      <section style={{ padding: '6rem 0', background: 'rgba(255,255,255,0.02)', borderTop: '1px solid var(--border)' }}>
+      {/* Footer-ish School Pride */}
+      <section style={{ padding: '8rem 0', borderTop: '1px solid var(--border)' }}>
         <div className="container" style={{ textAlign: 'center' }}>
-          <p style={{ color: 'var(--secondary)', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '3rem' }}>
-            Trusted by students from top global programs
-          </p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '4rem', opacity: 0.6 }}>
+          <p style={{ color: 'var(--secondary)', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '4rem' }}>Battle-tested by the best</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '4rem', opacity: 0.5 }}>
             {schools.map(school => (
-              <span key={school.id} style={{ fontSize: '1.25rem', fontWeight: 700, letterSpacing: '-0.025em' }}>
-                {school.name.split(' ')[0]} <span style={{ color: school.brandColor }}>.</span>
-              </span>
+              <div key={school.id} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: school.brandColor }} />
+                <span style={{ fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.02em' }}>{school.name.split(' (')[0].toUpperCase()}</span>
+              </div>
             ))}
           </div>
         </div>
