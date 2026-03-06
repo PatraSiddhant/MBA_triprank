@@ -3,7 +3,7 @@
 import { useState, useTransition, useEffect } from "react";
 import { tripTemplates } from "@/data/trip-templates";
 import { updateRankingAction, getLeaderboardAction } from "@/lib/ranking-actions";
-import { cloneTemplateAction } from "@/lib/actions";
+import { addTripFromTemplateAction } from "@/lib/actions";
 import RankingCard from "@/components/RankingCard";
 import TripDetailModal from "@/components/TripDetailModal";
 import Link from "next/link";
@@ -166,7 +166,7 @@ export default function RankPage() {
                                                 </td>
                                                 <td style={{ padding: '1.5rem 2rem', textAlign: 'right' }}>
                                                     <button
-                                                        onClick={() => startTransition(() => cloneTemplateAction(trip.slug))}
+                                                        onClick={() => startTransition(() => addTripFromTemplateAction(trip.slug))}
                                                         style={{ background: 'transparent', border: 'none', color: 'var(--accent)', fontWeight: 700, cursor: 'pointer', fontSize: '0.875rem' }}
                                                     >
                                                         Add to Plan →
@@ -194,7 +194,7 @@ export default function RankPage() {
                                             </div>
                                         </div>
                                         <button
-                                            onClick={() => startTransition(() => cloneTemplateAction(trip.slug))}
+                                            onClick={() => startTransition(() => addTripFromTemplateAction(trip.slug))}
                                             style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--accent)', padding: '0.5rem 1rem', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 700 }}
                                         >
                                             Add

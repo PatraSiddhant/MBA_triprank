@@ -35,6 +35,8 @@ model TripCandidate {
   tags                  String      // Stored as JSON string or comma-separated
   templateSlug          String?     // To track origin if cloned from template
   status                String      @default("planning") // interested, planning, booked, completed
+  travelDateStart       DateTime?   // User-set travel start date
+  travelDateEnd         DateTime?   // User-set travel end date
   userId                String?
   user                  User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt             DateTime    @default(now())

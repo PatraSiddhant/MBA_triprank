@@ -7,7 +7,8 @@ import BookingTrigger from "@/components/BookingTrigger";
 import ReviewTrigger from "@/components/ReviewTrigger";
 import { getInterestData } from "@/lib/interest-actions";
 import { createClient } from "@/lib/supabase/server";
-import { MapPin, Clock, DollarSign, Zap, Shield, Coffee, Camera, ExternalLink } from "lucide-react";
+import { MapPin, Clock, DollarSign, Zap, Shield, Coffee, Camera, ExternalLink, MessageCircle } from "lucide-react";
+import WhatsAppInvite from "@/components/WhatsAppInvite";
 
 export default async function TemplateDetail({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
@@ -258,6 +259,15 @@ export default async function TemplateDetail({ params }: { params: Promise<{ slu
 
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                 <UseTemplateButton slug={trip.slug} />
+                                <WhatsAppInvite data={{
+                                    title: trip.title,
+                                    region: trip.region,
+                                    duration: Number(trip.durationDays),
+                                    budget: Number(trip.roughBudgetUsd),
+                                    vibes: trip.vibes,
+                                    slug: trip.slug,
+                                    highlights: trip.days.slice(0, 2).map(d => d.title)
+                                }} />
                                 <BookingTrigger slug={trip.slug} schoolName={tripSchools[0]?.name} />
                             </div>
                             <p style={{ fontSize: '0.75rem', color: 'var(--secondary)', textAlign: 'center', marginTop: '1rem' }}>

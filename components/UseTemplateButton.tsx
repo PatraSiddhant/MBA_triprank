@@ -1,14 +1,14 @@
 "use client";
 
 import { useTransition } from "react";
-import { cloneTemplateAction } from "../lib/actions";
+import { addTripFromTemplateAction } from "../lib/actions";
 
 export default function UseTemplateButton({ slug }: { slug: string }) {
     const [isPending, startTransition] = useTransition();
 
     return (
         <button
-            onClick={() => startTransition(() => cloneTemplateAction(slug))}
+            onClick={() => startTransition(() => addTripFromTemplateAction(slug))}
             disabled={isPending}
             className="btn btn-primary"
             style={{

@@ -4,6 +4,219 @@ import { TripTemplate } from "./types";
 
 export const tripTemplates: TripTemplate[] = [
     {
+        "slug": "costa-rica-trek",
+        "title": "Costa Rica: The Pura Vida MBA Trek",
+        "primaryDestinationCountry": "Costa Rica",
+        "primaryDestinationCity": "San Jose",
+        "region": "Central America",
+        "durationDays": 7,
+        "roughBudgetUsd": 1500,
+        "themes": ["Adventure", "Sustainability", "Luxury"],
+        "summary": "Costa Rica offers the perfect balance of thrilling adventure, breathtaking nature, and relaxing beach vibes. Ideal for MBA cohorts looking to bond over ziplining, surfing, and exploring lush rainforests while enjoying the famous 'Pura Vida' lifestyle.",
+        "schoolSlugs": ["wharton", "harvard", "stanford"],
+        "days": [
+            {
+                "dayIndex": 1,
+                "title": "Arrival in San Jose",
+                "items": [
+                    { "title": "Welcome Dinner", "description": "Meet the cohort in San Jose.", "timeBucket": "Night" }
+                ]
+            },
+            {
+                "dayIndex": 2,
+                "title": "Arenal Volcano",
+                "items": [
+                    { "title": "Hot Springs", "description": "Relax in the natural hot springs.", "timeBucket": "Afternoon" }
+                ]
+            },
+            {
+                "dayIndex": 3,
+                "title": "Ziplining Adventure",
+                "items": [
+                    { "title": "Canopy Tour", "description": "Zipline through the cloud forest.", "timeBucket": "Morning" }
+                ]
+            },
+            {
+                "dayIndex": 4,
+                "title": "Manuel Antonio",
+                "items": [
+                    { "title": "Beach Day", "description": "Relax and surf at the national park.", "timeBucket": "All Day" }
+                ]
+            },
+            {
+                "dayIndex": 5,
+                "title": "Departure",
+                "items": [
+                    { "title": "Farewell", "description": "Flights home.", "timeBucket": "Morning" }
+                ]
+            }
+        ],
+        "photos": [{ "path": "/trips/costarica/hero.png", "alt": "Costa Rica Volcano", "isHero": true }],
+        "reviewSnippets": [{ "text": "The perfect mix of adventure and relaxation. Great for bonding!", "sourceName": "MBA Trek Hub", "tag": "adventure" }],
+        "safetyRating": 4,
+        "comfortRating": 4,
+        "vibes": ["adventure", "tropical", "relaxed"],
+        "logistics": {
+            "bestSeason": "December-April",
+            "visaNotes": "US citizens do not need a visa",
+            "dailyBudgetRange": "100-200",
+            "primaryAirport": "SJO or LIR",
+            "currency": "Colon (CRC)",
+            "healthNotes": "Routine vaccines recommended",
+            "transport": { "airportToHotel": "Shuttle", "withinCity": "Shuttle or Uber", "betweenDestinations": "Charter Bus" }
+        },
+        "culturalIntelligence": {
+            "communicationStyle": "Friendly and indirect.",
+            "businessEtiquette": "Punctual but relaxed.",
+            "socialCustoms": "'Pura Vida' is a way of life.",
+            "diningNorms": "Casual dining is common."
+        },
+        "groupBondingActivities": [{ "activity": "Catamaran Cruise", "durationHours": 3, "costPerPerson": 80, "whyItWorks": "Great sunset views and open bar." }],
+        "premiumAccommodations": [{ "name": "Nayara Gardens", "stars": 5, "city": "Arenal", "whyGoodForGroups": "Luxury villas with volcano views." }]
+    },
+    {
+        "slug": "dominican-republic-trek",
+        "title": "Dominican Republic: The Caribbean Escape",
+        "primaryDestinationCountry": "Dominican Republic",
+        "primaryDestinationCity": "Punta Cana",
+        "region": "Caribbean",
+        "durationDays": 6,
+        "roughBudgetUsd": 1200,
+        "themes": ["Party", "Luxury", "Culture"],
+        "summary": "Punta Cana is the ultimate Caribbean getaway for MBA students looking for beautiful white sand beaches, all-inclusive luxury, and vibrant nightlife. It's the perfect setting to decompress after finals and celebrate with the cohort.",
+        "schoolSlugs": ["columbia", "booth", "kellogg"],
+        "days": [
+            {
+                "dayIndex": 1,
+                "title": "Arrival in Punta Cana",
+                "items": [
+                    { "title": "Resort Check-In", "description": "Settle into the all-inclusive resort.", "timeBucket": "Afternoon" }
+                ]
+            },
+            {
+                "dayIndex": 2,
+                "title": "Beach & Pool Day",
+                "items": [
+                    { "title": "Group Swim", "description": "Relax by the pool with open bar.", "timeBucket": "All Day" }
+                ]
+            },
+            {
+                "dayIndex": 3,
+                "title": "Island Excursion",
+                "items": [
+                    { "title": "Saona Island", "description": "Catamaran trip to a pristine island.", "timeBucket": "All Day" }
+                ]
+            },
+            {
+                "dayIndex": 4,
+                "title": "Nightlife",
+                "items": [
+                    { "title": "Coco Bongo", "description": "Famous nightclub show and party.", "timeBucket": "Night" }
+                ]
+            },
+            {
+                "dayIndex": 5,
+                "title": "Departure",
+                "items": [
+                    { "title": "Farewell", "description": "Flights home.", "timeBucket": "Morning" }
+                ]
+            }
+        ],
+        "photos": [{ "path": "/trips/dominicanrepublic/hero.png", "alt": "Punta Cana Beach", "isHero": true }],
+        "reviewSnippets": [{ "text": "Unbeatable resort experience. Pure relaxation and fun.", "sourceName": "MBA Trek Hub", "tag": "nightlife" }],
+        "safetyRating": 4,
+        "comfortRating": 5,
+        "vibes": ["tropical", "party", "luxury"],
+        "logistics": {
+            "bestSeason": "December-April",
+            "visaNotes": "US citizens just need a tourist card",
+            "dailyBudgetRange": "150-300",
+            "primaryAirport": "PUJ",
+            "currency": "Dominican Peso (DOP)",
+            "healthNotes": "Drink bottled water",
+            "transport": { "airportToHotel": "Pre-booked transfer", "withinCity": "Resort transport", "betweenDestinations": "Charter Bus" }
+        },
+        "culturalIntelligence": {
+            "communicationStyle": "Expressive and warm.",
+            "businessEtiquette": "Relationship-driven.",
+            "socialCustoms": "Music and dancing are central to life.",
+            "diningNorms": "Late dinners are common."
+        },
+        "groupBondingActivities": [{ "activity": "Private Yacht Charter", "durationHours": 4, "costPerPerson": 120, "whyItWorks": "Exclusive party on the water." }],
+        "premiumAccommodations": [{ "name": "Hard Rock Hotel", "stars": 5, "city": "Punta Cana", "whyGoodForGroups": "Massive resort with endless entertainment." }]
+    },
+    {
+        "slug": "jamaica-trek",
+        "title": "Jamaica: The Island Rhythm Trek",
+        "primaryDestinationCountry": "Jamaica",
+        "primaryDestinationCity": "Montego Bay",
+        "region": "Caribbean",
+        "durationDays": 6,
+        "roughBudgetUsd": 1350,
+        "themes": ["Culture", "Party", "Adventure"],
+        "summary": "Experience the vibrant culture, incredible food, and stunning beaches of Jamaica. This trek offers MBA cohorts a chance to unwind to reggae rhythms, climb iconic waterfalls, and enjoy world-class Caribbean hospitality.",
+        "schoolSlugs": ["stern", "haas", "tuck"],
+        "days": [
+            {
+                "dayIndex": 1,
+                "title": "Arrival in MBJ",
+                "items": [
+                    { "title": "Welcome Cocktail", "description": "Rum punch reception at the resort.", "timeBucket": "Afternoon" }
+                ]
+            },
+            {
+                "dayIndex": 2,
+                "title": "Dunn's River Falls",
+                "items": [
+                    { "title": "Waterfall Climb", "description": "Group climb up the famous falls.", "timeBucket": "Morning" }
+                ]
+            },
+            {
+                "dayIndex": 3,
+                "title": "Catamaran & Snorkel",
+                "items": [
+                    { "title": "Sail the Coast", "description": "Snorkeling and sunset sailing.", "timeBucket": "Afternoon" }
+                ]
+            },
+            {
+                "dayIndex": 4,
+                "title": "Cultural Day",
+                "items": [
+                    { "title": "Bob Marley Museum", "description": "Visit the legendary musician's home.", "timeBucket": "Morning" }
+                ]
+            },
+            {
+                "dayIndex": 5,
+                "title": "Departure",
+                "items": [
+                    { "title": "Farewell", "description": "Flights home.", "timeBucket": "Morning" }
+                ]
+            }
+        ],
+        "photos": [{ "path": "/trips/jamaica/hero.png", "alt": "Jamaica Waterfalls", "isHero": true }],
+        "reviewSnippets": [{ "text": "Amazing vibes and the people are incredible. So relaxing.", "sourceName": "MBA Trek Hub", "tag": "culture" }],
+        "safetyRating": 3,
+        "comfortRating": 4,
+        "vibes": ["chill", "tropical", "cultural"],
+        "logistics": {
+            "bestSeason": "November-Mid December",
+            "visaNotes": "US citizens do not need a visa",
+            "dailyBudgetRange": "100-250",
+            "primaryAirport": "MBJ",
+            "currency": "Jamaican Dollar (JMD)",
+            "healthNotes": "Mosquito repellant is a must",
+            "transport": { "airportToHotel": "Resort shuttle", "withinCity": "Taxis", "betweenDestinations": "Charter Bus" }
+        },
+        "culturalIntelligence": {
+            "communicationStyle": "Direct but friendly.",
+            "businessEtiquette": "Relaxed pacing.",
+            "socialCustoms": "'Island time' is real.",
+            "diningNorms": "Jerk chicken is a staple."
+        },
+        "groupBondingActivities": [{ "activity": "Bioluminescent Bay Tour", "durationHours": 2, "costPerPerson": 60, "whyItWorks": "Magical night-time experience." }],
+        "premiumAccommodations": [{ "name": "Half Moon", "stars": 5, "city": "Montego Bay", "whyGoodForGroups": "Spacious luxury compound." }]
+    },
+    {
         "slug": "colombia-trek",
         "title": "Colombia: The Iconic MBA Trek",
         "primaryDestinationCity": "Bogotá",

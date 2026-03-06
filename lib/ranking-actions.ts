@@ -2,6 +2,7 @@
 
 import prisma from "./prisma";
 import { revalidatePath } from "next/cache";
+import { tripTemplates } from "@/data/trip-templates";
 
 const K_FACTOR = 32;
 
@@ -37,18 +38,14 @@ export async function updateRankingAction(winnerSlug: string, loserSlug: string)
         })
     ]);
 
-    revalidatePath("/rank");
+    revalidatePath("/recommend");
 }
 
 async function getOrCreateRanking(slug: string) {
-    const ranking = await prisma.tripRanking.findUnique({
-        where: { templateSlug: slug }
-    });
-
-    if (ranking) return ranking;
-
-    return await prisma.tripRanking.create({
-        data: {
+    return await prisma.tripRanking.upsert({
+        where: { templateSlug: slug },
+        update: {},
+        create: {
             templateSlug: slug,
             score: 1200
         }
@@ -56,7 +53,10 @@ async function getOrCreateRanking(slug: string) {
 }
 
 export async function getLeaderboardAction() {
-    return await prisma.tripRanking.findMany({
+    const knownSlugs = new Set(tripTemplates.map(t => t.slug));
+    const all = await prisma.tripRanking.findMany({
         orderBy: { score: 'desc' }
     });
+    // Filter out slugs that no longer match a template
+    return all.filter(r => knownSlugs.has(r.templateSlug));
 }

@@ -9,10 +9,11 @@ import {
     ZoomableGroup
 } from "react-simple-maps";
 import { MapPin, Plus, Sparkles, Compass } from "lucide-react";
-import { createCustomTripAction } from "@/lib/actions";
+import { createCustomTripAction, createWorldMapTripAction } from "@/lib/actions";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-const geoUrl = "https://raw.githubusercontent.com/lotusms/world-map-data/master/world-110m.json";
+const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
 interface WorldMapProps {
     trips: any[];
@@ -52,15 +53,81 @@ const CITY_COORDS: Record<string, { lat: number, lng: number }> = {
 
 export default function WorldMap({ trips }: WorldMapProps) {
     const [isPending, startTransition] = useTransition();
+    const [showModal, setShowModal] = React.useState(false);
+    const [country, setCountry] = React.useState("");
+    const [citiesInput, setCitiesInput] = React.useState("");
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+    const router = useRouter();
 
-    const markers = trips.map(t => {
-        const coords = CITY_COORDS[t.primaryDestinationCity] || { lat: 0, lng: 0 };
-        return {
-            ...t,
-            coordinates: [coords.lng, coords.lat] as [number, number],
-            hasCoords: !!CITY_COORDS[t.primaryDestinationCity]
-        };
-    }).filter(m => m.hasCoords);
+    const markers: any[] = [];
+    trips.forEach(t => {
+        let hasDynamicTags = false;
+        if (t.tags && t.tags.startsWith('[')) {
+            try {
+                const parsed = JSON.parse(t.tags);
+                if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].lat) {
+                    hasDynamicTags = true;
+                    parsed.forEach((c: any) => {
+                        if (c.lat && c.lng) {
+                            markers.push({
+                                ...t,
+                                id: `${t.id}-${c.name}`,
+                                primaryDestinationCity: c.name,
+                                coordinates: [c.lng, c.lat] as [number, number],
+                            });
+                        }
+                    });
+                }
+            } catch (e) { }
+        }
+
+        if (!hasDynamicTags) {
+            const coords = CITY_COORDS[t.primaryDestinationCity];
+            if (coords) {
+                markers.push({
+                    ...t,
+                    coordinates: [coords.lng, coords.lat] as [number, number],
+                });
+            }
+        }
+    });
+
+    const handleAddMapTrip = async () => {
+        if (!country || !citiesInput) return;
+        setIsSubmitting(true);
+        const cityNames = citiesInput.split(',').map(c => c.trim()).filter(Boolean);
+        const geocodedCities: { name: string, lat: number, lng: number }[] = [];
+
+        for (const city of cityNames) {
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}&format=json&limit=1`);
+                const data = await res.json();
+                if (data && data.length > 0) {
+                    geocodedCities.push({
+                        name: city,
+                        lat: parseFloat(data[0].lat),
+                        lng: parseFloat(data[0].lon)
+                    });
+                } else {
+                    // Fallback just pushing the name if coords fail
+                    geocodedCities.push({ name: city, lat: 0, lng: 0 });
+                }
+            } catch (err) {
+                geocodedCities.push({ name: city, lat: 0, lng: 0 });
+            }
+            // small delay to respect nominatim rate limits
+            await new Promise(r => setTimeout(r, 600));
+        }
+
+        startTransition(async () => {
+            const tripId = await createWorldMapTripAction(country, geocodedCities.filter(c => c.lat !== 0));
+            setShowModal(false);
+            setCountry("");
+            setCitiesInput("");
+            setIsSubmitting(false);
+            router.push(`/trips/${tripId}`);
+        });
+    };
 
     return (
         <div className="glass" style={{
@@ -86,12 +153,11 @@ export default function WorldMap({ trips }: WorldMapProps) {
                         <Sparkles size={16} /> Explore Templates
                     </Link>
                     <button
-                        onClick={() => startTransition(() => createCustomTripAction())}
-                        disabled={isPending}
+                        onClick={() => setShowModal(true)}
                         className="btn btn-primary"
                         style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.5rem', fontSize: '0.875rem', fontWeight: 800 }}
                     >
-                        <Plus size={16} /> {isPending ? "Creating..." : "Design Custom Trek"}
+                        <Plus size={16} /> Add Map Pin
                     </button>
                 </div>
             </div>
@@ -110,18 +176,18 @@ export default function WorldMap({ trips }: WorldMapProps) {
                 >
                     <ZoomableGroup zoom={1} minZoom={1} maxZoom={4}>
                         <Geographies geography={geoUrl}>
-                            {({ geographies }: { geographies: any[] }) =>
+                            {({ geographies }) =>
                                 geographies.map((geo) => (
                                     <Geography
                                         key={geo.rsmKey}
                                         geography={geo}
-                                        fill="#1c2128" // Dark land
-                                        stroke="#2d333b" // Subtle borders
+                                        fill="rgba(255,255,255,0.15)"
+                                        stroke="rgba(255,255,255,0.25)"
                                         strokeWidth={0.5}
                                         style={{
                                             default: { outline: "none" },
-                                            hover: { fill: "#22272e", outline: "none" },
-                                            pressed: { fill: "#2d333b", outline: "none" },
+                                            hover: { fill: "rgba(255,255,255,0.25)", outline: "none", transition: 'all 0.2s' },
+                                            pressed: { fill: "rgba(var(--accent-rgb), 0.4)", outline: "none" },
                                         }}
                                     />
                                 ))
@@ -221,6 +287,53 @@ export default function WorldMap({ trips }: WorldMapProps) {
                     <div style={{ fontSize: '1.25rem', fontWeight: 800 }}>Master Voyager</div>
                 </div>
             </div>
+            {showModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0, left: 0, right: 0, bottom: 0,
+                    background: 'rgba(0,0,0,0.8)',
+                    zIndex: 9999,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}>
+                    <div className="glass" style={{ width: '400px', padding: '2rem', borderRadius: '1rem', position: 'relative' }}>
+                        <button onClick={() => setShowModal(false)} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: 'none', color: 'white', cursor: 'pointer' }}>✕</button>
+                        <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', fontWeight: 800 }}>Add Trip to Map</h2>
+
+                        <div style={{ marginBottom: '1rem' }}>
+                            <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.5rem', color: 'var(--secondary)' }}>Country</label>
+                            <input
+                                type="text"
+                                value={country}
+                                onChange={e => setCountry(e.target.value)}
+                                placeholder="e.g. Italy"
+                                style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white' }}
+                            />
+                        </div>
+
+                        <div style={{ marginBottom: '2rem' }}>
+                            <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.5rem', color: 'var(--secondary)' }}>Cities Visited (comma-separated)</label>
+                            <input
+                                type="text"
+                                value={citiesInput}
+                                onChange={e => setCitiesInput(e.target.value)}
+                                placeholder="e.g. Rome, Florence, Venice"
+                                style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white' }}
+                            />
+                        </div>
+
+                        <button
+                            onClick={handleAddMapTrip}
+                            disabled={isSubmitting || isPending || !country || !citiesInput}
+                            className="btn btn-primary"
+                            style={{ width: '100%', padding: '1rem', fontWeight: 800, opacity: (isSubmitting || isPending) ? 0.7 : 1 }}
+                        >
+                            {isSubmitting ? "Finding Coordinates..." : isPending ? "Saving..." : "Pin on Map"}
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Compass, Sword, Users, Map, Menu, X, LogOut } from "lucide-react";
+import { Compass, Zap, Calendar, Users, Map, Menu, X, LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { User } from "@supabase/supabase-js";
 
@@ -37,9 +37,10 @@ export default function ClientHeader() {
 
     const navLinks = [
         { name: "Explore", href: "/discover", icon: Compass },
-        { name: "Arena", href: "/rank", icon: Sword },
-        { name: "Community", href: "/socials", icon: Users },
+        { name: "Recommend", href: "/recommend", icon: Zap },
+        { name: "Plan", href: "/plan", icon: Calendar },
         { name: "My Trips", href: "/trips", icon: Map },
+        { name: "Community", href: "/socials", icon: Users },
     ];
 
     const isActive = (path: string) => pathname === path;
