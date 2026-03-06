@@ -42,6 +42,8 @@ export async function addTripFromTemplateAction(templateSlug: string) {
             durationDays: template.durationDays,
             roughBudgetUsd: template.roughBudgetUsd,
             templateSlug: template.slug,
+            theme: template.themes?.[0] || 'Adventure',
+            tags: JSON.stringify(template.vibes || []),
             status: "planning",
             userId: user?.id || null,
             itinerary: {
@@ -96,6 +98,8 @@ export async function logPastTripFromTemplateAction(templateSlug: string) {
             durationDays: template.durationDays,
             roughBudgetUsd: template.roughBudgetUsd,
             templateSlug: template.slug,
+            theme: template.themes?.[0] || 'Adventure',
+            tags: JSON.stringify(template.vibes || []),
             status: "completed",
             userId: user?.id || null,
             itinerary: {
@@ -211,6 +215,7 @@ export async function createWorldMapTripAction(country: string, cities: { name: 
             primaryDestinationCountry: country,
             durationDays: cities.length * 3,
             roughBudgetUsd: cities.length * 500,
+            theme: "Explorer",
             status: "completed",
             userId: user?.id || null,
             tags: JSON.stringify(cities),
@@ -261,6 +266,8 @@ export async function createCustomTripAction() {
             primaryDestinationCountry: "TBD",
             durationDays: 1,
             roughBudgetUsd: 0,
+            theme: "Custom",
+            tags: "[]",
             status: "planning",
             userId: user?.id || null,
             itinerary: {
