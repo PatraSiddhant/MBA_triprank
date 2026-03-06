@@ -4,6 +4,7 @@ import { MapPin, Clock, DollarSign, Calendar, Zap, Book } from "lucide-react";
 import ItineraryEditor from "@/components/ItineraryEditor";
 import MemoryQuestionnaire from "@/components/MemoryQuestionnaire";
 import MemoryCard from "@/components/MemoryCard";
+import TripDownloadButton from "@/components/TripDownloadButton";
 
 export default async function UserTripPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -126,9 +127,7 @@ export default async function UserTripPage({ params }: { params: Promise<{ id: s
                                         }}>{trip.status || 'Draft'}</span>
                                     </div>
                                 </div>
-                                <button className="btn btn-primary" style={{ width: '100%', marginTop: '3rem', padding: '1rem', fontWeight: 800 }}>
-                                    Share Itinerary
-                                </button>
+                                <TripDownloadButton trip={trip} />
                             </div>
                         </aside>
                     )}

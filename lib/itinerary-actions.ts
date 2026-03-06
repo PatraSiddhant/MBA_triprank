@@ -10,7 +10,6 @@ export async function updateItineraryItem(
 ) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error("Not authenticated");
 
     const item = await (prisma as any).itineraryItem.update({
         where: { id: itemId },
@@ -27,7 +26,6 @@ export async function addItineraryItem(
 ) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error("Not authenticated");
 
 
     const item = await (prisma as any).itineraryItem.create({
@@ -44,7 +42,6 @@ export async function addItineraryItem(
 export async function deleteItineraryItem(itemId: string) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error("Not authenticated");
 
     await (prisma as any).itineraryItem.delete({
         where: { id: itemId },
@@ -59,7 +56,6 @@ export async function addItineraryDay(
 ) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error("Not authenticated");
 
     const existingDays = await (prisma as any).itineraryDay.findMany({
         where: { itineraryId },
@@ -84,7 +80,6 @@ export async function addItineraryDay(
 export async function deleteItineraryDay(dayId: string) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error("Not authenticated");
 
     // Delete all items in the day first
     await (prisma as any).itineraryItem.deleteMany({

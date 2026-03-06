@@ -48,7 +48,7 @@ export default function Home() {
               The World is Your <br /><span style={{ color: 'white' }}>Campus.</span>
             </h1>
             <p style={{ fontSize: 'clamp(1.125rem, 2vw, 1.5rem)', color: 'var(--secondary)', marginBottom: '4rem', maxWidth: '650px', lineHeight: 1.4 }}>
-              Discover iconic MBA treks, build your wishlist, and record your legacy. The ultimate travel companion for the modern business student.
+              Discover iconic MBA treks, add custom cities to your interactive Global Footprint, generate WhatsApp recruitment messages, and download PDF itineraries without creating an account. The ultimate travel companion for the modern business student.
             </p>
             <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
               <Link href="/discover" className="btn btn-primary" style={{ fontSize: '1.125rem', padding: '1.25rem 2.5rem', fontWeight: 800 }}>Explore Treks</Link>
@@ -113,7 +113,7 @@ export default function Home() {
               </div>
               <h2 style={{ fontSize: '3.5rem', marginBottom: '2.5rem', lineHeight: 1.1 }}>Your travels, your story.</h2>
               <p style={{ color: 'var(--secondary)', fontSize: '1.25rem', lineHeight: 1.6, marginBottom: '3.5rem' }}>
-                Record your legacy with guided post-trek journals. Visualize your global footprint on your personal world map.
+                Quickly add custom map pins for any popular city in the world to visualize your holistic global footprint. Then, instantly download beautifully formatted PDF itineraries of your journeys.
               </p>
               <Link href="/trips" className="btn btn-primary" style={{ padding: '1rem 2.5rem', fontWeight: 800 }}>Open Your Quest Log</Link>
             </div>
@@ -141,7 +141,7 @@ export default function Home() {
             </div>
             <h2 style={{ fontSize: '4rem', marginBottom: '2.5rem' }}>Ranked by the community.</h2>
             <p style={{ color: 'var(--secondary)', fontSize: '1.25rem', maxWidth: '700px', margin: '0 auto' }}>
-              Settle the debate. Pairwise rank treks and see which destinations are trending for your school.
+              Settle the debate. Pairwise rank treks to see which destinations are trending, or effortlessly recruit your cohort using our WhatsApp Invite generator.
             </p>
           </div>
 
@@ -158,8 +158,8 @@ export default function Home() {
             </div>
             <div className="glass animate-fade-in" style={{ padding: '3rem', borderRadius: '2.5rem', textAlign: 'center' }}>
               <BookOpen size={40} color="#00cc88" style={{ margin: '0 auto 2rem' }} />
-              <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Social DNA</h3>
-              <p style={{ color: 'var(--secondary)', fontSize: '0.875rem', lineHeight: 1.6 }}>Share your rankings and see how you align with your peers.</p>
+              <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Instant Recruitment</h3>
+              <p style={{ color: 'var(--secondary)', fontSize: '0.875rem', lineHeight: 1.6 }}>Generate high-conversion WhatsApp templates to hype your trek and easily collect RSVP commitments.</p>
             </div>
           </div>
 
