@@ -1,14 +1,22 @@
 import prisma from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
+import { cookies } from "next/headers";
 import TripsPageClient from "./TripsPageClient";
 
 export default async function UserTripsIndex() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
+    const cookieStore = await cookies();
+    const guestTripsCookie = cookieStore.get("guest_trips")?.value;
+    let guestTripIds: string[] = [];
+    if (guestTripsCookie) {
+        try { guestTripIds = JSON.parse(guestTripsCookie); } catch (e) { }
+    }
+
     let trips: any[] = [];
-    if (user) {
-        try {
+    try {
+        if (user) {
             trips = await (prisma as any).tripCandidate.findMany({
                 where: { userId: user.id },
                 orderBy: { createdAt: 'desc' },
@@ -17,9 +25,18 @@ export default async function UserTripsIndex() {
                     memory: true,
                 }
             });
-        } catch (e) {
-            console.error("Prisma error:", e);
+        } else if (guestTripIds.length > 0) {
+            trips = await (prisma as any).tripCandidate.findMany({
+                where: { id: { in: guestTripIds } },
+                orderBy: { createdAt: 'desc' },
+                include: {
+                    itinerary: true,
+                    memory: true,
+                }
+            });
         }
+    } catch (e) {
+        console.error("Prisma error:", e);
     }
 
     // Serialize dates for client components

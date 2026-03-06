@@ -4,7 +4,19 @@ import prisma from "./prisma";
 import { createClient } from "./supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { tripTemplates } from "@/data/trip-templates";
+
+async function addGuestTrip(tripId: string) {
+    const cookieStore = await cookies();
+    const existing = cookieStore.get("guest_trips")?.value;
+    let guestTrips: string[] = [];
+    if (existing) {
+        try { guestTrips = JSON.parse(existing); } catch (e) { }
+    }
+    guestTrips.push(tripId);
+    cookieStore.set("guest_trips", JSON.stringify(guestTrips), { maxAge: 60 * 60 * 24 * 365, path: '/' });
+}
 
 export async function addTripFromTemplateAction(templateSlug: string) {
     const supabase = await createClient();
@@ -40,9 +52,9 @@ export async function addTripFromTemplateAction(templateSlug: string) {
                             title: d.title || "Day",
                             items: {
                                 create: d.items?.map((item: any) => ({
-                                    title: item.title,
-                                    description: item.description,
-                                    timeBucket: item.timeBucket
+                                    title: item.title || "Activity",
+                                    description: item.description || "",
+                                    timeBucket: item.timeBucket || "Anytime"
                                 })) || []
                             }
                         })) || []
@@ -51,6 +63,10 @@ export async function addTripFromTemplateAction(templateSlug: string) {
             }
         }
     });
+
+    if (!user) {
+        await addGuestTrip(trip.id);
+    }
 
     revalidatePath("/trips");
     redirect("/trips");
@@ -90,9 +106,9 @@ export async function logPastTripFromTemplateAction(templateSlug: string) {
                             title: d.title || "Day",
                             items: {
                                 create: d.items?.map((item: any) => ({
-                                    title: item.title,
-                                    description: item.description,
-                                    timeBucket: item.timeBucket
+                                    title: item.title || "Activity",
+                                    description: item.description || "",
+                                    timeBucket: item.timeBucket || "Anytime"
                                 })) || []
                             }
                         })) || []
@@ -101,6 +117,10 @@ export async function logPastTripFromTemplateAction(templateSlug: string) {
             }
         }
     });
+
+    if (!user) {
+        await addGuestTrip(trip.id);
+    }
 
     revalidatePath("/trips");
     redirect("/trips");
@@ -204,6 +224,10 @@ export async function createWorldMapTripAction(country: string, cities: { name: 
         }
     });
 
+    if (!user) {
+        await addGuestTrip(trip.id);
+    }
+
     revalidatePath("/trips");
     return trip.id;
 }
@@ -248,6 +272,10 @@ export async function createCustomTripAction() {
             }
         }
     });
+
+    if (!user) {
+        await addGuestTrip(trip.id);
+    }
 
     revalidatePath("/trips");
     redirect(`/trips/${trip.id}`);
