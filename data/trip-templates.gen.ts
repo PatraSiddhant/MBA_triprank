@@ -1,5 +1,4 @@
 
-export * from "./types";
 import { TripTemplate } from "./types";
 
 export const tripTemplates: TripTemplate[] = [
@@ -682,7 +681,7 @@ export const tripTemplates: TripTemplate[] = [
         ],
         "photos": [
             {
-                "path": "/trips/patagonia/hero.png",
+                "path": "/trips/chile/hero.png",
                 "alt": "Chile Skyline",
                 "isHero": true
             }
@@ -867,7 +866,7 @@ export const tripTemplates: TripTemplate[] = [
         ],
         "photos": [
             {
-                "path": "/trips/costarica/hero.png",
+                "path": "/trips/costa-rica/hero.png",
                 "alt": "Costa Rica Skyline",
                 "isHero": true
             }
@@ -1058,7 +1057,7 @@ export const tripTemplates: TripTemplate[] = [
         ],
         "photos": [
             {
-                "path": "/trips/argentina/hero.png",
+                "path": "/trips/brazil/hero.png",
                 "alt": "Brazil Skyline",
                 "isHero": true
             }
@@ -2586,7 +2585,7 @@ export const tripTemplates: TripTemplate[] = [
         ],
         "photos": [
             {
-                "path": "/trips/ibiza/hero.png",
+                "path": "/trips/spain/hero.png",
                 "alt": "Spain Skyline",
                 "isHero": true
             }
@@ -3923,7 +3922,7 @@ export const tripTemplates: TripTemplate[] = [
         ],
         "photos": [
             {
-                "path": "/trips/southkorea/hero.png",
+                "path": "/trips/south-korea/hero.png",
                 "alt": "South Korea Skyline",
                 "isHero": true
             }
@@ -4878,7 +4877,7 @@ export const tripTemplates: TripTemplate[] = [
         ],
         "photos": [
             {
-                "path": "/trips/philippines/hero.png",
+                "path": "/trips/thailand/hero.png",
                 "alt": "Thailand Skyline",
                 "isHero": true
             }
@@ -5642,7 +5641,7 @@ export const tripTemplates: TripTemplate[] = [
         ],
         "photos": [
             {
-                "path": "/trips/taiwan/hero.png",
+                "path": "/trips/singapore/hero.png",
                 "alt": "Singapore Skyline",
                 "isHero": true
             }
@@ -5732,5 +5731,3 @@ export const tripTemplates: TripTemplate[] = [
 export const getTripTemplateBySlug = (slug: string) => {
     return tripTemplates.find((t) => t.slug === slug);
 };
-
-export const getAllTripTemplates = () => tripTemplates;

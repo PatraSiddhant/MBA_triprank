@@ -115,6 +115,102 @@ export default async function TemplateDetail({ params }: { params: Promise<{ slu
                             </div>
                         </div>
 
+                        {/* Cultural Intelligence Section */}
+                        <div style={{ marginBottom: '6rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '3rem' }}>
+                                <Zap className="text-accent" size={32} />
+                                <h2 style={{ fontSize: '2.5rem', fontWeight: 800 }}>Cultural Intelligence</h2>
+                            </div>
+                            <div className="grid-2">
+                                <div className="glass" style={{ padding: '2.5rem' }}>
+                                    <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--accent)' }}>Communication Style</h3>
+                                    <p style={{ color: 'var(--secondary)', lineHeight: 1.6 }}>{trip.culturalIntelligence.communicationStyle}</p>
+                                </div>
+                                <div className="glass" style={{ padding: '2.5rem' }}>
+                                    <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--accent)' }}>Business Etiquette</h3>
+                                    <p style={{ color: 'var(--secondary)', lineHeight: 1.6 }}>{trip.culturalIntelligence.businessEtiquette}</p>
+                                </div>
+                                <div className="glass" style={{ padding: '2.5rem' }}>
+                                    <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--accent)' }}>Social Customs</h3>
+                                    <p style={{ color: 'var(--secondary)', lineHeight: 1.6 }}>{trip.culturalIntelligence.socialCustoms}</p>
+                                </div>
+                                <div className="glass" style={{ padding: '2.5rem' }}>
+                                    <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--accent)' }}>Dining Norms</h3>
+                                    <p style={{ color: 'var(--secondary)', lineHeight: 1.6 }}>{trip.culturalIntelligence.diningNorms}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Pro Logistics Section */}
+                        <div style={{ marginBottom: '6rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '3rem' }}>
+                                <Shield className="text-accent" size={32} />
+                                <h2 style={{ fontSize: '2.5rem', fontWeight: 800 }}>Pro Logistics</h2>
+                            </div>
+                            <div className="glass" style={{ padding: '3rem' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '2rem' }}>
+                                    <div>
+                                        <h4 style={{ fontWeight: 700, marginBottom: '0.5rem', opacity: 0.6 }}>Best Season</h4>
+                                        <p>{trip.logistics.bestSeason}</p>
+                                    </div>
+                                    <div>
+                                        <h4 style={{ fontWeight: 700, marginBottom: '0.5rem', opacity: 0.6 }}>Visa Info</h4>
+                                        <p>{trip.logistics.visaNotes}</p>
+                                    </div>
+                                    <div>
+                                        <h4 style={{ fontWeight: 700, marginBottom: '0.5rem', opacity: 0.6 }}>Budget Range</h4>
+                                        <p>${trip.logistics.dailyBudgetRange}/day</p>
+                                    </div>
+                                    <div>
+                                        <h4 style={{ fontWeight: 700, marginBottom: '0.5rem', opacity: 0.6 }}>Currency</h4>
+                                        <p>{trip.logistics.currency}</p>
+                                    </div>
+                                </div>
+                                <div style={{ marginTop: '3rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '2rem' }}>
+                                    <h4 style={{ fontWeight: 700, marginBottom: '1rem' }}>Health & Wellness</h4>
+                                    <p style={{ color: 'var(--secondary)' }}>{trip.logistics.healthNotes}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* MBA Group Specials */}
+                        <div style={{ marginBottom: '6rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '3rem' }}>
+                                <Coffee className="text-accent" size={32} />
+                                <h2 style={{ fontSize: '2.5rem', fontWeight: 800 }}>MBA Group Specials</h2>
+                            </div>
+                            <div className="responsive-stack">
+                                <div style={{ flex: 1 }}>
+                                    <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '2rem' }}>Bonding Activities</h3>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                        {trip.groupBondingActivities.map((activity, idx) => (
+                                            <div key={idx} className="glass" style={{ padding: '1.5rem' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                                                    <span style={{ fontWeight: 700 }}>{activity.activity}</span>
+                                                    <span style={{ color: 'var(--accent)' }}>${activity.costPerPerson}</span>
+                                                </div>
+                                                <p style={{ fontSize: '0.875rem', color: 'var(--secondary)' }}>{activity.whyItWorks}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                    <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '2rem' }}>Cohort Basecamps</h3>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                        {trip.premiumAccommodations.map((hotel, idx) => (
+                                            <div key={idx} className="glass" style={{ padding: '1.5rem' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                                                    <span style={{ fontWeight: 700 }}>{hotel.name}</span>
+                                                    <span>{'★'.repeat(hotel.stars)}</span>
+                                                </div>
+                                                <p style={{ fontSize: '0.875rem', color: 'var(--secondary)' }}>{hotel.whyGoodForGroups}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div style={{ marginBottom: '6rem' }}>
                             <h2 style={{ fontSize: '2rem', marginBottom: '2rem', fontWeight: 800 }}>Student Reviews</h2>
                             <div className="grid-2">
