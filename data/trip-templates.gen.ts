@@ -3250,7 +3250,7 @@ export const tripTemplates: TripTemplate[] = [
         "primaryDestinationCountry": "UAE",
         "region": "Middle East",
         "durationDays": 1,
-        "roughBudgetUsd": 90,
+        "roughBudgetUsd": "90-150",
         "themes": [
             "Culture",
             "Adventure",

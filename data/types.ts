@@ -22,8 +22,8 @@ export type TripTemplate = {
     primaryDestinationCity: string;
     primaryDestinationCountry: string;
     region: string;
-    durationDays: number;
-    roughBudgetUsd: number;
+    durationDays: number | string;
+    roughBudgetUsd: number | string;
     themes: ("Adventure" | "Culture" | "Business" | "Party" | "Luxury" | "Sustainability" | "Food & Wine" | "Tech")[];
     summary: string;
     schoolSlugs: string[];
@@ -61,7 +61,7 @@ export type TripTemplate = {
     groupBondingActivities: {
         activity: string;
         durationHours: number | string;
-        costPerPerson: number;
+        costPerPerson: number | string;
         whyItWorks: string;
     }[];
     premiumAccommodations: {

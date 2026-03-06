@@ -66,7 +66,7 @@ const templates = Object.entries(destinations).map(([country, data]) => {
         primaryDestinationCountry: country,
         region: data.region || "Global",
         durationDays: data.tour_packages?.[0]?.duration_days || 5,
-        roughBudgetUsd: parseInt(data.tour_packages?.[0]?.cost_per_person_usd) || 2000,
+        roughBudgetUsd: data.tour_packages?.[0]?.cost_per_person_usd || "2000",
         themes: ["Culture", "Adventure", "Business"],
         summary: data.summary,
         schoolSlugs,
@@ -115,9 +115,12 @@ const templates = Object.entries(destinations).map(([country, data]) => {
 });
 
 const output = `
+export * from "./types";
 import { TripTemplate } from "./types";
 
 export const tripTemplates: TripTemplate[] = ${JSON.stringify(templates, null, 4)};
+
+export const getAllTripTemplates = () => tripTemplates;
 
 export const getTripTemplateBySlug = (slug: string) => {
     return tripTemplates.find((t) => t.slug === slug);
