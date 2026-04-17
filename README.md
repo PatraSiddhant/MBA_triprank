@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TrekRank (MBA TripRank) ✈️🌍
 
-## Getting Started
+**TrekRank** is a premium social platform and itinerary building application engineered specifically for MBA students. It reinvents how cohorts discover, rank, plan, and immortalize their travel expeditions (treks) by combining dynamic Elo-style destination voting with robust trip planning tools.
 
-First, run the development server:
+---
 
+## ✨ Key Features
+
+🏆 **Destination Ranking System:**
+Vote on curated MBA trips using pairwise comparisons. Our Elo ranking engine automatically bubbles up the absolute best treks across categories like *Party*, *Culture*, and *Adventure*.
+
+🗺️ **Comprehensive Itinerary Builder:**
+Create day-by-day expedition plans. Add activities, edit time buckets (Morning, Afternoon, Night), and track your budget. Built with dynamic drag-and-drop mechanics. 
+
+📸 **"MBA Wrapped" & Legacy Memories:**
+Log past trips and create an interactive "Trip Memory". Note hidden gems, provide actionable tips for future cohorts, and lock in your "best meal" to help future MBAs replicate your success.
+
+👥 **Intelligent Social Feed:**
+Stay up to date with your cohort. See when peers book new adventures, clone their itineraries in a single click, or read their post-trip updates.
+
+📊 **Rich Cultural & Logistical Intelligence:**
+Every trip template comes loaded with MBA-specific intel—from business etiquette and communication styles to safety ratings, visa notes, and top group-bonding activities.
+
+📥 **Export to PDF:**
+Download your pristine, formatted itinerary highlight sheet to a beautifully organized PDF, ideal for sharing via WhatsApp or Slack bounds.
+
+---
+
+## 🛠️ Tech Stack 
+
+TrekRank is built with a modern, high-performance web stack natively targeting fluid, glass-morphism aesthetics:
+
+- **Framework:** Next.js 16.1 (App Router, Turbopack)
+- **Database & Auth:** Supabase (PostgreSQL)
+- **ORM:** Prisma
+- **UI & Icons:** Vanilla CSS with custom design tokens, `lucide-react`
+- **Map Visualizations:** `react-simple-maps`
+- **PDF Generation:** `jspdf` & `html2canvas`
+- **Deployment:** Netlify 
+
+---
+
+## 🚀 Getting Started Locally
+
+### 1. Clone & Install
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/your-username/trekrank.git
+cd trekrank
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Configure Environment Variables
+Create a `.env` file in the root directory and add your Supabase credentials:
+```env
+DATABASE_URL="postgres://..."
+DIRECT_URL="postgres://..."
+NEXT_PUBLIC_SUPABASE_URL="https://..."
+NEXT_PUBLIC_SUPABASE_ANON_KEY="..."
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Sync the Database
+Push the Prisma schema to your Supabase instance:
+```bash
+npx prisma db push
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Run the Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) to view the app!
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 📂 Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `/app`: Next.js App Router (Pages, Layouts, API routes)
+- `/components`: Reusable UI components (ItineraryEditor, MemoryCard, SocialFeed, etc.)
+- `/data`: Static trip templates and robust JSON definitions for baseline MBA treks.
+- `/lib`: Server actions, Prisma client initialization, and Supabase SSR utilities.
+- `/prisma`: Database schema definitions (`schema.prisma`).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🎨 Design Philosophy
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+TrekRank favors **rich aesthetics** over generic frameworks. Expect vibrant dynamic gradients, frosted "glassmorphic" paneling, responsive auto-playing mechanics, and modern typography tailored via the *Outfit* and *Inter* fonts. Every interaction is mapped out to feel premium and fast.
