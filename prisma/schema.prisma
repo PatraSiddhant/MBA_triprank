@@ -17,7 +17,10 @@ model User {
   name      String?
   avatar    String?
   school    String?
+  cohortYear String?
+  section   String?
   travelPersona String?
+  tripDna   String?         // JSON string representing swipe vector + themes
   trips     TripCandidate[]
   posts     Post[]
   interests TripInterest[]
