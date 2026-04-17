@@ -13,7 +13,7 @@ export async function createPost(content: string, tripSlug?: string, imageUrl?: 
     }
 
     // Ensure user exists in Prisma
-    await (prisma as any).user.upsert({
+    await prisma.user.upsert({
         where: { id: user.id },
         update: { email: user.email! },
         create: {
@@ -24,7 +24,7 @@ export async function createPost(content: string, tripSlug?: string, imageUrl?: 
         },
     });
 
-    const post = await (prisma as any).post.create({
+    const post = await prisma.post.create({
         data: {
             content,
             tripSlug,
@@ -39,12 +39,10 @@ export async function createPost(content: string, tripSlug?: string, imageUrl?: 
 }
 
 export async function getPosts() {
-    const posts = await (prisma as any).post.findMany({
+    return prisma.post.findMany({
         orderBy: { createdAt: 'desc' },
         include: {
             user: true,
         },
     });
-
-    return posts;
 }

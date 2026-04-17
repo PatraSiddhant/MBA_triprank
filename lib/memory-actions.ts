@@ -29,7 +29,7 @@ export async function saveMemoryAction(tripId: string, data: {
         throw new Error("Trip not found or unauthorized.");
     }
 
-    await (prisma as any).tripMemory.upsert({
+    await prisma.tripMemory.upsert({
         where: { tripCandidateId: tripId },
         update: {
             ...data,
@@ -46,7 +46,7 @@ export async function saveMemoryAction(tripId: string, data: {
 }
 
 export async function getMemoryAction(tripId: string) {
-    return await (prisma as any).tripMemory.findUnique({
+    return await prisma.tripMemory.findUnique({
         where: { tripCandidateId: tripId }
     });
 }

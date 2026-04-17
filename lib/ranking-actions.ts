@@ -20,8 +20,8 @@ export async function updateRankingAction(winnerSlug: string, loserSlug: string)
     const newWinnerScore = Math.round(winner.score + K_FACTOR * (1 - expectedWinner));
     const newLoserScore = Math.round(loser.score + K_FACTOR * (0 - expectedLoser));
 
-    // 3. Update scores
-    await Promise.all([
+    // 3. Update scores atomically to prevent race conditions
+    await prisma.$transaction([
         prisma.tripRanking.update({
             where: { templateSlug: winnerSlug },
             data: {
@@ -38,7 +38,7 @@ export async function updateRankingAction(winnerSlug: string, loserSlug: string)
         })
     ]);
 
-    revalidatePath("/recommend");
+    revalidatePath("/rank");
 }
 
 async function getOrCreateRanking(slug: string) {

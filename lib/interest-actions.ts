@@ -13,7 +13,7 @@ export async function toggleInterest(templateSlug: string) {
     }
 
     // Ensure user exists in our DB
-    const dbUser = await (prisma as any).user.upsert({
+    const dbUser = await prisma.user.upsert({
         where: { id: user.id },
         update: {
             email: user.email || '',
@@ -28,7 +28,7 @@ export async function toggleInterest(templateSlug: string) {
         }
     });
 
-    const existing = await (prisma as any).tripInterest.findUnique({
+    const existing = await prisma.tripInterest.findUnique({
         where: {
             templateSlug_userId: {
                 templateSlug,
@@ -38,11 +38,11 @@ export async function toggleInterest(templateSlug: string) {
     });
 
     if (existing) {
-        await (prisma as any).tripInterest.delete({
+        await prisma.tripInterest.delete({
             where: { id: existing.id }
         });
     } else {
-        await (prisma as any).tripInterest.create({
+        await prisma.tripInterest.create({
             data: {
                 templateSlug,
                 userId: user.id,
@@ -55,7 +55,7 @@ export async function toggleInterest(templateSlug: string) {
 }
 
 export async function getInterestData(templateSlug: string) {
-    const interests = await (prisma as any).tripInterest.findMany({
+    const interests = await prisma.tripInterest.findMany({
         where: { templateSlug },
         include: {
             user: {
@@ -70,7 +70,7 @@ export async function getInterestData(templateSlug: string) {
 
     return {
         count: interests.length,
-        users: interests.map((i: any) => ({
+        users: interests.map((i) => ({
             name: i.user.name,
             avatar: i.user.avatar,
             school: i.user.school
