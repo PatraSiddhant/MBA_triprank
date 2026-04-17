@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ClientHeader from "@/components/ClientHeader";
-
+import TrekConcierge from "@/components/TrekConcierge";
 
 export const metadata: Metadata = {
-  title: "trekrank | Discover Iconic MBA Treks",
+  title: "TrekRank | Discover Iconic MBA Treks",
   description: "The ultimate platform for discovering, ranking, and planning the world's most iconic MBA trips.",
 };
 
@@ -26,9 +26,10 @@ export default function RootLayout({
         <main style={{ paddingTop: '0' }}>
           {children}
         </main>
+        <TrekConcierge />
         <footer className="container" style={{ padding: '4rem 0', color: 'var(--secondary)', borderTop: '1px solid var(--border)', marginTop: '4rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <p style={{ fontSize: '0.875rem' }}>© 2026 trekrank. Built for the modern MBA.</p>
+            <p style={{ fontSize: '0.875rem' }}>© 2026 TrekRank. Built for the modern MBA.</p>
             <div style={{ display: 'flex', gap: '1.5rem' }}>
               <a href="/about">About</a>
               <a href="/about#privacy">Privacy</a>
@@ -36,7 +37,6 @@ export default function RootLayout({
             </div>
           </div>
         </footer>
-
       </body>
     </html>
   );

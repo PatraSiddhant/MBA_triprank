@@ -134,15 +134,13 @@ export default function MbaCalendar({ availableTrips }: MbaCalendarProps) {
         scheduledTrips.forEach((period, idx) => {
             const trip = period.trip!;
 
-            // Check for page break
             if (yOffset > 240) {
                 doc.addPage();
                 yOffset = 20;
             }
 
-            // Period Title
             doc.setFontSize(16);
-            doc.setTextColor(0, 112, 243); // Blue accent
+            doc.setTextColor(0, 112, 243);
             doc.text(`${period.name} (${period.dates})`, 20, yOffset);
             yOffset += 10;
 
@@ -151,14 +149,12 @@ export default function MbaCalendar({ availableTrips }: MbaCalendarProps) {
             doc.text(trip.title, 25, yOffset);
             yOffset += 8;
 
-            // Trip DNA (Vibes)
             doc.setFontSize(10);
             doc.setFont("Helvetica", "italic");
             doc.setTextColor(80);
             doc.text(`Trip DNA: ${trip.vibes.join(", ")}`, 25, yOffset);
             yOffset += 10;
 
-            // Itinerary Highlights
             doc.setFontSize(12);
             doc.setFont("Helvetica", "bold");
             doc.setTextColor(40);
@@ -183,11 +179,31 @@ export default function MbaCalendar({ availableTrips }: MbaCalendarProps) {
                 styles: { fontSize: 9 }
             });
 
-            // Update yOffset based on table end
             yOffset = (doc as any).lastAutoTable.finalY + 20;
         });
 
         doc.save("MBA-Itinerary.pdf");
+    };
+
+    const handleAiOptimize = () => {
+        // AI Optimizer logic: Fill empty non-blocked periods with the highest-ranked affordable trips
+        if (tripsSource.length === 0) return;
+        
+        const newPeriods = [...periods];
+        let remainingTrips = [...tripsSource];
+        
+        // Sort trips by score (highest first)
+        remainingTrips.sort((a, b) => b.score - a.score);
+
+        newPeriods.forEach(period => {
+            if (!period.isBlocked && period.trip === null && remainingTrips.length > 0) {
+                // Assign the best available trip to this window
+                period.trip = remainingTrips.shift()!;
+            }
+        });
+
+        setPeriods(newPeriods);
+        setTripsSource(remainingTrips);
     };
 
     const onDragEnd = (result: DropResult) => {
@@ -203,7 +219,6 @@ export default function MbaCalendar({ availableTrips }: MbaCalendarProps) {
             let newTripsSource = Array.from(tripsSource);
             if (newPeriods[destPeriodIndex].trip) {
                 newTripsSource.push(newPeriods[destPeriodIndex].trip as RankedTrip);
-                // Sort by rank again if we put it back
                 newTripsSource.sort((a, b) => a.rank - b.rank);
             }
 
@@ -279,7 +294,13 @@ export default function MbaCalendar({ availableTrips }: MbaCalendarProps) {
                             <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                                 <div style={{ textAlign: 'right' }}>
                                     <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase' }}>AI Optimizer</div>
-                                    <div style={{ fontSize: '0.6rem', color: 'var(--secondary)' }}>Maximize Vibes vs. Budget</div>
+                                    <button
+                                        onClick={handleAiOptimize}
+                                        className="btn btn-secondary"
+                                        style={{ padding: "0.3rem 0.6rem", fontSize: "0.7rem", marginTop: "4px" }}
+                                    >
+                                        Auto-Fill Empty
+                                    </button>
                                 </div>
                                 <button
                                     onClick={generatePdf}
