@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ClientHeader from "@/components/ClientHeader";
-import TrekConcierge from "@/components/TrekConcierge";
 
 export const metadata: Metadata = {
   title: "TrekRank | Discover Iconic MBA Treks",
@@ -26,7 +25,6 @@ export default function RootLayout({
         <main style={{ paddingTop: '0' }}>
           {children}
         </main>
-        <TrekConcierge />
         <footer className="container" style={{ padding: '4rem 0', color: 'var(--secondary)', borderTop: '1px solid var(--border)', marginTop: '4rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <p style={{ fontSize: '0.875rem' }}>© 2026 TrekRank. Built for the modern MBA.</p>

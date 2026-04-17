@@ -240,7 +240,7 @@ export default function TripsPageClient({ trips, userId }: { trips: Trip[], user
                                                         <span style={{ fontSize: '0.65rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', color: trip.status === 'completed' ? '#00cc88' : 'var(--accent)' }}>
                                                             {trip.status || 'planning'}
                                                         </span>
-                                                        <Link href={`/trips/${trip.id}`} style={{ color: 'var(--secondary)' }}><MoreHorizontal size={18} /></Link>
+                                                        <Link href={`/journal/${trip.id}`} style={{ color: 'var(--secondary)' }}><MoreHorizontal size={18} /></Link>
                                                     </div>
 
                                                     <h3 style={{ fontSize: '1.25rem', fontWeight: 900, marginBottom: '0.5rem' }}>{trip.name}</h3>
@@ -351,7 +351,7 @@ function TripQuickDashboard({ trip }: { trip: Trip }) {
                             {trip.travelDateStart ? new Date(trip.travelDateStart).toLocaleDateString() : 'Unscheduled'}
                         </div>
                     </div>
-                    <Link href={`/trips/${trip.id}`} className="btn btn-primary" style={{ height: '52px', padding: '0 1.5rem', borderRadius: '1rem' }}>
+                    <Link href={`/journal/${trip.id}`} className="btn btn-primary" style={{ height: '52px', padding: '0 1.5rem', borderRadius: '1rem' }}>
                         Itinerary
                     </Link>
                 </div>

@@ -41,8 +41,8 @@ export async function saveMemoryAction(tripId: string, data: {
         }
     });
 
-    revalidatePath("/trips");
-    revalidatePath(`/trips/${tripId}`);
+    revalidatePath("/journal");
+    revalidatePath(`/journal/${tripId}`);
 }
 
 export async function getMemoryAction(tripId: string) {

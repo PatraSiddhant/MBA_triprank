@@ -83,8 +83,8 @@ export async function addTripFromTemplateAction(templateSlug: string) {
 
     if (!user) await addGuestTrip(trip.id);
 
-    revalidatePath("/trips");
-    redirect("/trips");
+    revalidatePath("/journal");
+    redirect("/journal");
 }
 
 export async function logPastTripFromTemplateAction(templateSlug: string) {
@@ -114,8 +114,8 @@ export async function logPastTripFromTemplateAction(templateSlug: string) {
 
     if (!user) await addGuestTrip(trip.id);
 
-    revalidatePath("/trips");
-    redirect("/trips");
+    revalidatePath("/journal");
+    redirect("/journal");
 }
 
 async function requireTripAccess(tripId: string, userId?: string) {
@@ -136,8 +136,8 @@ export async function updateTripStatusAction(tripId: string, status: 'planning' 
         data: { status }
     });
 
-    revalidatePath("/trips");
-    revalidatePath(`/trips/${tripId}`);
+    revalidatePath("/journal");
+    revalidatePath(`/journal/${tripId}`);
 }
 
 export async function updateTripDateAction(tripId: string, startDate: string | null, endDate: string | null) {
@@ -154,7 +154,7 @@ export async function updateTripDateAction(tripId: string, startDate: string | n
         }
     });
 
-    revalidatePath("/trips");
+    revalidatePath("/journal");
 }
 
 export async function updateTripDestinationAction(tripId: string, city: string, country: string) {
@@ -171,7 +171,7 @@ export async function updateTripDestinationAction(tripId: string, city: string, 
         }
     });
 
-    revalidatePath("/trips");
+    revalidatePath("/journal");
 }
 
 export async function createWorldMapTripAction(country: string, cities: { name: string, lat: number, lng: number }[]) {
@@ -205,7 +205,7 @@ export async function createWorldMapTripAction(country: string, cities: { name: 
 
     if (!user) await addGuestTrip(trip.id);
 
-    revalidatePath("/trips");
+    revalidatePath("/journal");
     return trip.id;
 }
 
@@ -238,6 +238,6 @@ export async function createCustomTripAction() {
 
     if (!user) await addGuestTrip(trip.id);
 
-    revalidatePath("/trips");
-    redirect(`/trips/${trip.id}`);
+    revalidatePath("/journal");
+    redirect(`/journal/${trip.id}`);
 }

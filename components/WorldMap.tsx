@@ -130,7 +130,7 @@ export default function WorldMap({ trips }: WorldMapProps) {
             setCountry("");
             setCitiesInput("");
             setIsSubmitting(false);
-            router.push(`/trips/${tripId}`);
+            router.push(`/journal/${tripId}`);
         });
     };
 
@@ -226,7 +226,7 @@ export default function WorldMap({ trips }: WorldMapProps) {
                         </Geographies>
 
                         {markers.map((marker) => (
-                            <Marker key={marker.id} coordinates={marker.coordinates} onClick={() => router.push(`/trips/${marker.tripId}`)}>
+                            <Marker key={marker.id} coordinates={marker.coordinates} onClick={() => router.push(`/journal/${marker.tripId}`)}>
                                 <g
                                     style={{ cursor: "pointer" }}
                                     onMouseEnter={(e) => {
