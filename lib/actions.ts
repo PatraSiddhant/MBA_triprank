@@ -6,16 +6,54 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { tripTemplates } from "@/data/trip-templates";
+import type { User } from "@supabase/supabase-js";
 
 async function addGuestTrip(tripId: string) {
     const cookieStore = await cookies();
     const existing = cookieStore.get("guest_trips")?.value;
     let guestTrips: string[] = [];
     if (existing) {
-        try { guestTrips = JSON.parse(existing); } catch (e) { }
+        try { guestTrips = JSON.parse(existing); } catch { }
     }
     guestTrips.push(tripId);
     cookieStore.set("guest_trips", JSON.stringify(guestTrips), { maxAge: 60 * 60 * 24 * 365, path: '/' });
+}
+
+async function upsertUser(user: User) {
+    await prisma.user.upsert({
+        where: { id: user.id },
+        update: {
+            email: user.email || '',
+            name: user.user_metadata?.name || user.email?.split('@')[0],
+            avatar: user.user_metadata?.avatar_url || null
+        },
+        create: {
+            id: user.id,
+            email: user.email || '',
+            name: user.user_metadata?.name || user.email?.split('@')[0] || 'User',
+            avatar: user.user_metadata?.avatar_url || null
+        }
+    });
+}
+
+function buildItineraryCreate(template: NonNullable<ReturnType<typeof tripTemplates.find>>) {
+    return {
+        create: {
+            days: {
+                create: template.days?.map((d: any) => ({
+                    dayIndex: d.dayIndex || 1,
+                    title: d.title || "Day",
+                    items: {
+                        create: d.items?.map((item: any) => ({
+                            title: item.title || "Activity",
+                            description: item.description || "",
+                            timeBucket: item.timeBucket || "Anytime"
+                        })) || []
+                    }
+                })) || []
+            }
+        }
+    };
 }
 
 export async function addTripFromTemplateAction(templateSlug: string) {
@@ -25,50 +63,25 @@ export async function addTripFromTemplateAction(templateSlug: string) {
     const template = tripTemplates.find(t => t.slug === templateSlug);
     if (!template) throw new Error("Template not found");
 
-    // Ensure user exists if logged in
-    if (user) {
-        await (prisma as any).user.upsert({
-            where: { id: user.id },
-            update: { email: user.email || '' },
-            create: { id: user.id, email: user.email || '', name: user.email?.split('@')[0] || 'User' }
-        });
-    }
+    if (user) await upsertUser(user);
 
-    const trip = await (prisma as any).tripCandidate.create({
+    const trip = await prisma.tripCandidate.create({
         data: {
             name: `My ${template.title}`,
             primaryDestinationCity: template.primaryDestinationCity,
             primaryDestinationCountry: template.primaryDestinationCountry,
-            durationDays: template.durationDays,
-            roughBudgetUsd: template.roughBudgetUsd,
+            durationDays: Number(template.durationDays) || 1,
+            roughBudgetUsd: Number(template.roughBudgetUsd) || 0,
             templateSlug: template.slug,
             theme: template.themes?.[0] || 'Adventure',
             tags: JSON.stringify(template.vibes || []),
             status: "planning",
             userId: user?.id || null,
-            itinerary: {
-                create: {
-                    days: {
-                        create: template.days?.map((d: any) => ({
-                            dayIndex: d.dayIndex || 1,
-                            title: d.title || "Day",
-                            items: {
-                                create: d.items?.map((item: any) => ({
-                                    title: item.title || "Activity",
-                                    description: item.description || "",
-                                    timeBucket: item.timeBucket || "Anytime"
-                                })) || []
-                            }
-                        })) || []
-                    }
-                }
-            }
+            itinerary: buildItineraryCreate(template)
         }
     });
 
-    if (!user) {
-        await addGuestTrip(trip.id);
-    }
+    if (!user) await addGuestTrip(trip.id);
 
     revalidatePath("/trips");
     redirect("/trips");
@@ -81,64 +94,44 @@ export async function logPastTripFromTemplateAction(templateSlug: string) {
     const template = tripTemplates.find(t => t.slug === templateSlug);
     if (!template) throw new Error("Template not found");
 
-    // Ensure user exists if logged in
-    if (user) {
-        await (prisma as any).user.upsert({
-            where: { id: user.id },
-            update: { email: user.email || '' },
-            create: { id: user.id, email: user.email || '', name: user.email?.split('@')[0] || 'User' }
-        });
-    }
+    if (user) await upsertUser(user);
 
-    const trip = await (prisma as any).tripCandidate.create({
+    const trip = await prisma.tripCandidate.create({
         data: {
             name: `Log: ${template.title}`,
             primaryDestinationCity: template.primaryDestinationCity,
             primaryDestinationCountry: template.primaryDestinationCountry,
-            durationDays: template.durationDays,
-            roughBudgetUsd: template.roughBudgetUsd,
+            durationDays: Number(template.durationDays) || 1,
+            roughBudgetUsd: Number(template.roughBudgetUsd) || 0,
             templateSlug: template.slug,
             theme: template.themes?.[0] || 'Adventure',
             tags: JSON.stringify(template.vibes || []),
             status: "completed",
             userId: user?.id || null,
-            itinerary: {
-                create: {
-                    days: {
-                        create: template.days?.map((d: any) => ({
-                            dayIndex: d.dayIndex || 1,
-                            title: d.title || "Day",
-                            items: {
-                                create: d.items?.map((item: any) => ({
-                                    title: item.title || "Activity",
-                                    description: item.description || "",
-                                    timeBucket: item.timeBucket || "Anytime"
-                                })) || []
-                            }
-                        })) || []
-                    }
-                }
-            }
+            itinerary: buildItineraryCreate(template)
         }
     });
 
-    if (!user) {
-        await addGuestTrip(trip.id);
-    }
+    if (!user) await addGuestTrip(trip.id);
 
     revalidatePath("/trips");
     redirect("/trips");
+}
+
+async function requireTripAccess(tripId: string, userId?: string) {
+    const trip = await prisma.tripCandidate.findUnique({ where: { id: tripId } });
+    if (!trip) return null;
+    if (trip.userId && trip.userId !== userId) redirect("/login");
+    return trip;
 }
 
 export async function updateTripStatusAction(tripId: string, status: 'planning' | 'booked' | 'completed') {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    const trip = await (prisma as any).tripCandidate.findUnique({ where: { id: tripId } });
-    if (!trip) return;
-    if (trip.userId && trip.userId !== user?.id) redirect("/login");
+    if (!await requireTripAccess(tripId, user?.id)) return;
 
-    await (prisma as any).tripCandidate.update({
+    await prisma.tripCandidate.update({
         where: { id: tripId },
         data: { status }
     });
@@ -151,11 +144,9 @@ export async function updateTripDateAction(tripId: string, startDate: string | n
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    const trip = await (prisma as any).tripCandidate.findUnique({ where: { id: tripId } });
-    if (!trip) return;
-    if (trip.userId && trip.userId !== user?.id) redirect("/login");
+    if (!await requireTripAccess(tripId, user?.id)) return;
 
-    await (prisma as any).tripCandidate.update({
+    await prisma.tripCandidate.update({
         where: { id: tripId },
         data: {
             travelDateStart: startDate ? new Date(startDate) : null,
@@ -170,11 +161,9 @@ export async function updateTripDestinationAction(tripId: string, city: string, 
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    const trip = await (prisma as any).tripCandidate.findUnique({ where: { id: tripId } });
-    if (!trip) return;
-    if (trip.userId && trip.userId !== user?.id) redirect("/login");
+    if (!await requireTripAccess(tripId, user?.id)) return;
 
-    await (prisma as any).tripCandidate.update({
+    await prisma.tripCandidate.update({
         where: { id: tripId },
         data: {
             primaryDestinationCity: city,
@@ -189,26 +178,11 @@ export async function createWorldMapTripAction(country: string, cities: { name: 
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    if (user) {
-        await (prisma as any).user.upsert({
-            where: { id: user.id },
-            update: {
-                email: user.email || '',
-                name: user.user_metadata?.name || user.email?.split('@')[0],
-                avatar: user.user_metadata?.avatar_url || null
-            },
-            create: {
-                id: user.id,
-                email: user.email || '',
-                name: user.user_metadata?.name || user.email?.split('@')[0],
-                avatar: user.user_metadata?.avatar_url || null
-            }
-        });
-    }
+    if (user) await upsertUser(user);
 
-    const firstCity = cities.length > 0 ? cities[0].name : "TBD";
+    const firstCity = cities[0]?.name ?? "TBD";
 
-    const trip = await (prisma as any).tripCandidate.create({
+    const trip = await prisma.tripCandidate.create({
         data: {
             name: `${country} Expedition`,
             primaryDestinationCity: firstCity,
@@ -229,9 +203,7 @@ export async function createWorldMapTripAction(country: string, cities: { name: 
         }
     });
 
-    if (!user) {
-        await addGuestTrip(trip.id);
-    }
+    if (!user) await addGuestTrip(trip.id);
 
     revalidatePath("/trips");
     return trip.id;
@@ -241,25 +213,9 @@ export async function createCustomTripAction() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    if (user) {
-        // Ensure user exists in our DB
-        await (prisma as any).user.upsert({
-            where: { id: user.id },
-            update: {
-                email: user.email || '',
-                name: user.user_metadata?.name || user.email?.split('@')[0],
-                avatar: user.user_metadata?.avatar_url || null
-            },
-            create: {
-                id: user.id,
-                email: user.email || '',
-                name: user.user_metadata?.name || user.email?.split('@')[0],
-                avatar: user.user_metadata?.avatar_url || null
-            }
-        });
-    }
+    if (user) await upsertUser(user);
 
-    const trip = await (prisma as any).tripCandidate.create({
+    const trip = await prisma.tripCandidate.create({
         data: {
             name: "New Adventure",
             primaryDestinationCity: "TBD",
@@ -273,16 +229,14 @@ export async function createCustomTripAction() {
             itinerary: {
                 create: {
                     days: {
-                        create: [{ dayIndex: 1, title: "Day 1", items: { create: [] } }]
+                        create: [{ dayIndex: 1, title: "Day 1" }]
                     }
                 }
             }
         }
     });
 
-    if (!user) {
-        await addGuestTrip(trip.id);
-    }
+    if (!user) await addGuestTrip(trip.id);
 
     revalidatePath("/trips");
     redirect(`/trips/${trip.id}`);

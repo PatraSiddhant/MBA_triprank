@@ -15,7 +15,6 @@ interface ItineraryItemData {
     title: string;
     description: string | null;
     timeBucket: string;
-    sortOrder: number;
 }
 
 interface ItineraryDayData {

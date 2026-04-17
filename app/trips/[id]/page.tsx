@@ -89,7 +89,6 @@ export default async function UserTripPage({ params }: { params: Promise<{ id: s
                                             title: item.title,
                                             description: item.description,
                                             timeBucket: item.timeBucket,
-                                            sortOrder: 0,
                                         })),
                                     }))}
                                 />
