@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { tripTemplates } from "@/data/trip-templates";
 import Link from "next/link";
-import { Search, MapPin, Clock, Filter, Users, TrendingUp, Sparkles, SlidersHorizontal, Bell } from "lucide-react";
+import { Search, MapPin, Clock, Filter, Users, TrendingUp, Sparkles, SlidersHorizontal, Bell, ArrowRight, Heart } from "lucide-react";
 
 export default function DiscoverPage() {
-    const [mode, setMode] = useState<"foryou" | "trending" | "browse" | "recommender">("browse");
+    const [mode, setMode] = useState<"foryou" | "trending" | "browse" | "recommender">("foryou");
     const [selectedTheme, setSelectedTheme] = useState<string | null>(null);
     const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
@@ -191,10 +191,65 @@ export default function DiscoverPage() {
                     )}
 
                     {mode === 'foryou' && (
-                        <div style={{ padding: '4rem 0', textAlign: 'center', background: 'var(--bg-1)', borderRadius: '24px', border: '1px solid var(--border)' }}>
-                            <Sparkles size={48} color="var(--accent)" style={{ marginBottom: '1.5rem' }} />
-                            <h2>Coming Soon: Personalized Engine</h2>
-                            <p style={{ color: 'var(--fg-2)', maxWidth: '500px', margin: '1rem auto' }}>We are blending your Trip DNA, cohort signals, and budget to generate the absolute perfect recommendation.</p>
+                        <div style={{ 
+                            height: '80vh', 
+                            overflowY: 'scroll', 
+                            scrollSnapType: 'y mandatory',
+                            borderRadius: '24px',
+                            background: '#000',
+                            position: 'relative'
+                        }} className="hide-scrollbar">
+                            {tripTemplates.map((trip) => (
+                                <div key={trip.slug} style={{
+                                    height: '100%',
+                                    width: '100%',
+                                    scrollSnapAlign: 'start',
+                                    position: 'relative',
+                                    display: 'flex',
+                                    alignItems: 'flex-end',
+                                    padding: '2.5rem'
+                                }}>
+                                    <img 
+                                        src={trip.photos[0].path} 
+                                        alt={trip.title} 
+                                        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} 
+                                    />
+                                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 50%)' }} />
+                                    
+                                    <div style={{ position: 'relative', zIndex: 10, width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                                        <div style={{ flex: 1, paddingRight: '2rem' }}>
+                                            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+                                                {trip.themes.slice(0, 2).map((t, i) => (
+                                                    <span key={i} style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)', color: '#fff', padding: '0.4rem 0.8rem', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 700 }}>
+                                                        {t}
+                                                    </span>
+                                                ))}
+                                                <span style={{ background: 'var(--accent)', color: '#000', padding: '0.4rem 0.8rem', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 800 }}>
+                                                    ${trip.roughBudgetUsd}
+                                                </span>
+                                            </div>
+                                            <h2 style={{ fontSize: '3rem', fontWeight: 900, color: '#fff', marginBottom: '0.5rem', lineHeight: 1.1 }}>
+                                                {trip.title}
+                                            </h2>
+                                            <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                                                <MapPin size={16} /> {trip.primaryDestinationCity}, {trip.primaryDestinationCountry}
+                                            </p>
+                                            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                                                {trip.summary}
+                                            </p>
+                                        </div>
+
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
+                                            <button style={{ width: '50px', height: '50px', borderRadius: '25px', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', cursor: 'pointer' }}>
+                                                <Heart size={24} />
+                                            </button>
+                                            <Link href={`/templates/${trip.slug}`} style={{ width: '50px', height: '50px', borderRadius: '25px', background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', cursor: 'pointer', border: 'none' }}>
+                                                <ArrowRight size={24} />
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     )}
                     

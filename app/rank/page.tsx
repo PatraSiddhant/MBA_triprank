@@ -6,6 +6,7 @@ import { updateRankingAction, getLeaderboardAction } from "@/lib/ranking-actions
 import { addTripFromTemplateAction } from "@/lib/actions";
 import RankingCard from "@/components/RankingCard";
 import TripDetailModal from "@/components/TripDetailModal";
+import SwipeArena from "@/components/SwipeArena";
 import Link from "next/link";
 import { Sword, Trophy, Users, Zap } from "lucide-react";
 
@@ -62,56 +63,13 @@ export default function RankPage() {
                     <p style={{ color: 'var(--secondary)', fontSize: '1.25rem' }}>Help the community find the most iconic MBA journeys.</p>
                 </header>
 
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                    alignItems: 'center',
-                    gap: '2rem',
-                    maxWidth: '1200px',
-                    margin: '0 auto',
-                    position: 'relative'
-                }}>
-                    <RankingCard
-                        trip={pair[0]}
-                        onSelect={() => handleVote(pair[0].slug, pair[1].slug)}
-                        onViewDetail={() => setDetailTrip(pair[0])}
-                    />
-
-                    <div style={{
-                        position: 'absolute',
-                        left: '50%',
-                        top: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        zIndex: 10,
-                        background: 'var(--bg)',
-                        width: '80px',
-                        height: '80px',
-                        borderRadius: '50%',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '1.5rem',
-                        fontWeight: 900,
-                        color: 'var(--accent)',
-                        boxShadow: '0 0 30px rgba(0,0,0,0.5)'
-                    }} className="desktop-only">VS</div>
-
-                    <RankingCard
-                        trip={pair[1]}
-                        onSelect={() => handleVote(pair[1].slug, pair[0].slug)}
-                        onViewDetail={() => setDetailTrip(pair[1])}
-                    />
+                <div style={{ textAlign: 'center', marginBottom: '2rem', color: 'var(--secondary)', fontSize: '0.875rem' }}>
+                    <p>Swipe <strong style={{ color: '#00cc88' }}>Right</strong> to upvote • Swipe <strong style={{ color: '#ff3b30' }}>Left</strong> to pass</p>
                 </div>
 
-                <div className="mobile-only" style={{ textAlign: 'center', marginTop: '3rem' }}>
-                    <div className="glass" style={{ padding: '1rem', borderRadius: '12px' }}>
-                        <Zap size={20} color="var(--accent)" style={{ marginBottom: '0.5rem' }} />
-                        <p style={{ fontSize: '0.875rem', color: 'var(--secondary)' }}>Tap the trek you prefer. Your votes influence the global leaderboard.</p>
-                    </div>
+                <div style={{ padding: '0 1rem' }}>
+                    <SwipeArena pair={pair} onVote={handleVote} onDetail={setDetailTrip} />
                 </div>
-
-                {/* Leaderboard Section */}
                 <div style={{ padding: '6rem 0' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem' }}>
                         <div>

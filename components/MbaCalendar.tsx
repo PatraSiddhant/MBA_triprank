@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import { TripTemplate } from "@/data/trip-templates";
+import { Sparkles } from "lucide-react";
 
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -292,14 +293,29 @@ export default function MbaCalendar({ availableTrips }: MbaCalendarProps) {
                                 <p style={{ color: "var(--secondary)", fontSize: "0.875rem" }}>Drag your top ranked trips into your calendar.</p>
                             </div>
                             <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                                <div style={{ textAlign: 'right' }}>
-                                    <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase' }}>AI Optimizer</div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1, marginRight: '1rem' }}>
                                     <button
                                         onClick={handleAiOptimize}
-                                        className="btn btn-secondary"
-                                        style={{ padding: "0.3rem 0.6rem", fontSize: "0.7rem", marginTop: "4px" }}
+                                        style={{
+                                            background: 'linear-gradient(135deg, var(--accent) 0%, rgba(0, 204, 136, 0.8) 100%)',
+                                            color: '#000',
+                                            padding: '0.75rem 1rem',
+                                            borderRadius: '12px',
+                                            border: 'none',
+                                            fontWeight: 800,
+                                            fontSize: '0.875rem',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            gap: '0.5rem',
+                                            cursor: 'pointer',
+                                            boxShadow: '0 4px 15px rgba(0,204,136,0.3)',
+                                            transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                                        }}
+                                        onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,204,136,0.4)'; }}
+                                        onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,204,136,0.3)'; }}
                                     >
-                                        Auto-Fill Empty
+                                        <Sparkles size={16} /> Spark Auto-Fill
                                     </button>
                                 </div>
                                 <button
