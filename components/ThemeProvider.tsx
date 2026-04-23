@@ -15,8 +15,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         const stored = localStorage.getItem("trekrank-theme") as Theme | null;
-        const preferred = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-        const resolved = stored ?? preferred;
+        // Default to light mode; only use stored preference if explicitly set
+        const resolved = stored ?? "light";
         setTheme(resolved);
         document.documentElement.setAttribute("data-theme", resolved);
         setMounted(true);
