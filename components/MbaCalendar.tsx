@@ -1,9 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import { TripTemplate } from "@/data/trip-templates";
 import { Sparkles } from "lucide-react";
+import { useToast } from "@/components/Toast";
+
+const CALENDAR_STORAGE_KEY = "mba_calendar_v1";
 
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -107,8 +111,45 @@ interface MbaCalendarProps {
 export default function MbaCalendar({ availableTrips }: MbaCalendarProps) {
     const [periods, setPeriods] = useState<CalendarPeriod[]>(INITIAL_PERIODS);
     const [tripsSource, setTripsSource] = useState<RankedTrip[]>(availableTrips);
+    const { warning, success } = useToast();
 
-    React.useEffect(() => {
+    // Restore saved calendar from localStorage on mount
+    useEffect(() => {
+        try {
+            const saved = localStorage.getItem(CALENDAR_STORAGE_KEY);
+            if (saved) {
+                const { savedPeriods, savedSlugs } = JSON.parse(saved) as {
+                    savedPeriods: Array<{ id: string; slug: string | null }>;
+                    savedSlugs: string[];
+                };
+                const slugToTrip = new Map(availableTrips.map(t => [t.slug, t]));
+                const restored = INITIAL_PERIODS.map(period => {
+                    const entry = savedPeriods.find(p => p.id === period.id);
+                    const trip = entry?.slug ? slugToTrip.get(entry.slug) ?? null : null;
+                    return { ...period, trip };
+                });
+                const scheduledSlugs = new Set(restored.map(p => p.trip?.slug).filter(Boolean));
+                const remainingTrips = availableTrips.filter(t => !scheduledSlugs.has(t.slug));
+                setPeriods(restored);
+                setTripsSource(remainingTrips);
+            }
+        } catch {
+            // Ignore corrupt storage
+        }
+    }, [availableTrips]);
+
+    // Persist calendar to localStorage whenever periods change
+    useEffect(() => {
+        try {
+            const savedPeriods = periods.map(p => ({ id: p.id, slug: p.trip?.slug ?? null }));
+            const savedSlugs = tripsSource.map(t => t.slug);
+            localStorage.setItem(CALENDAR_STORAGE_KEY, JSON.stringify({ savedPeriods, savedSlugs }));
+        } catch {
+            // Ignore storage errors (e.g. private browsing quota)
+        }
+    }, [periods, tripsSource]);
+
+    useEffect(() => {
         setTripsSource(availableTrips);
     }, [availableTrips]);
 
@@ -117,7 +158,7 @@ export default function MbaCalendar({ availableTrips }: MbaCalendarProps) {
         const scheduledTrips = periods.filter(p => p.trip !== null);
 
         if (scheduledTrips.length === 0) {
-            alert("No trips scheduled! Drag some trips into the calendar first.");
+            warning("No trips scheduled! Drag some trips into the calendar first.");
             return;
         }
 
@@ -184,6 +225,7 @@ export default function MbaCalendar({ availableTrips }: MbaCalendarProps) {
         });
 
         doc.save("MBA-Itinerary.pdf");
+        success("Your itinerary PDF has been downloaded!");
     };
 
     const handleAiOptimize = () => {
@@ -418,7 +460,7 @@ export default function MbaCalendar({ availableTrips }: MbaCalendarProps) {
                                                     }}>
                                                         #{trip.rank.toString().padStart(2, '0')}
                                                     </div>
-                                                    <img src={trip.photos[0].path} alt="" style={{ width: '40px', height: '40px', borderRadius: '0.5rem', objectFit: 'cover' }} />
+                                                    <Image src={trip.photos[0].path} alt={trip.title} width={40} height={40} style={{ borderRadius: '0.5rem', objectFit: 'cover' }} unoptimized />
                                                     <div style={{ flex: 1 }}>
                                                         <div style={{ fontWeight: 600, fontSize: "0.9rem" }}>{trip.title}</div>
                                                         <div style={{ fontSize: "0.75rem", color: "var(--secondary)" }}>Elo: {trip.score}</div>
@@ -489,7 +531,7 @@ export default function MbaCalendar({ availableTrips }: MbaCalendarProps) {
                                                             boxShadow: snapshot.isDragging ? "0 10px 30px rgba(0,0,0,0.5)" : "none"
                                                         }}
                                                     >
-                                                        <img src={period.trip!.photos[0].path} alt="" style={{ width: '30px', height: '30px', borderRadius: '4px', objectFit: 'cover' }} />
+                                                        <Image src={period.trip!.photos[0].path} alt={period.trip!.title} width={30} height={30} style={{ borderRadius: '4px', objectFit: 'cover' }} unoptimized />
                                                         <div style={{ fontWeight: 600, fontSize: "0.85rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                                                             {period.trip!.title}
                                                         </div>

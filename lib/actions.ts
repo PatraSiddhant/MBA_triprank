@@ -7,6 +7,14 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { tripTemplates } from "@/data/trip-templates";
 import type { User } from "@supabase/supabase-js";
+import {
+    TripStatusSchema,
+    UpdateTripDateSchema,
+    UpdateTripDestinationSchema,
+    TemplateSlugSchema,
+    LogPastTripDetailsSchema,
+} from "./validations";
+import { signTripId } from "./guest-auth";
 
 async function addGuestTrip(tripId: string) {
     const cookieStore = await cookies();
@@ -15,7 +23,12 @@ async function addGuestTrip(tripId: string) {
     if (existing) {
         try { guestTrips = JSON.parse(existing); } catch { }
     }
-    guestTrips.push(tripId);
+    const signed = signTripId(tripId);
+    if (!guestTrips.includes(signed)) {
+        guestTrips.push(signed);
+    }
+    // Guard against cookie size overflow (max ~50 IDs)
+    if (guestTrips.length > 50) guestTrips = guestTrips.slice(-50);
     cookieStore.set("guest_trips", JSON.stringify(guestTrips), { maxAge: 60 * 60 * 24 * 365, path: '/' });
 }
 
@@ -40,11 +53,11 @@ function buildItineraryCreate(template: NonNullable<ReturnType<typeof tripTempla
     return {
         create: {
             days: {
-                create: template.days?.map((d: any) => ({
+                create: template.days?.map((d: { dayIndex?: number; title?: string; items?: Array<{ title?: string; description?: string; timeBucket?: string }> }) => ({
                     dayIndex: d.dayIndex || 1,
                     title: d.title || "Day",
                     items: {
-                        create: d.items?.map((item: any) => ({
+                        create: d.items?.map((item) => ({
                             title: item.title || "Activity",
                             description: item.description || "",
                             timeBucket: item.timeBucket || "Anytime"
@@ -57,10 +70,11 @@ function buildItineraryCreate(template: NonNullable<ReturnType<typeof tripTempla
 }
 
 export async function addTripFromTemplateAction(templateSlug: string) {
+    const slug = TemplateSlugSchema.parse(templateSlug);
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    const template = tripTemplates.find(t => t.slug === templateSlug);
+    const template = tripTemplates.find(t => t.slug === slug);
     if (!template) throw new Error("Template not found");
 
     if (user) await upsertUser(user);
@@ -88,10 +102,11 @@ export async function addTripFromTemplateAction(templateSlug: string) {
 }
 
 export async function logPastTripFromTemplateAction(templateSlug: string) {
+    const slug = TemplateSlugSchema.parse(templateSlug);
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    const template = tripTemplates.find(t => t.slug === templateSlug);
+    const template = tripTemplates.find(t => t.slug === slug);
     if (!template) throw new Error("Template not found");
 
     if (user) await upsertUser(user);
@@ -126,6 +141,7 @@ async function requireTripAccess(tripId: string, userId?: string) {
 }
 
 export async function updateTripStatusAction(tripId: string, status: 'planning' | 'booked' | 'completed') {
+    const validatedStatus = TripStatusSchema.parse(status);
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -133,7 +149,7 @@ export async function updateTripStatusAction(tripId: string, status: 'planning' 
 
     await prisma.tripCandidate.update({
         where: { id: tripId },
-        data: { status }
+        data: { status: validatedStatus }
     });
 
     revalidatePath("/journal");
@@ -141,6 +157,7 @@ export async function updateTripStatusAction(tripId: string, status: 'planning' 
 }
 
 export async function updateTripDateAction(tripId: string, startDate: string | null, endDate: string | null) {
+    UpdateTripDateSchema.parse({ tripId, startDate, endDate });
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -155,9 +172,11 @@ export async function updateTripDateAction(tripId: string, startDate: string | n
     });
 
     revalidatePath("/journal");
+    revalidatePath(`/journal/${tripId}`);
 }
 
 export async function updateTripDestinationAction(tripId: string, city: string, country: string) {
+    UpdateTripDestinationSchema.parse({ tripId, city, country });
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -172,6 +191,7 @@ export async function updateTripDestinationAction(tripId: string, city: string, 
     });
 
     revalidatePath("/journal");
+    revalidatePath(`/journal/${tripId}`);
 }
 
 export async function createWorldMapTripAction(country: string, cities: { name: string, lat: number, lng: number }[]) {
@@ -221,6 +241,7 @@ export async function logPastTripWithDetailsAction(
         durationDays?: number;
     }
 ) {
+    const validatedDetails = LogPastTripDetailsSchema.parse(details);
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -230,29 +251,29 @@ export async function logPastTripWithDetailsAction(
 
     const trip = await prisma.tripCandidate.create({
         data: {
-            name: template ? `Log: ${template.title}` : `${details.city} Trip`,
-            primaryDestinationCity: details.city || template?.primaryDestinationCity || "TBD",
-            primaryDestinationCountry: details.country || template?.primaryDestinationCountry || "TBD",
-            durationDays: details.durationDays || Number(template?.durationDays) || 1,
+            name: template ? `Log: ${template.title}` : `${validatedDetails.city} Trip`,
+            primaryDestinationCity: validatedDetails.city || template?.primaryDestinationCity || "TBD",
+            primaryDestinationCountry: validatedDetails.country || template?.primaryDestinationCountry || "TBD",
+            durationDays: validatedDetails.durationDays || Number(template?.durationDays) || 1,
             roughBudgetUsd: Number(template?.roughBudgetUsd) || 0,
             templateSlug: template?.slug ?? null,
             theme: template?.themes?.[0] || 'Adventure',
             tags: template ? JSON.stringify(template.vibes || []) : "[]",
             status: "completed",
-            travelDateStart: details.startDate ? new Date(details.startDate) : null,
-            travelDateEnd: details.endDate ? new Date(details.endDate) : null,
+            travelDateStart: validatedDetails.startDate ? new Date(validatedDetails.startDate) : null,
+            travelDateEnd: validatedDetails.endDate ? new Date(validatedDetails.endDate) : null,
             userId: user?.id || null,
             itinerary: template ? buildItineraryCreate(template) : {
-                create: { days: { create: [{ dayIndex: 1, title: `Explore ${details.city}` }] } }
+                create: { days: { create: [{ dayIndex: 1, title: `Explore ${validatedDetails.city}` }] } }
             },
-            memory: details.overallRating ? {
+            memory: validatedDetails.overallRating ? {
                 create: {
-                    overallRating: details.overallRating,
-                    highlightMoment: details.highlightMoment || "",
+                    overallRating: validatedDetails.overallRating,
+                    highlightMoment: validatedDetails.highlightMoment || "",
                     foodPick: "",
                     hiddenGem: "",
                     travelTip: "",
-                    wouldReturn: details.overallRating >= 4,
+                    wouldReturn: validatedDetails.overallRating >= 4,
                 }
             } : undefined,
         }
@@ -270,23 +291,19 @@ export async function deleteTripAction(tripId: string) {
 
     const trip = await prisma.tripCandidate.findUnique({ where: { id: tripId } });
     if (!trip) return;
-    // Only owner can delete (or guest trips with no userId)
     if (trip.userId && trip.userId !== user?.id) return;
 
-    // Cascade delete memory, itinerary days/items, then the trip
-    if (trip) {
-        await prisma.tripMemory.deleteMany({ where: { tripCandidateId: tripId } });
-        const itinerary = await prisma.itinerary.findUnique({ where: { tripCandidateId: tripId } });
-        if (itinerary) {
-            const days = await prisma.itineraryDay.findMany({ where: { itineraryId: itinerary.id } });
-            for (const day of days) {
-                await prisma.itineraryItem.deleteMany({ where: { itineraryDayId: day.id } });
-            }
-            await prisma.itineraryDay.deleteMany({ where: { itineraryId: itinerary.id } });
-            await prisma.itinerary.delete({ where: { id: itinerary.id } });
+    await prisma.tripMemory.deleteMany({ where: { tripCandidateId: tripId } });
+    const itinerary = await prisma.itinerary.findUnique({ where: { tripCandidateId: tripId } });
+    if (itinerary) {
+        const days = await prisma.itineraryDay.findMany({ where: { itineraryId: itinerary.id } });
+        for (const day of days) {
+            await prisma.itineraryItem.deleteMany({ where: { itineraryDayId: day.id } });
         }
-        await prisma.tripCandidate.delete({ where: { id: tripId } });
+        await prisma.itineraryDay.deleteMany({ where: { itineraryId: itinerary.id } });
+        await prisma.itinerary.delete({ where: { id: itinerary.id } });
     }
+    await prisma.tripCandidate.delete({ where: { id: tripId } });
 
     revalidatePath("/journal");
 }

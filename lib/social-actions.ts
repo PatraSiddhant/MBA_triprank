@@ -3,6 +3,7 @@
 import prisma from "./prisma";
 import { createClient } from "./supabase/server";
 import { revalidatePath } from "next/cache";
+import { CreatePostSchema } from "./validations";
 
 export async function createPost(content: string, tripSlug?: string, imageUrl?: string) {
     const supabase = await createClient();
@@ -12,7 +13,8 @@ export async function createPost(content: string, tripSlug?: string, imageUrl?: 
         throw new Error("You must be logged in to post.");
     }
 
-    // Ensure user exists in Prisma
+    const validated = CreatePostSchema.parse({ content, tripSlug, imageUrl });
+
     await prisma.user.upsert({
         where: { id: user.id },
         update: { email: user.email! },
@@ -26,9 +28,9 @@ export async function createPost(content: string, tripSlug?: string, imageUrl?: 
 
     const post = await prisma.post.create({
         data: {
-            content,
-            tripSlug,
-            imageUrl: imageUrl || null,
+            content: validated.content,
+            tripSlug: validated.tripSlug ?? null,
+            imageUrl: validated.imageUrl || null,
             userId: user.id,
             type: "update",
         },
@@ -38,11 +40,15 @@ export async function createPost(content: string, tripSlug?: string, imageUrl?: 
     return post;
 }
 
-export async function getPosts() {
+export async function getPosts(page = 0, limit = 20) {
     return prisma.post.findMany({
         orderBy: { createdAt: 'desc' },
-        include: {
-            user: true,
-        },
+        include: { user: true },
+        skip: page * limit,
+        take: limit,
     });
+}
+
+export async function getPostCount() {
+    return prisma.post.count();
 }

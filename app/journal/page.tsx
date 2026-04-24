@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
+import { verifySignedTripId } from "@/lib/guest-auth";
 import TripsPageClient from "./TripsPageClient";
 
 export default async function UserTripsIndex() {
@@ -11,35 +12,54 @@ export default async function UserTripsIndex() {
     const guestTripsCookie = cookieStore.get("guest_trips")?.value;
     let guestTripIds: string[] = [];
     if (guestTripsCookie) {
-        try { guestTripIds = JSON.parse(guestTripsCookie); } catch (e) { }
+        try {
+            const raw: string[] = JSON.parse(guestTripsCookie);
+            // Verify each signed token — reject any that don't pass HMAC check
+            guestTripIds = raw
+                .map(verifySignedTripId)
+                .filter((id): id is string => id !== null);
+        } catch { }
     }
 
-    let trips: any[] = [];
+    let trips: {
+        id: string;
+        name: string;
+        primaryDestinationCity: string;
+        primaryDestinationCountry: string;
+        durationDays: number;
+        roughBudgetUsd: number;
+        status: string;
+        travelDateStart: Date | null;
+        travelDateEnd: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+        itinerary: object | null;
+        memory: {
+            highlightMoment: string | null;
+            overallRating: number | null;
+            createdAt: Date;
+            updatedAt: Date;
+        } | null;
+    }[] = [];
+
     try {
         if (user) {
-            trips = await (prisma as any).tripCandidate.findMany({
+            trips = await prisma.tripCandidate.findMany({
                 where: { userId: user.id },
                 orderBy: { createdAt: 'desc' },
-                include: {
-                    itinerary: true,
-                    memory: true,
-                }
+                include: { itinerary: true, memory: true },
             });
         } else if (guestTripIds.length > 0) {
-            trips = await (prisma as any).tripCandidate.findMany({
-                where: { id: { in: guestTripIds } },
+            trips = await prisma.tripCandidate.findMany({
+                where: { id: { in: guestTripIds }, userId: null },
                 orderBy: { createdAt: 'desc' },
-                include: {
-                    itinerary: true,
-                    memory: true,
-                }
+                include: { itinerary: true, memory: true },
             });
         }
     } catch (e) {
         console.error("Prisma error:", e);
     }
 
-    // Serialize dates for client components
     const serialized = trips.map(t => ({
         ...t,
         createdAt: t.createdAt?.toISOString?.() ?? null,

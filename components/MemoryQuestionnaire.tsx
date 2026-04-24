@@ -2,15 +2,25 @@
 
 import { useState, useTransition } from "react";
 import { saveMemoryAction } from "@/lib/memory-actions";
+import { useToast } from "@/components/Toast";
 import { Heart, Star, Send, ChevronRight, ChevronLeft, MapPin, Coffee, Utensils, Camera } from "lucide-react";
 
 interface Step {
     id: string;
     title: string;
     question: string;
-    icon: any;
+    icon: React.ElementType;
     placeholder: string;
     field: string;
+}
+
+interface MemoryFormData {
+    highlightMoment: string;
+    foodPick: string;
+    hiddenGem: string;
+    travelTip: string;
+    wouldReturn: boolean;
+    overallRating: number;
 }
 
 const STEPS: Step[] = [
@@ -22,7 +32,7 @@ const STEPS: Step[] = [
 
 export default function MemoryQuestionnaire({ tripId, tripName }: { tripId: string; tripName: string }) {
     const [currentStep, setCurrentStep] = useState(0);
-    const [formData, setFormData] = useState<any>({
+    const [formData, setFormData] = useState<MemoryFormData>({
         highlightMoment: "",
         foodPick: "",
         hiddenGem: "",
@@ -33,6 +43,7 @@ export default function MemoryQuestionnaire({ tripId, tripName }: { tripId: stri
     const [hoveredStar, setHoveredStar] = useState(0);
     const [isPending, startTransition] = useTransition();
     const [isFinished, setIsFinished] = useState(false);
+    const { success, error } = useToast();
 
     const step = STEPS[currentStep];
     const progress = ((currentStep + 1) / (STEPS.length + 1)) * 100;
@@ -45,8 +56,9 @@ export default function MemoryQuestionnaire({ tripId, tripName }: { tripId: stri
             try {
                 await saveMemoryAction(tripId, formData);
                 setIsFinished(true);
-            } catch {
-                alert("Failed to save memory. Please check your connection.");
+                success("Memory saved to your legacy!");
+            } catch (err) {
+                error(err instanceof Error ? err.message : "Failed to save memory. Please check your connection.");
             }
         });
     };
@@ -86,15 +98,7 @@ export default function MemoryQuestionnaire({ tripId, tripName }: { tripId: stri
                 <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
                     {currentStep < STEPS.length && (
                         <>
-                            <div
-                                style={{
-                                    padding: "8px",
-                                    background: "rgba(var(--accent-rgb), 0.1)",
-                                    borderRadius: "10px",
-                                    color: "var(--accent)",
-                                    display: "flex",
-                                }}
-                            >
+                            <div style={{ padding: "8px", background: "rgba(var(--accent-rgb), 0.1)", borderRadius: "10px", color: "var(--accent)", display: "flex" }}>
                                 <step.icon size={20} />
                             </div>
                             <span style={{ fontSize: "0.75rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--fg-2)" }}>
@@ -126,7 +130,7 @@ export default function MemoryQuestionnaire({ tripId, tripName }: { tripId: stri
 
                     <textarea
                         autoFocus
-                        value={formData[step.field]}
+                        value={formData[step.field as keyof MemoryFormData] as string}
                         onChange={(e) => setFormData({ ...formData, [step.field]: e.target.value })}
                         placeholder={step.placeholder}
                         rows={4}
@@ -182,7 +186,6 @@ export default function MemoryQuestionnaire({ tripId, tripName }: { tripId: stri
                         How would you rate the experience?
                     </h2>
 
-                    {/* Star rating */}
                     <div style={{ display: "flex", gap: "0.75rem", marginBottom: "0.5rem", alignItems: "center" }}>
                         {[1, 2, 3, 4, 5].map((star) => (
                             <button
@@ -214,7 +217,6 @@ export default function MemoryQuestionnaire({ tripId, tripName }: { tripId: stri
                         {["", "Poor", "Fair", "Good", "Great", "Legendary!"][hoveredStar || formData.overallRating]}
                     </p>
 
-                    {/* Would return */}
                     <button
                         onClick={() => setFormData({ ...formData, wouldReturn: !formData.wouldReturn })}
                         style={{

@@ -1,15 +1,17 @@
 import React from "react";
 import SocialFeed from "@/components/SocialFeed";
-import { getPosts } from "@/lib/social-actions";
+import { getPosts, getPostCount } from "@/lib/social-actions";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function SocialsPage() {
-    const posts = await getPosts();
+    const [posts, totalCount] = await Promise.all([
+        getPosts(0, 20),
+        getPostCount(),
+    ]);
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    // Map Prisma posts to the format expected by SocialFeed
-    const serializedPosts = posts.map((post: any) => ({
+    const serializedPosts = posts.map((post) => ({
         ...post,
         createdAt: post.createdAt,
     }));
@@ -38,7 +40,11 @@ export default async function SocialsPage() {
                 </header>
 
                 <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-                    <SocialFeed initialPosts={serializedPosts as any} currentUserId={user?.id} />
+                    <SocialFeed
+                        initialPosts={serializedPosts}
+                        totalCount={totalCount}
+                        currentUserId={user?.id}
+                    />
                 </div>
             </div>
         </div>

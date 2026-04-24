@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
+import Image from "next/image";
 import { getAllTripTemplates } from "@/data/trip-templates";
-import { Heart, Share2, MessageSquare, ShieldCheck, Trophy, Send, Image as ImageIcon } from "lucide-react";
-import { createPost } from "@/lib/social-actions";
+import { Heart, Share2, MessageSquare, Trophy, Send, Image as ImageIcon } from "lucide-react";
+import { createPost, getPosts } from "@/lib/social-actions";
+import { useToast } from "@/components/Toast";
 
 interface PostWithUser {
     id: string;
@@ -25,17 +27,24 @@ interface PostWithUser {
 
 interface SocialFeedProps {
     initialPosts: PostWithUser[];
+    totalCount: number;
     currentUserId?: string;
 }
 
-export default function SocialFeed({ initialPosts, currentUserId }: SocialFeedProps) {
+const PAGE_SIZE = 20;
+
+export default function SocialFeed({ initialPosts, totalCount, currentUserId }: SocialFeedProps) {
     const [activeTab, setActiveTab] = useState<"global" | "school">("global");
     const [posts, setPosts] = useState(initialPosts);
     const [newPostContent, setNewPostContent] = useState("");
     const [newPostImageUrl, setNewPostImageUrl] = useState("");
     const [showImageInput, setShowImageInput] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoadingMore, startLoadMore] = useTransition();
+    const [page, setPage] = useState(0);
+    const hasMore = posts.length < totalCount;
     const templates = getAllTripTemplates();
+    const { success, error } = useToast();
 
     const filteredPosts = activeTab === "school"
         ? posts.filter(p => p.user.school === "Columbia Business School")
@@ -47,16 +56,30 @@ export default function SocialFeed({ initialPosts, currentUserId }: SocialFeedPr
 
         setIsSubmitting(true);
         try {
-            const post = await createPost(newPostContent, undefined, newPostImageUrl || undefined);
+            await createPost(newPostContent, undefined, newPostImageUrl || undefined);
             setNewPostContent("");
             setNewPostImageUrl("");
             setShowImageInput(false);
+            success("Post shared with the community!");
             window.location.reload();
         } catch (err) {
-            alert(err instanceof Error ? err.message : "Failed to post");
+            error(err instanceof Error ? err.message : "Failed to post");
         } finally {
             setIsSubmitting(false);
         }
+    };
+
+    const handleLoadMore = () => {
+        startLoadMore(async () => {
+            try {
+                const nextPage = page + 1;
+                const morePosts = await getPosts(nextPage, PAGE_SIZE);
+                setPosts(prev => [...prev, ...morePosts as PostWithUser[]]);
+                setPage(nextPage);
+            } catch {
+                error("Failed to load more posts");
+            }
+        });
     };
 
     return (
@@ -114,7 +137,7 @@ export default function SocialFeed({ initialPosts, currentUserId }: SocialFeedPr
                 </div>
             </div>
 
-            {/* Post Creation Banner at the TOP */}
+            {/* Post Creation */}
             <form onSubmit={handlePostSubmit} style={{
                 background: "rgba(0,112,243,0.05)",
                 border: "1px dashed var(--accent)",
@@ -160,7 +183,6 @@ export default function SocialFeed({ initialPosts, currentUserId }: SocialFeedPr
                         <Send size={18} />
                     </button>
                 </div>
-                {/* Image URL Input */}
                 {showImageInput && (
                     <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                         <input
@@ -180,7 +202,6 @@ export default function SocialFeed({ initialPosts, currentUserId }: SocialFeedPr
                         />
                     </div>
                 )}
-                {/* Image Preview */}
                 {newPostImageUrl && (
                     <div style={{ position: 'relative', borderRadius: '0.75rem', overflow: 'hidden', maxHeight: '200px' }}>
                         <img src={newPostImageUrl} alt="Preview" style={{ width: '100%', maxHeight: '200px', objectFit: 'cover', borderRadius: '0.75rem' }} />
@@ -191,7 +212,6 @@ export default function SocialFeed({ initialPosts, currentUserId }: SocialFeedPr
                         >×</button>
                     </div>
                 )}
-                {/* Action Buttons */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <button
                         type="button"
@@ -244,7 +264,18 @@ export default function SocialFeed({ initialPosts, currentUserId }: SocialFeedPr
                         }}>
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
                                 <div style={{ display: "flex", gap: "0.875rem", alignItems: "center" }}>
-                                    <img src={user.avatar || ""} alt="" style={{ width: "40px", height: "40px", borderRadius: "50%", background: "rgba(255,255,255,0.1)" }} />
+                                    {user.avatar ? (
+                                        <Image
+                                            src={user.avatar}
+                                            alt={user.name || ""}
+                                            width={40}
+                                            height={40}
+                                            style={{ borderRadius: "50%", objectFit: "cover" }}
+                                            unoptimized
+                                        />
+                                    ) : (
+                                        <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "rgba(255,255,255,0.1)" }} />
+                                    )}
                                     <div>
                                         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                                             <span style={{ fontWeight: 700, fontSize: "0.9rem" }}>{user.name}</span>
@@ -278,11 +309,10 @@ export default function SocialFeed({ initialPosts, currentUserId }: SocialFeedPr
                                 {post.content}
                             </p>
 
-                            {/* Attached Image */}
-                            {(post as any).imageUrl && (
+                            {post.imageUrl && (
                                 <div style={{ borderRadius: '0.75rem', overflow: 'hidden' }}>
                                     <img
-                                        src={(post as any).imageUrl}
+                                        src={post.imageUrl}
                                         alt="Post attachment"
                                         style={{ width: '100%', maxHeight: '300px', objectFit: 'cover', borderRadius: '0.75rem' }}
                                     />
@@ -298,7 +328,14 @@ export default function SocialFeed({ initialPosts, currentUserId }: SocialFeedPr
                                     padding: "0.75rem",
                                     alignItems: "center"
                                 }}>
-                                    <img src={trip.photos[0].path} alt="" style={{ width: "60px", height: "40px", borderRadius: "4px", objectFit: "cover" }} />
+                                    <Image
+                                        src={trip.photos[0].path}
+                                        alt={trip.title}
+                                        width={60}
+                                        height={40}
+                                        style={{ borderRadius: "4px", objectFit: "cover" }}
+                                        unoptimized
+                                    />
                                     <div style={{ flex: 1 }}>
                                         <div style={{ fontSize: "0.8rem", fontWeight: 700 }}>{trip.title}</div>
                                         <div suppressHydrationWarning style={{ fontSize: "0.7rem", color: "var(--accent)", fontWeight: 600 }}>
@@ -322,6 +359,27 @@ export default function SocialFeed({ initialPosts, currentUserId }: SocialFeedPr
                         </div>
                     );
                 })}
+
+                {hasMore && activeTab === "global" && (
+                    <button
+                        onClick={handleLoadMore}
+                        disabled={isLoadingMore}
+                        style={{
+                            width: "100%",
+                            padding: "0.875rem",
+                            background: "rgba(255,255,255,0.03)",
+                            border: "1px solid var(--border)",
+                            borderRadius: "0.875rem",
+                            color: "var(--secondary)",
+                            fontSize: "0.875rem",
+                            fontWeight: 600,
+                            cursor: isLoadingMore ? "not-allowed" : "pointer",
+                            transition: "all 0.2s",
+                        }}
+                    >
+                        {isLoadingMore ? "Loading…" : `Load more (${totalCount - posts.length} remaining)`}
+                    </button>
+                )}
             </div>
         </div>
     );

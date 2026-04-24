@@ -3,6 +3,7 @@
 import prisma from "./prisma";
 import { revalidatePath } from "next/cache";
 import { createClient } from "./supabase/server";
+import { SaveMemorySchema } from "./validations";
 
 export async function saveMemoryAction(tripId: string, data: {
     highlightMoment?: string;
@@ -20,7 +21,8 @@ export async function saveMemoryAction(tripId: string, data: {
         throw new Error("You must be signed in to save memories.");
     }
 
-    // Ensure trip exists and belongs to user
+    const validated = SaveMemorySchema.parse({ tripId, ...data });
+
     const trip = await prisma.tripCandidate.findUnique({
         where: { id: tripId, userId: user.id }
     });
@@ -32,17 +34,17 @@ export async function saveMemoryAction(tripId: string, data: {
     await prisma.tripMemory.upsert({
         where: { tripCandidateId: tripId },
         update: {
-            ...data,
+            ...validated,
             updatedAt: new Date()
         },
         create: {
             tripCandidateId: tripId,
-            ...data
+            ...validated,
         }
     });
 
-    revalidatePath("/journal");
     revalidatePath(`/journal/${tripId}`);
+    revalidatePath("/journal");
 }
 
 export async function getMemoryAction(tripId: string) {
