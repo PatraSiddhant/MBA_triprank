@@ -1,18 +1,20 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Map, Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { Map, Eye, EyeOff, Mail, Lock, CheckCircle } from "lucide-react";
 
-export default function LoginPage() {
+function LoginForm() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const message = searchParams.get("message");
     const supabase = createClient();
 
     const handleLogin = async (e: React.FormEvent) => {
@@ -45,7 +47,7 @@ export default function LoginPage() {
                 alignItems: "center",
                 justifyContent: "center",
                 padding: "6rem 1rem 2rem",
-                background: "var(--background)",
+                background: "var(--bg-0)",
             }}
         >
             <div style={{ width: "100%", maxWidth: "420px" }}>
@@ -81,6 +83,28 @@ export default function LoginPage() {
                         Sign in to your TrekRank account
                     </p>
                 </div>
+
+                {/* Verification success message */}
+                {message && (
+                    <div
+                        style={{
+                            background: "rgba(34,197,94,0.1)",
+                            border: "1px solid rgba(34,197,94,0.3)",
+                            borderRadius: "0.875rem",
+                            padding: "0.875rem 1rem",
+                            marginBottom: "1.25rem",
+                            color: "#16a34a",
+                            fontSize: "0.875rem",
+                            fontWeight: 500,
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "0.5rem",
+                        }}
+                    >
+                        <CheckCircle size={16} />
+                        {message}
+                    </div>
+                )}
 
                 {/* Card */}
                 <div
@@ -148,7 +172,7 @@ export default function LoginPage() {
                                         borderRadius: "0.875rem",
                                         fontSize: "0.95rem",
                                         color: "var(--fg-0)",
-                                        background: "var(--glass-bg)",
+                                        background: "var(--bg-2)",
                                         border: "1px solid var(--border)",
                                     }}
                                 />
@@ -173,7 +197,7 @@ export default function LoginPage() {
                                     href="/forgot-password"
                                     style={{ fontSize: "0.75rem", color: "var(--accent)", fontWeight: 600 }}
                                 >
-                                    Forgot?
+                                    Forgot password?
                                 </Link>
                             </div>
                             <div style={{ position: "relative" }}>
@@ -201,7 +225,7 @@ export default function LoginPage() {
                                         borderRadius: "0.875rem",
                                         fontSize: "0.95rem",
                                         color: "var(--fg-0)",
-                                        background: "var(--glass-bg)",
+                                        background: "var(--bg-2)",
                                         border: "1px solid var(--border)",
                                     }}
                                 />
@@ -235,12 +259,12 @@ export default function LoginPage() {
                                 width: "100%",
                                 padding: "0.9rem",
                                 borderRadius: "0.875rem",
-                                background: loading ? "rgba(var(--accent-rgb), 0.7)" : "var(--accent)",
+                                background: loading || !email || !password ? "rgba(var(--accent-rgb), 0.5)" : "var(--accent)",
                                 color: "#fff",
                                 fontWeight: 700,
                                 fontSize: "1rem",
                                 border: "none",
-                                cursor: loading ? "not-allowed" : "pointer",
+                                cursor: loading || !email || !password ? "not-allowed" : "pointer",
                                 transition: "all 0.2s",
                                 marginTop: "0.5rem",
                             }}
@@ -258,5 +282,13 @@ export default function LoginPage() {
                 </p>
             </div>
         </div>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={<div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>Loading…</div>}>
+            <LoginForm />
+        </Suspense>
     );
 }

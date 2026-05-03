@@ -1,56 +1,71 @@
-# Final Project: TripRank — Solving the MBA Choice Paradox
+# Final Project Write-Up: TripRank — An Operating System for MBA Travel
 
-## 1. Motivation: The Choice Overload and the FOMO Framework
-The MBA experience is often characterized by a high-frequency sequence of high-stakes decisions: which internship to take, which electives to choose, and—perhaps most socially fraught—which treks to attend. In my own experience and that of my peers at Columbia Business School, the process of planning an academic year's travel (the 2026-2027 cycle) is often defined not by individual passion, but by a "FOMO" (Fear Of Missing Out) framework. Information is scattered across WhatsApp groups, Reddit threads, and old school blogs. When students see a group of 50 people signing up for the "Colombia Trek," they often follow suit without considering if their own "Trip DNA" might actually lean towards a "Tech & Tradition" exploration of Japan or a "Sustainability" focus in Iceland.
-
-The "Aha!" moment for **TripRank** came during a guest lecture by the founder of **Beli**, an AI-driven restaurant ranking platform. He spoke about the psychological ease of pairwise selection—choosing between two distinct options—as a more accurate way to elicit true preferences than traditional star ratings. I realized that if we could apply this "Beli-style" logic to MBA treks, we could help students navigate the "Choice Paradox." Following that lecture, I set out to build a prototype that uses AI-generated data and an Elo-based ranking algorithm to help students discover their personal travel priorities and translate those priorities into a functional 2027 academic calendar.
-
-## 2. Strategic Framework: Network Effects and Single-Player Utility
-A central theme of our Technology Strategy course is the concept of **Network Effects** and the "Chicken-and-Egg" problem. For a travel platform to be valuable, it typically needs a large user base to provide reviews and trending data. However, a new platform has no users, thus no data, thus no value.
-
-To solve this for TripRank, I implemented a **"Single-Player Utility"** strategy. The app is functionally useful to a student who is the *only* person on the platform. By performing pairwise comparisons (e.g., "Would you rather visit the street art of Comuna 13 in Medellin or the neon streets of Shibuya in Tokyo?"), the student builds a private, personalized leaderboard based on their own value system. 
-
-To "seed" the platform—another core strategic concept—I used AI to generate 17 high-quality trek templates. These aren't just placeholders; they are detailed 5-day itineraries covering budget, vibes (e.g., "high-energy," "immersive," "luxury"), and safety ratings. This ensures that the "Supply Side" of the platform is rich and compelling from Day 1. As more students use the tool, these individual preferences aggregate into a **Global Leaderboard**, moving the platform from Single-Player utility to Multi-Player network value, where students can see which treks are "trending" across the school without the noise of a chaotic group chat.
-
-## 3. Implementation and the AI Partnership
-Developing a premium, interactive prototype without a large engineering team required a deep partnership with AI. I utilized **Antigravity** (a Gemini-powered assistant) as my "Product Design Partner."
-
-### The Aesthetic Logic
-I wanted the UI to feel "photo-forward" and premium, rivaling apps like Beli or Airbnb. I used iterative prompting to develop a **Glassmorphism** design system. The core prompt was: *"Design a modern travel UI using vanilla CSS that leverages glassmorphism (blurred backgrounds), high-end typography (Inter/Outfit), and a dark-mode-first aesthetic. Ensure the experience feels immersive and premium, using vibrant accent colors like #0070f3."* The result is a platform that uses blurred navbars, floating cards, and smooth hover transitions to create a "luxury" feel.
-
-### The Elo Rating System
-To power the ranking, I implemented the **Elo Rating System**, famously used in chess. In `lib/ranking-actions.ts`, I worked with the AI to write a server-side algorithm that updates scores based on "win/loss" outcomes:
-- **Expected Outcome**: The math calculates the probability of one trip "winning" over another based on current ratings.
-- **K-Factor**: We selected a K-factor of 32 to ensure that early rankings have a significant impact, allowing the user's leaderboard to take shape quickly (within 5-10 comparisons).
-- **Persistence**: Using **Prisma and SQLite**, every comparison is stored, ensuring the student's ranking persists across sessions.
-
-### The Draggable MBA Journey
-Transitioning from "Choice" to "Action" is where the **MbaCalendar** component comes in. This was the most technically challenging part of the build. I used the `@hello-pangea/dnd` library to create a draggable interface where students can move their #1, #2, and #3 ranked trips into specific "Slots" in the 2026-2027 academic year (e.g., Fall Break, Winter Break, Spring Break). The AI assisted in writing the complex state management logic to ensure that if a student moves a trip back to the "Leaderboard pool," it maintains its rank and data.
-
-## 4. Problems, Challenges, and Iterations
-The development process was not without its "Product Management" hurdles:
-- **The Cold Start Visuals**: A travel app with no photos is useless. I used the `generate_image` tool to create 17 unique hero images in a consistent "Nano Banana" style. This ensured visual harmony. However, the first batch of images was too generic; I had to refine the prompts to focus on "iconic markers" (like the Taj Mahal or the Shibuya Crossing) to make the trips feel authentic.
-- **State Synchronization**: Initially, the UI would "flicker" when a user made a selection. I had to implement React's `useTransition` and Next.js server actions to ensure the "Elo" update happened in the background while the UI instantly moved to the next pair, maintaining the "Beli" speed.
-- **PDF Generation**: I realized that a prototype's value is limited if you can't "take it with you." I implemented `jspdf` to allow users to download their final scheduled itinerary. Debugging the table layouts for 17 different possible trip combinations required several rounds of AI-assisted refactoring to ensure the PDF was professional and readable.
-
-To move from conceptual ranking to a functional travel ecosystem, I implemented several advanced strategic layers:
-- **Network Consensus (FOMO Engine)**: The dedicated **Socials** tab leverages peer influence by showing real-time rankings and reviews from other students. We added "Synergy Scores" to each post, using AI to calculate how well a friend's top-ranked trip aligns with your own "Trip DNA."
-- **AI Budget & "Vibe" Optimizer**: In the **MbaCalendar**, I added a "Strategy Slider." This allows students to optimize their 2027 calendar for "Efficiency" (lowest cost per trek) or "YOLO Vibes" (maximizing high-Elo, high-cost trips), simulating a personalized AI travel advisor.
-- **Group Synergy & Fulfillment**: Each trek detail page now includes a "Who's Going?" layer to solve the coordination problem. By integrating a "Fulfillment Layer" (e.g., "Book with MBA Discount"), the app moves from a discovery tool to a transactional platform, exploring the final stage of the user journey.
-- **The Supply-Side Review Loop**: To ensure the platform's longevity (a key requirement for maintaining network effects), I added a review loop where students can upload their "Photo DNA" and experiences, constantly refreshing the platform's value for the next academic year.
-
-## 5. Value, Synthesis, and Future Ambitions
-**TripRank** is no longer just a prototype; it is a synthesis of Technology Strategy and AI-Native development. It demonstrates conceptual clarity by transforming the **Choice Paradox** into a gamified, peer-validated exploration of individual preferences.
-
-For me, this project has developed the "Capacity and Confidence" to use AI as a high-level product architect. Instead of seeing AI as a tool to write simple code, I used it to:
-1.  **Seed a Marketplace**: Generating 1,600+ lines of rich itinerary data to solve the "empty world" problem.
-2.  **Architect Social Proof**: Designing consensus-driven UI elements that map directly to the strategic concept of Social Signaling.
-3.  **Bridge Discovery and Action**: Creating the "Fulfillment Loop" that demonstrates a clear understanding of the full consumer lifecycle.
-
-In my future career, I hope to use this "AI Partnership" to rapidly prototype platforms that solve information asymmetry and preference discovery across complex industries. TripRank proves that with a good command of language and a willingness to experiment, the barrier between a "Strategic Idea" and a "Finished Product" has effectively vanished.
+**Course:** Technology Strategy, Spring 2026 · Prof. Dan Wang
+**Student:** Siddhant Patra (sp4352) · Columbia Business School
+**Prototype:** [link to deployed app] · **Feedback Survey:** [unique survey URL]
 
 ---
 
-**Prototype Link**: [Deploy Link Here]
-**Feedback Survey**: [Link to Submissions]
-**Project Artifacts**: View the [Itinerary Data](file:///c:/Users/Siddhant%20Patra/OneDrive%20-%20Columbia%20Business%20School/Documents/Antigravity_tool/triprank/data/trip-templates.ts) and the [Ranking Logic](file:///c:/Users/Siddhant%20Patra/OneDrive%20-%20Columbia%20Business%20School/Documents/Antigravity_tool/triprank/lib/ranking-actions.ts).
+## 1. Motivation
+
+Every MBA program is, in practice, two years of travel. Between Pre-Term, Fall Break, Winter Break, Spring Break, internship weekends, and Post-Finals, a typical CBS student visits 8–20 countries. Yet the *decision-making* process behind those trips is astonishingly broken. Information is scattered across fourteen WhatsApp groups, three Reddit threads, a Notion someone made in 2022, and a Google Sheet that nobody updates after week two. When fifty classmates start signing up for the "Colombia Trek," the rest of the cohort follows — not because Colombia is the right trip for them, but because the *Cost of Coordination* of doing anything else is prohibitively high.
+
+The motivating insight came during Beli founder Eytan Seidman's guest lecture. He framed pairwise comparison ("would you rather A or B?") as a way to surface true preferences that star ratings systematically destroy. I sat there realizing the MBA-trek problem is structurally identical: high-stakes social choice, drowning in unstructured signal, a vocal minority dictating the consensus. If Beli could turn a city's restaurants into a ranked, comparable graph, the same primitive could turn a cohort's travel options into a ranked, plannable one.
+
+**TripRank** is the result. It is a personalization-first travel operating system for MBA students that helps a user (a) discover what *they* actually want, (b) plan it across the specific time-windows of an MBA calendar, and (c) remember and share it after the fact. The thesis is that the artifact of two years of travel should not be a cluttered Google Photos folder — it should be a ranked, planned, shareable global legacy.
+
+## 2. Connection to Class Concepts
+
+TripRank is, deliberately, a synthesis of four threads from the course.
+
+**Demand-side disruption and the Innovator's Dilemma.** Incumbents like Excel-based planners and TripAdvisor compete on *granular control* — more filters, more reviews, more knobs. TripRank does the opposite: it redefines the dimension of performance from "control" to **speed of consensus**. This is the same playbook as Netflix vs. Blockbuster. Blockbuster optimized for "availability of new releases"; Netflix changed the question to "ease of selecting from the long tail." TripRank changes it from "richest information set" to "fastest path from chaos to a ranked plan." That is a low-end / fringe entry point — it is initially worse for the power-user planner who already has a perfect spreadsheet, and decisively better for the 80% who don't.
+
+**Market frictions and the Cost of Coordination (Session 5).** The product is built to attack three specific frictions head-on. *Search costs* are cut by reducing a 30-trip choice set into binary swipes via the SwipeArena. *Preference elicitation* is solved by an Elo rating system that converts unstructured "likes" into a numerical ranking — the user does not have to know what they want; the system infers it from revealed preference. *Information asymmetry* is mitigated by aggregating pairwise votes into a school-scoped "Cohort Pulse" that surfaces collective signal, not the loudest voice in the WhatsApp.
+
+**Cold start, single-player utility, and seeding (Sessions 7–12).** A travel-ranking platform with zero users has zero data and therefore zero value. To bridge the chicken-and-egg gap, I followed the *single-player utility* doctrine: the app must be useful to the *only* student on it. I did this with three concrete moves. (1) I seeded the platform with 30 fully-fleshed trip templates — each carrying a 5-day itinerary, hero imagery, budget bands, vibes, safety notes, and visa intel — so the supply side is rich on day one. (2) Pairwise voting produces a *personal* leaderboard from the very first session, regardless of network size. (3) Trip DNA onboarding (three swipe pairs: Beach↔Mountain, Crew↔Solo, Party↔Quiet) personalizes the feed from minute one. The handoff to multi-player utility happens naturally once a school crosses ~10 accounts: the personal Elo leaderboard begins to overlay a cohort one, and the school-scoped Socials feed surfaces what classmates are booking, ranking, and reviewing. This mirrors the **Beli case** (Session 11): standardize a unit of unstructured social data — a restaurant rating, or an MBA trek — and the standardization itself becomes the moat.
+
+**Make–Partner–Buy and Capacity & Competence (Session 19).** The contrast with the **Rivian case** is sharp. Rivian's vertical integration created the *interdependence-of-parts* trap that surfaced in the now-infamous $775 battery replacement. TripRank deliberately does the opposite: every non-core capability is *partnered*, not built. Auth and storage are Supabase. Maps are MapLibre/Leaflet on free OSM tiles. The 3D globe is the open-source `cobe` library. Drag-and-drop is `@hello-pangea/dnd`. PDF export is `jspdf`. The proprietary surface is intentionally narrow — the Elo engine, the Trip DNA model, the year-canvas planner, the cohort-aggregation logic. Everything else is partnered, which is what lets a single MBA student ship a product this large.
+
+## 3. How I Put It Together
+
+TripRank is a Next.js 16 / React 19 / Prisma / Supabase application. The shipped surfaces are **Discover** (browse the seeded template library with theme/region/budget filters), **Rank** (the SwipeArena pairwise voting flow with an Elo leaderboard), **Plan** (the draggable MBA-year calendar with PDF export), **Journal** (the user's saved trips, the world-map view, and the Memory questionnaire for past trips), **Socials** (a school-scoped feed of peer activity), plus **Onboarding**, **Profile**, **Templates**, and **About**. The information architecture went through one deliberate rewrite mid-build: an early version had five peer tabs that each fought for the same cognitive real estate, and I collapsed them into three jobs — **Discover, Plan, Journal** — after a heuristic audit (documented in `TREKRANK_UX_UI_IMPLEMENTATION_PLAN.md`) revealed that a user's intent is always one of three things: *find something*, *organize something I already found*, *remember something I did*. That single IA decision did more for usability than any individual feature.
+
+### The AI partnership
+
+I treated AI as a *Product Design Partner*, not a code-completion tool. Three models did distinct jobs:
+
+- **Antigravity (Gemini-powered)** was my primary architect. I used it to brainstorm IA, draft the design system, generate the 30-template seed dataset (~1,600 lines of TypeScript, including budgets, themes, school relevance, and day-by-day itineraries), and write the Elo math. The most useful prompt pattern was *role-then-constraint-then-artifact*: "You are a senior product designer. The constraint is that every screen ships with one Display headline, content-first, filters as modifiers. Produce the redline for the Discover page."
+- **Claude Code** owned implementation. I used it for the Next.js server actions, the Prisma schema, the SwipeArena state machine, and the year-canvas drag-and-drop. The pattern that worked best was *spec-then-diff*: I'd hand it the rubric of design tokens and ask for the smallest possible diff to comply, which kept the visual language coherent across 17 components.
+- **Nano Banana / image-gen models** produced the 30 hero images. The first batch was generic ("a beach"). I refined toward *iconic markers* ("Comuna 13 graffiti at golden hour with a tram in the background, photorealistic, low saturation") and got a visually coherent set on the third pass.
+
+Notable prompting techniques I leaned on: **iterative refinement** with explicit "what's wrong" critiques between passes; **constraint stacking** (typography rule + spacing grid + accessibility floor in one prompt); and **persona-conditioned prompts** ("write this empty state for The Aspirational Planner — second-year, money to spend, allergic to filter walls"). I also wrote two long-form planning documents *with* AI as the drafting partner — the TrekRank UX/UI Implementation Plan and the MBA Wrapped Standalone App Plan — and used those as the canonical specs that every subsequent code session cited back to.
+
+### The two-product family
+
+A late-stage decision was to scope a *sister product*, **MBA Wrapped**, as a separate but linked surface. TripRank handles the *prospective* (rank → plan); MBA Wrapped handles the *retrospective* — a 15-second cinematic time-lapse of a student's two-year journey, plane arcs across a stylized world map, ending in a shareable MP4. This is the viral artifact: the "Spotify Wrapped of an MBA." Inside TripRank, every Journal entry already feeds the Wrapped reel via shared `country_iso3` and `start_date` fields, so the moment the second product ships, the data graph is already populated. This is the *standardization-as-moat* lesson from Beli: own the data structure, and the next product is cheap.
+
+## 4. Problems and Challenges
+
+The hardest problems were not technical.
+
+**The IA was wrong, and I had to admit it.** My first build had five peer tabs (Explore, Recommend, Plan, My Trips, Community) where every page tried to be a hero landing page. After watching three classmates use it, every one of them bounced when the Explore page presented filters before any content. I rebuilt around three jobs (Discover, Plan, Journal), adopted a "results first, filters second" rule, and dropped the Recommender wizard from the critical path entirely — it remains in the codebase as a scaffold but is intentionally not promoted in the nav, because a half-working personalization wizard is worse than none. The class-level lesson: **filters before content is an anti-pattern**, and I had committed it twice.
+
+**The cold-start visual problem.** Without imagery, a travel app reads as spam. Generating 30 visually-coherent hero photos was a multi-day effort in itself; the prompts had to specify subject, lighting, era, and saturation to get a set that felt like the same product, not a stock-photo collage.
+
+**State synchronization in the SwipeArena.** Naïve implementations made the UI flicker on every Elo update. I rewired it with React's `useTransition` plus Next.js server actions so the rank update happens in the background while the UI advances to the next pair instantly — the "Beli speed" feel.
+
+**Plan-page drag-and-drop with no source.** My first Plan page had "Drop trip here" placeholders but no visible candidates rail. Every single test user asked the same question: *drag from where?* The fix was a persistent left-side Candidates rail with the user's ranked-but-unscheduled trips, and explicit conflict detection ("Patagonia ends Mar 22, Kenya starts Mar 20").
+
+**Honest scope cuts.** Two surfaces I prototyped — a natural-language "TrekConcierge" chat and an end-to-end Recommender wizard — are not part of the live experience. Both could have shipped as half-working features, but a recommender that returns generic results or a chatbot that hallucinates a $400 flight that doesn't exist would have done more brand damage than the absent feature. The discipline of *not* shipping turned out to be one of the most useful lessons of the project: in an AI-assisted workflow where building is cheap, deciding what to *cut* is where the strategy actually lives.
+
+## 5. Why This Is Valuable
+
+For me, TripRank was the proof that the gap between a *strategic idea* and a *finished product* has effectively collapsed. I am not an engineer by training, and yet the combination of clear product specs, a partnered AI architect, and modular open-source primitives let me ship 9 routes, 17 components, an Elo engine, a draggable year-planner, a PDF exporter, a 3D globe, a memory journal, and a fully scoped sister product in a few weeks. The capability I built — using AI as a high-leverage product partner rather than a code-completer — is the single most transferable skill I am taking out of this course.
+
+For the user, TripRank fills a hole that no incumbent fills. WhatsApp coordinates, but doesn't decide. TripAdvisor reviews, but doesn't personalize. Spotify and Strava have proven that an annual *Wrapped* artifact is a magnet for organic sharing in dense, identity-rich communities — and an MBA cohort is exactly that community. By owning the data structure of an MBA trek (window, budget, vibe, cohort overlap, ranked moments) before anyone else does, TripRank establishes the same kind of switching cost Beli established for restaurants: once your two-year travel record lives here, the cost of going back to the Google Sheet is no longer measured in convenience — it is measured in *legacy*.
+
+The deeper bet is on **demand-side disruption**: that a tool which is initially "worse" for the obsessive spreadsheet planner is decisively better for the 80% of students who never had a tool at all, and that this fringe entry point — done well, seeded right, standardized early — is exactly the kind of low-end disruption the course taught us to recognize.
+
+---
+
+*Word count: ~1,790 words.*

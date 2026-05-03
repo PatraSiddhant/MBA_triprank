@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(cd \"C:\\\\Users\\\\Siddhant Patra\\\\OneDrive - Columbia Business School\\\\Documents\\\\Antigravity_tool\\\\mbatriprank\\\\triprank\"; Get-ChildItem -Path \"./app\" -Recurse | Where-Object { !$_.Name.StartsWith\\('.'\\) -and $_.Name -ne \"node_modules\" } | Select-Object FullName | head -50)"
+    ]
+  }
+}
